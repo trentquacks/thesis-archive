@@ -1,0 +1,28 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!--css framework for styling shortcuts-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index_style.css') }}">
+</head>
+<body>
+	<p> Viewing results for: {{ search }} {{ department_name }} </p>
+	<br>
+	{% if theses %}
+		<ul class=flashes>
+		{% for thesis in theses %}
+			<li><b>{{ thesis['title'] }}</b></li>
+			<ul>
+				<li>Authors: {{ thesis['authors'] }}</li>
+				<li>Publisher: {{ thesis['department_name'] }}</li>
+				<li>Published: {{ thesis['date_published'].strftime('%Y-%m-%d') }}</li>
+			</ul>
+		{% endfor %}
+		</ul>
+	{% else %}
+	<p>No match found</p>
+	{% endif %}
+</body>
+
+

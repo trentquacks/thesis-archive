@@ -1,0 +1,83 @@
+/* for styles */
+body {
+    background-color: #ece0da;
+    font-family: 'Times New Roman';
+    color: #626A53;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.createacc-box {
+    /*background-color: #f6b0bb;*/
+    background-image: linear-gradient(180deg, #f1c8cb, #f6b0bb); 
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    width: 500px;
+    height: 400px;
+    border-radius: 15px;
+    padding: 10px 20px;
+    margin: auto;
+
+    /* what is box-sizing: border-box*/
+
+    /*for centering content inside*/
+    
+    text-align: center;
+    line-height: 28px;
+}
+
+a {
+    color: #b24f7d;
+}
+p {
+    color: #626A53;
+    font-size: 13px;
+    font-family: 'Times New Roman';
+}
+
+h2 {
+    color: #626A53;
+    font-family: 'Times New Roman';
+}
+
+button {
+    background-color: #7E8C69;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 10px;
+    padding: 10px 20px;    
+}
+
+input {
+    opacity: 0.6;
+    border-radius: 5px;
+    border:1px solid white;
+    padding: 10px 20px;    
+}
+
+label {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    color: #626A53;
+}
+
+.navbar{
+    background:#8c9a73;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    color:white;
+    border-radius:0 0 20px 20px;
+}
+
+.navbar nav a{
+    color:white;
+    margin-left:25px;
+    text-decoration:none;
+    font-weight:500;
+}
