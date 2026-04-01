@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #E8EBE0;
+    font-family: 'Crimson Pro', serif;
+    color: #4A5D4A;
+    padding-bottom: 50px;
+}
+
+/* --- HEADER & NAVIGATION (Mananatili ang original style mo) --- */
+.header-nav {
+    background-color: #8B9D77;
+    border-radius: 0.75rem;
+    padding: 1rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.logo-dark { color: #4A5D4A; }
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* --- MAIN CONTENT STYLES --- */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #626A53;
+}
+
+.breadcrumb span {
+    font-weight: bold;
+}
+
+.page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.page-title h1 {
+    font-size: 42px;
+    font-weight: 500;
+}
+
+.robot-icon i {
+    font-size: 50px;
+}
+
+.divider {
+    border: none;
+    height: 1.5px;
+    background-color: #4A5D4A;
+    margin-bottom: 30px;
+}
+
+.description {
+    line-height: 1.5;
+    font-size: 18px;
+    margin-bottom: 40px;
+    text-align: justify;
+}
+
+.section-heading {
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 22px;
+}
+
+/* --- SINGLE BANNER CARD (New Design) --- */
+.banner-card {
+    background-color: #8B9D77;
+    border-radius: 12px;
+    padding: 35px 45px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.banner-icon i {
+    font-size: 70px;
+    opacity: 0.9;
+}
+
+.banner-info h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.banner-info p {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* --- FILTERS & BUTTONS --- */
+.filters-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+}
+
+
+/* --- DOCUMENTS LIST --- */
+.year-header {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.doc-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.view-pdf {
+    color: #626A53;
+    text-decoration: underline;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.doc-content h4 {
+    font-size: 20px;
+    font-weight: 700;
+    display: inline-block;
+    border-bottom: 1.5px solid #4A5D4A;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
+
+.doc-content p {
+    font-size: 15px;
+    font-style: italic;
+    color: #555;
+}
+
+/*.btn-newest {
+    background-color: #717F63;
+    color: white;
+    padding: 8px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-az {
+    background-color: #DDE2D1;
+    color: #4A5D4A;
+    padding: 8px 35px;
+    border: 1px solid #99A68B;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}*\
+

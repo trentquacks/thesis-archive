@@ -1,84 +1,64 @@
-<!DOCTYPE html> <!-- for structure of the website -->
-<html lang="en">
-    <head>
-        <!-- for displaying special character -->
-    <meta charset="UTF-8">
-    <title>Thesis Archive</title>
-        <!-- for connecting CSS file -->
-    <script src="https://cdn.tailwindcss.com"></script> <!--css framework for styling shortcuts-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    </head>
+{% extends 'base.html' %}
 
-<body class="p-6 md:p-10">
+{% block title %} Login {% endblock %}
 
-    <header class="header-nav max-w-6xl mx-auto">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-graduation-cap text-3xl logo-dark"></i>
-            <h1 class="text-2xl font-bold">Thesis & Capstone Archive</h1>
-        </div>
-        <nav class="flex gap-8 font-medium">
-            <a href="home.html" class="nav-link">Home</a>
-            <a href="#" class="nav-link">About</a>
-            <a href="#" class="nav-link">FAQ</a>
-            <a href="regis.html" class="nav-link">Login</a>
-        </nav>
-    </header>
+{% block style %} {{ url_for('static', filename='style.css') }} {% endblock %}
 
-    <main class="flex-grow flex flex-col items-center justify-center -mt-10">
-        <h1 class="text-3xl font-bold text-[#626A53] mb-6 serif-title mt-[70px]">Account Registration</h1>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class=flashes>
+{% block content %}
+<main class="flex-grow flex flex-col items-center justify-center -mt-10">
+    <h1 class="text-3xl font-bold text-[#626A53] mb-6 serif-title mt-[70px]">Account Registration</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
             {% for message in messages %}
-              <li>{{ message }}</li>
+            <li>{{ message }}</li>
             {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-        <div class="createacc-box">
-            <form method="post" class="space-y-6">
-                
-                <div class="space-y-1">
-                    <label>Email:</label>
-                    <input name="email" type="email" class="bg-input">
-                </div>
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <div class="createacc-box">
+        <form method="post" class="space-y-6">
 
-                <div class="space-y-1 relative">
-                    <label>Password:</label>
-                    <div class="relative">
-                        <input name="password" type="password" class="bg-input">
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-40 cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                 
-                <div class="space-y-1 relative">
-                    <label>Confirm Password:</label>
-                    <div class="relative">
-                        <input name="confirm_password" type="password" class="bg-input">
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-40">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+            <div class="space-y-1">
+                <label>Email:</label>
+                <input name="email" type="email" class="bg-input">
+            </div>
 
-                <div class="pt-4 flex flex-col items-center gap-4">
-                    <button type="submit" class="createacc-btn">
-                        Create Account
-                    </button>
-                    <div class="text-center text-gray-500 text-sm">
-                        Have an account already? <br>
-                        <a href="login.html" class="text-[#7E8C69] hover:underline underline-offset-4">Login Here</a>
+            <div class="space-y-1 relative">
+                <label>Password:</label>
+                <div class="relative">
+                    <input name="password" type="password" class="bg-input">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-40 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                        </svg>
                     </div>
                 </div>
-                
-            </form>
-        </div>
-    </main>
-</html>
+            </div>
+
+            <div class="space-y-1 relative">
+                <label>Confirm Password:</label>
+                <div class="relative">
+                    <input name="confirm_password" type="password" class="bg-input">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-40">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-col items-center gap-4">
+                <button type="submit" class="createacc-btn">
+                    Create Account
+                </button>
+                <div class="text-center text-gray-500 text-sm">
+                    Have an account already? <br>
+                    <a href="login.html" class="text-[#7E8C69] hover:underline underline-offset-4">Login Here</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</main>
+{% endblock %}

@@ -24,7 +24,8 @@ CREATE TABLE author (
 
 CREATE TABLE department (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT UNIQUE NOT NULL -- cs department, it department
+  name TEXT UNIQUE NOT NULL, -- cs department, it department
+  description TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE branch (

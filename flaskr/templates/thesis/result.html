@@ -1,28 +1,128 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Archive</title>
-    <script src="https://cdn.tailwindcss.com"></script> <!--css framework for styling shortcuts-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='index_style.css') }}">
-</head>
-<body>
-	<p> Viewing results for: {{ search }} {{ department_name }} </p>
-	<br>
-	{% if theses %}
-		<ul class=flashes>
-		{% for thesis in theses %}
-			<li><b>{{ thesis['title'] }}</b></li>
-			<ul>
-				<li>Authors: {{ thesis['authors'] }}</li>
-				<li>Publisher: {{ thesis['department_name'] }}</li>
-				<li>Published: {{ thesis['date_published'].strftime('%Y-%m-%d') }}</li>
-			</ul>
-		{% endfor %}
-		</ul>
+{% extends 'base.html' %}
+
+{% block title %} Search {% endblock %}
+
+{% block style %} {{ url_for('static', filename='result.css') }} {% endblock %}
+
+{% block content %}
+<main class="container max-w-6xl mx-auto mt-6">
+	<nav class="breadcrumb text-sm mb-4 text-[#626A53]">
+		<a href="home1.html">Home</a> <span class="font-bold">Computer Science</span>
+	</nav>
+
+	<section class="flex justify-between items-center mb-1">
+		<h1 class="text-4xl text-[#4A5D4A]">{{ category }}</h1>
+		<div class="text-5xl text-[#4A5D4A]">
+			<i class="fa-solid fa-robot"></i>
+		</div>
+	</section>
+
+	<hr class="border-[#4A5D4A] border-t-2 mb-8">
+
+	<p class="description text-lg leading-relaxed text-justify mb-10">
+	{% if description %}
+	{{ description }}
 	{% else %}
-	<p>No match found</p>
+	Searching for "{{ search }}"
 	{% endif %}
-</body>
+	</p>
+
+	<h3 class="font-bold text-xl mb-6">Browse {{ category }} Collections</h3>
+
+	<div class="bg-[#8B9D77] rounded-lg p-8 flex items-center gap-8 text-white shadow-md mb-10">
+		<div class="text-7xl opacity-80">
+			<i class="fa-solid fa-book"></i>
+		</div>
+		<div class="card-info">
+			<h2 class="text-3xl font-bold">Undergraduate Thesis & Capstone Projects</h2>
+			<p class="text-lg opacity-90 font-semibold">{{ count }} Collections | 2015-2026</p>
+		</div>
+	</div>
+
+	<div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+		<div class="flex gap-4">
+			<button onclick="updateFilter('sort', 'newest')" 
+				class="px-4 py-2 rounded-lg font-semibold transition 
+				{% if current_sort == 'newest' or not current_sort %} 
+					bg-[#7A8B66] text-white border border-[#7A8B66] 
+				{% else %} 
+					bg-transparent text-[#7A8B66] border border-[#7A8B66] hover:bg-[#7A8B66]/10 
+				{% endif %}">
+				Newest
+			</button>
+
+			<button onclick="updateFilter('sort', 'az')" 
+				class="px-5 py-2 rounded-lg font-semibold transition 
+				{% if current_sort == 'az' %} 
+					bg-[#7A8B66] text-white border border-[#7A8B66] 
+				{% else %} 
+					bg-transparent text-[#7A8B66] border border-[#7A8B66] hover:bg-[#7A8B66]/10 
+				{% endif %}">
+				A-Z
+			</button>
+		</div>
+
+		<div class="flex items-center gap-3">
+			<span class="text-[20px] font-semibold text-[#4c5f52]">Jump To:</span>
+
+			<div class="relative flex items-center">
+				<select id="jump_to" onchange="updateFilter('year', this.value)"
+						class="appearance-none bg-transparent border border-[#8f9683]
+							text-[#4c5f52] px-3 py-1 pr-10 rounded-lg
+							focus:outline-none focus:ring-2 focus:ring-[#aab5a0]
+							hover:bg-[#8f9683]/10 transition cursor-pointer">
+
+					<option value="" {% if not current_year %}selected{% endif %}>Any Year</option>
+					<option value="2026" {% if current_year == '2026' %}selected{% endif %}>2026</option>
+					<option value="2025" {% if current_year == '2025' %}selected{% endif %}>2025</option>
+					<option value="2024" {% if current_year == '2024' %}selected{% endif %}>2024</option>
+					<option value="2023" {% if current_year == '2023' %}selected{% endif %}>2023</option>
+					<option value="2022" {% if current_year == '2022' %}selected{% endif %}>2022</option>
+					<option value="2021" {% if current_year == '2021' %}selected{% endif %}>2021</option>
+					<option value="2020" {% if current_year == '2020' %}selected{% endif %}>2020</option>
+				</select>
+
+				<i class="fa-solid fa-chevron-down absolute right-3 pointer-events-none text-[#4c5f52] text-xs"></i>
+			</div>
+		</div>
+	</div>
+
+	<div class="document-list">
+		{% if theses %}
+		{% for thesis in theses %}
+		<div class="flex items-start gap-12 mb-6">
+			<a href="#" class="text-[#626A53] underline font-medium">View PDF</a>
+			<div>
+				<a href="sample1.html" class="text-xl font-bold border-b border-[#4A5D4A] hover:text-black">{{ thesis['title'] }}</a>
+				<p class="text-sm italic text-gray-600">by {{ thesis['authors'] }}</p>
+				<p class="text-sm italic text-gray-600">{{ thesis['date_published'].strftime('%Y-%m-%d') }}</p>
+			</div>
+		</div>
+		{% endfor %}
+		{% endif %}
+
+	</div>
+</main>
+
+<script>
+	function updateFilter(key, value) {
+		const url = new URL(window.location.href);
+
+		if (value) {
+			url.searchParams.set(key, value);
+		} else {
+			url.searchParams.delete(key);
+		}
+
+		{% if search %}
+		if (!url.searchParams.has('search')) {
+			url.searchParams.set('search', '{{ search }}');
+		}
+		{% endif %}
+
+		window.location.href = url.toString();
+	}
+</script>
+{% endblock %}
 
 

@@ -6,6 +6,11 @@ body {
     font-family: 'Crimson Pro', serif;
 }
 
+form { 
+    margin: 0; padding: 0; 
+    width: 40%;
+}
+
 /* Header & Search */
 .header-nav {
     background-color: #8B9D77;
