@@ -6,10 +6,10 @@ body {
     font-family: 'Crimson Pro', serif;
 }
 
-form { 
-    margin: 0; padding: 0; 
-    width: 40%;
-}
+/* form {  */
+    /* margin: 0; padding: 0;  */
+    /* width: 40%; */
+/* } */
 
 /* Header & Search */
 .header-nav {
@@ -82,12 +82,10 @@ form {
 /* Color Variations */
 .card-sage { 
     background-color: #8B9D77; 
-    color: #FFFFFF !important; 
 }
 
 .card-white { 
-    background: linear-gradient(145deg, #ffffff, #f0f0f0); 
-    border: 1px solid #f3f4f6;
+    background: white; 
 }
 
 .sage-text { color: #2D432D; }
