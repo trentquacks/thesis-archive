@@ -13,16 +13,21 @@ body {
     padding-bottom: 50px;
 }
 
+form { 
+    margin: 0; padding: 0; 
+    width: 25%;
+}
+
 /* --- HEADER & NAVIGATION (Mananatili ang original style mo) --- */
 .header-nav {
+    font-weight: 800;
     background-color: #8B9D77;
     border-radius: 0.75rem;
-    padding: 1rem 2.5rem;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: white;
-    margin-bottom: 2rem;
 }
 
 .logo-dark { color: #4A5D4A; }
@@ -128,6 +133,30 @@ body {
     gap: 15px;
 }
 
+.search-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 32rem;
+    padding: 0.75rem 1.5rem;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border: 1px solid #d1d5db;
+    font-style: italic;
+    outline: none;
+}
+
+.search-btn {
+    background-color: #8B9D77;
+    padding: 16 1.25rem;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border: 1px solid #8B9D77;
+}
 
 /* --- DOCUMENTS LIST --- */
 .year-header {

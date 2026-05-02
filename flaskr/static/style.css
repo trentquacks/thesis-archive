@@ -14,6 +14,7 @@ body {
 .header-nav {
     background-color: #8B9D77;
     border-radius: 0.75rem;
+    text-align: center;
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -84,6 +85,7 @@ label {
     padding:20px 40px;
     color:white;
     border-radius:0 0 20px 20px;
+    text-align: center;
 }
 
 .navbar nav a{
@@ -91,4 +93,5 @@ label {
     margin-left:25px;
     text-decoration:none;
     font-weight:500;
+    text-align: center;
 }

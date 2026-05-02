@@ -7,17 +7,91 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <link rel="stylesheet" href="{% block style %}{% endblock %}">
     </head>
+<style>
+.dropdown {
+    overflow: visible;
+    position: relative;
+}
+
+.dropdown .dropbtn {
+    font-size: 16px;  
+    border: none;
+    outline: none;
+    color: white;
+    background-color: inherit;
+    font-family: inherit;
+    margin: auto;
+    text-align: center;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute; top: 100%;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.profile-pic{
+    display: inline-block;
+    vertical-align: middle;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+}
+</style>
     <body class="p-6 md:p-10">
         <header class="header-nav max-w-6xl mx-auto">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-graduation-cap text-3xl logo-dark"></i>
                 <h1 class="text-2xl font-bold">Project Archive</h1>
             </div>
-            <nav class="flex gap-8 font-medium">
-                <a href="{{ url_for('index') }}" class="nav-link">Home</a>
-                <a href="#" class="nav-link">About</a>
-                <a href="#" class="nav-link">FAQ</a>
-                <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+            <nav class="flex gap-8 font-medium items-center">
+                <a href="{{ url_for('index') }}" class="nav-link font-bold">Home</a>
+                <a href="#" class="nav-link font-bold">About</a>
+                <a href="#" class="nav-link font-bold">FAQ</a>
+                {% if g.user %}
+                
+                <div class="dropdown flex items-center gap-1">
+                    <div class="profile-pic">
+                        <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture">
+                    </div>
+                    <button class="gap-1 p-0 m-0 border-none bg-transparent flex items-center">
+                        <span class="leading-none">{{ g.user['email'] }}</span>
+                        <i class="fa fa-caret-down leading-none"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#">Profile</a>
+                        <a href="{{ url_for('thesis.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('auth.logout') }}">Logout</a>
+                    </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-link font-bold">Login</a>
+                {% endif %}
+                </div>
             </nav>
         </header>
         {% block content %}{% endblock %}

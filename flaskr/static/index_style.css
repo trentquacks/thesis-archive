@@ -13,6 +13,7 @@ form {
 
 /* Header & Search */
 .header-nav {
+    font-weight: 800;
     background-color: #8B9D77;
     border-radius: 0.75rem;
     padding: 1rem 2rem;
@@ -92,3 +93,58 @@ form {
 .sage-text { color: #2D432D; }
 
 .nav-link:hover { text-decoration: underline; }
+
+.dropdown {
+    overflow: visible;
+    position: relative;
+}
+
+.dropdown .dropbtn {
+    font-size: 16px;  
+    border: none;
+    outline: none;
+    color: white;
+    background-color: inherit;
+    font-family: inherit;
+    margin: auto;
+    text-align: center;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute; top: 100%;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.profile-pic{
+    display: inline-block;
+    vertical-align: middle;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+}

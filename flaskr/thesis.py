@@ -8,6 +8,10 @@ bp = Blueprint("thesis", __name__)
 def index():
     """Show all the theses"""
     db = get_db()
+
+    departments = db.execute(
+        "SELECT id, name, description FROM department"
+    ).fetchall()
     
     search = request.form.get("search") or request.args.get("search", "")
     sort = request.args.get('sort', 'newest')
@@ -47,7 +51,7 @@ def index():
         
         return render_template("thesis/result.html", theses=theses, search=search, category=category, count=count, current_sort=sort, current_year=year)
     
-    return render_template("thesis/index.html")
+    return render_template("thesis/index.html", departments=departments)
 
 @bp.route("/department/<int:dept_id>")
 def department_theses(dept_id):
@@ -103,3 +107,11 @@ def department_theses(dept_id):
         current_sort=sort, 
         current_year=year
     )
+
+@bp.route("/dashboard")
+def dashboard():
+    return render_template("thesis/dashboard.html")
+
+@bp.route("/form")
+def form():
+    return render_template("thesis/form.html")
