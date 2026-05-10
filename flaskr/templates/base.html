@@ -1,99 +1,74 @@
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}{% endblock %} | Project Archive</title>
-        <script src="https://cdn.tailwindcss.com"></script> <!--css framework for styling shortcuts-->
+        
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            sage: {
+                                50: '#E8EBE0',   /* Body background */
+                                100: '#E0E4D3',  /* Table cells */
+                                200: '#C5CCB7',  /* Borders */
+                                300: '#B0B8A3',  /* Table headers */
+                                500: '#8B9D77',  /* Primary accent (Nav, Buttons) */
+                                600: '#7E8C69',  /* Secondary Buttons */
+                                700: '#626A53',  /* Labels & Titles */
+                                800: '#4A5D4A',  /* Main text */
+                                900: '#2D432D',  /* Darkest text */
+                            }
+                        },
+                        fontFamily: {
+                            serif: ['Crimson Pro', 'serif'],
+                        }
+                    }
+                }
+            }
+        </script>
+        
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-        <link rel="stylesheet" href="{% block style %}{% endblock %}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     </head>
-<style>
-.dropdown {
-    overflow: visible;
-    position: relative;
-}
 
-.dropdown .dropbtn {
-    font-size: 16px;  
-    border: none;
-    outline: none;
-    color: white;
-    background-color: inherit;
-    font-family: inherit;
-    margin: auto;
-    text-align: center;
-}
-
-.navbar a:hover, .dropdown:hover .dropbtn {
-    background-color: red;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute; top: 100%;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    float: none;
-    color: black;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-}
-
-.dropdown-content a:hover {
-    background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.profile-pic{
-    display: inline-block;
-    vertical-align: middle;
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    border-radius: 50%;
-    position: relative;
-}
-</style>
-    <body class="p-6 md:p-10">
-        <header class="header-nav max-w-6xl mx-auto">
+    <body class="bg-sage-50 font-serif text-sage-800 leading-relaxed p-6 md:p-10">
+        <header class="bg-sage-500 rounded-xl px-8 py-4 flex justify-between items-center text-white font-extrabold max-w-6xl mx-auto shadow-sm">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-graduation-cap text-3xl logo-dark"></i>
+                <i class="fa-solid fa-graduation-cap text-3xl"></i>
                 <h1 class="text-2xl font-bold">Project Archive</h1>
             </div>
+            
             <nav class="flex gap-8 font-medium items-center">
-                <a href="{{ url_for('index') }}" class="nav-link font-bold">Home</a>
-                <a href="#" class="nav-link font-bold">About</a>
-                <a href="#" class="nav-link font-bold">FAQ</a>
-                {% if g.user %}
+                <a href="{{ url_for('index') }}" class="text-white hover:underline font-bold">Home</a>
+                <a href="#" class="text-white hover:underline font-bold">About</a>
+                <a href="#" class="text-white hover:underline font-bold">FAQ</a>
                 
-                <div class="dropdown flex items-center gap-1">
-                    <div class="profile-pic">
-                        <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture">
+                {% if g.user %}
+                <div class="dropdown flex items-center gap-2 relative">
+                    <div class="w-10 h-10 overflow-hidden rounded-full inline-block align-middle">
+                        <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture" class="w-full h-full object-cover">
                     </div>
-                    <button class="gap-1 p-0 m-0 border-none bg-transparent flex items-center">
-                        <span class="leading-none">{{ g.user['email'] }}</span>
-                        <i class="fa fa-caret-down leading-none"></i>
+                    <button class="flex items-center gap-1 p-0 m-0 bg-transparent border-none text-white cursor-pointer font-bold outline-none">
+                        <span>{{ g.user['email'] }}</span>
+                        <i class="fa fa-caret-down"></i>
                     </button>
+                    
                     <div class="dropdown-content">
                         <a href="#">Profile</a>
                         <a href="{{ url_for('thesis.dashboard') }}">Dashboard</a>
                         <a href="{{ url_for('auth.logout') }}">Logout</a>
                     </div>
-                {% else %}
-                <a href="{{ url_for('auth.login') }}" class="nav-link font-bold">Login</a>
-                {% endif %}
                 </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="text-white hover:underline font-bold">Login</a>
+                {% endif %}
             </nav>
         </header>
+        
         {% block content %}{% endblock %}
     </body>
 </html>

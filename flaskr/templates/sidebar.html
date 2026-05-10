@@ -1,27 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 h-[85dvh] pt-4">
+<!-- Changed h-[85dvh] to min-h-[85dvh] -->
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 md:h-[85dvh] md:min-h-[600px] pt-4">
 
-    <aside class="w-full md:w-64 bg-white flex flex-col justify-between p-4">
+    <!-- Added min-h-[400px] to ensure the sidebar never gets shorter than 400px -->
+    <aside class="w-full md:w-64 bg-white flex flex-col justify-between p-4 rounded-lg">
         <nav class="flex flex-col gap-2">
-            <a href="#" class="flex items-center gap-3 p-3 ">
-                <i class="fa-solid fa-circle-plus"></i> Dashboard
+            <a href="{{ url_for('thesis.dashboard') }}" class="flex items-center gap-3 p-3 ">
+                <i class="fa-solid fa-gauge"></i> Dashboard
             </a>
             <a href="#" class="flex items-center gap-3 p-3">
-                <i class="fa-solid fa-circle-plus"></i> Profile
+                <i class="fa-solid fa-user"></i> Profile
             </a>
             <a href="#" class="flex items-center gap-3 p-3">
-                <i class="fa-solid fa-circle-plus"></i> Bookmarks
+                <i class="fa-solid fa-bookmark"></i> Bookmarks
             </a>
             <a href="#" class="flex items-center gap-3 p-3">
-                <i class="fa-solid fa-circle-plus"></i> History
+                <i class="fa-solid fa-clock-rotate-left"></i> History
             </a>
         </nav>
-        <a href="#" class="flex items-center gap-3 p-3">
-            <i class="fa-solid fa-circle-plus"></i> Logout
+        <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 p-3">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
         </a>
     </aside>
+    
     {% block main %}{% endblock %}
 
 </div>

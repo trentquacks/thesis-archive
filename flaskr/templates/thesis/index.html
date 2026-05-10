@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 
 {% block title %} Home {% endblock %}
-{% block style %} {{ url_for('static', filename='index_style.css') }} {% endblock %}
 
 {% block content %}
 <main class="max-w-6xl mx-auto mt-16 text-center">
-    <h2 class="text-3xl mb-6">Browse Theses/Capstone Projects</h2>
-    
-    <div class="search-container">
-        <form method="post" style="margin: 0; padding: 0; width: 40%;">
-            <input name="search" type="text" placeholder="Enter search terms" class="search-input">
-        </form>
-        <button class="search-btn">
-            <i class="fa-solid fa-magnifying-glass logo-dark"></i>
-        </button>
-    </div>
+    <h2 class="text-3xl mb-8 font-bold text-sage-800">Browse Theses/Capstone Projects</h2>
 
-    <div class="category-grid">
-        {% for department in departments%}
-        <a href="{{ url_for('thesis.department_theses', dept_id=department.id ) }}" class="card {{ 'card-white' if department.id is even else 'card-sage' }}">
-            <span> {{ department.name }} </span>
-            <i class="fa-solid fa-briefcase-clock"></i>
+    <div class="flex justify-center mb-12">
+        <form action="{{ url_for('thesis.search') }}" method="get" class="flex w-full max-w-lg shadow-sm rounded-full">
+            <input name="q" type="text" placeholder="Enter search terms" class="w-full px-6 py-3 rounded-l-full border border-gray-300 border-r-0 italic outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent text-sage-900">
+            <button type="submit" class="bg-sage-500 px-6 rounded-r-full border border-sage-500 text-white flex items-center justify-center hover:brightness-90 transition">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+        {% for department in departments %}
+        <a href="{{ url_for('thesis.search', dept_id=department.id ) }}" 
+           class="rounded-xl p-8 flex flex-col items-center gap-4 shadow-md hover:scale-105 transition transform {{ 'bg-white text-sage-800' if department.id is even else 'bg-sage-500 text-white' }}">
+            <span class="font-bold text-lg"> {{ department.name }} </span>
+            <i class="fa-solid {{ department.icon }} text-5xl"></i>
         </a>
         {% endfor %}
     </div>

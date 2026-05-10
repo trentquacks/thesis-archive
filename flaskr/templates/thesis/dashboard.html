@@ -1,56 +1,56 @@
 {% extends 'sidebar.html' %}
 
 {% block title %} Dashboard {% endblock %}
-{% block style %} {{ url_for('static', filename='index_style.css') }} {% endblock %}
 
 {% block main %}
-<main class="flex-1 flex flex-col gap-6">
+<main class="flex-1 flex flex-col gap-6 min-h-0">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% set stats = [
+            ('fa-lightbulb', 'Projects', total_projects),
+            ('fa-magnifying-glass', 'Under review', under_review),
+            ('fa-certificate', 'Approved', approved)
+        ] %}
         
-        <div class="bg-white p-4 flex flex-col items-center justify-center gap-3 ">
-            <i class="fa-solid fa-lightbulb"></i>
-            <span class="font-bold text-lg">Projects: 3</span>
+        {% for icon, label, value in stats %}
+        <div class="bg-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm text-sage-800">
+            <i class="fa-solid {{ icon }} text-3xl text-sage-500"></i>
+            <span class="font-bold text-lg">{{ label }}: {{ value }}</span>
         </div>
+        {% endfor %}
 
-        <div class="bg-white p-4 flex flex-col items-center justify-center gap-3 ">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span class="font-bold text-lg">Under review: 2</span>
-        </div>
-
-        <div class="bg-white p-4 flex flex-col items-center justify-center gap-3 ">
-            <i class="fa-solid fa-certificate"></i>
-            <span class="font-bold text-lg">Approved: 1</span>
-        </div>
-
-        <a href="#">
-            <div class="card card-sage p-4 flex flex-col items-center justify-center gap-3">
-            <i class="fa-solid fa-plus text-5xl"></i>
+        <a href="{{ url_for('thesis.form') }}" class="bg-sage-500 text-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm hover:bg-sage-600 transition transform hover:-translate-y-1">
+            <i class="fa-solid fa-plus text-4xl"></i>
             <span class="font-bold text-xl">Submit Project</span>
-            </div>
         </a>
     </div>
 
-    <div class="card-sage p-6 flex-1 flex flex-col rounded-xl">
-        <h2 class="text-3xl font-bold text-white mb-2 ">Projects</h2>
-        <hr class="border-white mb-6 ">
+    <div class="bg-sage-500 p-6 flex-1 flex flex-col min-h-0 rounded-xl shadow-md">
+        <h2 class="text-3xl font-bold text-white mb-6 border-b border-white/30 pb-4">Your Projects</h2>
 
-        <div class="flex flex-col gap-4 overflow-y-auto pr-3">
-            <!-- 
-            UNDER REVIEW from-[#E04B40] to-[#B02820]
-            REJECT       from-[#EED575] to-[#C9A52B] 
-            -->
-            <div class="bg-white rounded-xl p-4 md:px-6 flex items-center justify-between shadow-sm shrink-0">
+        <div class="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar">
+            {% set badge_colors = {
+                'approved': 'from-[#7FB169] to-[#568A45]',
+                'pending': 'from-[#EED575] to-[#C9A52B]',
+                'rejected': 'from-[#E04B40] to-[#B02820]'
+            } %}
+            
+            {% for thesis in theses %}
+            <div class="bg-white rounded-xl p-5 md:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 hover:bg-sage-50 transition">
                 <div class="flex items-center gap-4">
-                    <i class="text-black fa-solid fa-robot "></i>
+                    <div class="bg-sage-100 p-3 rounded-lg text-sage-600">
+                        <i class="fa-solid {{ thesis.icon }} text-2xl"></i>
+                    </div>
                     <div>
-                        <h3 class="text-black font-bold">Computer Science Thesis Title</h3>
-                        <span class="text-black font-bold">2026</span>
+                        <h3 class="text-sage-900 font-bold text-lg leading-tight">{{ thesis.title }}</h3>
+                        <span class="text-sage-600 font-medium text-sm">{{ thesis.year }}</span>
                     </div>
                 </div>
-                <div class="status-badge bg-gradient-to-b from-[#7FB169] to-[#568A45] text-white px-6 md:px-8 py-2 md:py-3 rounded-full font-bold text-lg">
-                    Approved
+                
+                <div class="bg-gradient-to-b {{ badge_colors[thesis.status] }} text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-sm self-end sm:self-auto">
+                    {{ thesis.status }}
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </main>
