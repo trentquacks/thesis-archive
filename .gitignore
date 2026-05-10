@@ -1,1 +1,4 @@
 venv/
+pyproject.toml
+flaskr/static/uploads/
+flaskr/__pycache__/
