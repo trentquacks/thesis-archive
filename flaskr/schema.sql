@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS branch;
 DROP TABLE IF EXISTS format;
 DROP TABLE IF EXISTS thesis;
 DROP TABLE IF EXISTS thesis_author;
+DROP TABLE IF EXISTS bookmark; -- Added drop for bookmark
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,6 +79,18 @@ CREATE TABLE thesis_author (
   FOREIGN KEY (author_id) REFERENCES author (id)
 );
 
+-- =========================================
+-- NEW BOOKMARK TABLE
+-- =========================================
+CREATE TABLE bookmark (
+  user_id INTEGER NOT NULL,
+  thesis_id INTEGER NOT NULL,
+  date_bookmarked TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, thesis_id), -- Prevents a user from bookmarking the same thesis twice
+  FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+  FOREIGN KEY (thesis_id) REFERENCES thesis (id) ON DELETE CASCADE
+);
+
 -- Information required according to SRS
 -- searchable by keyword, title, author, date year
 -- filterable by title, author, year and category
@@ -85,7 +98,7 @@ CREATE TABLE thesis_author (
 -- history of submissions, user actions, log in activity, modification of theses and approval of submissions
 -- total thesis records
 --
--- bookmark table
+-- bookmark table (ADDED ABOVE)
 -- preview: digital preview, digital scan, abstract
 
 -- discontinued??
@@ -135,3 +148,8 @@ INSERT INTO thesis_author (thesis_id, author_id) VALUES
 (3, 3),
 (4, 4),
 (5, 5);
+
+-- Sample Bookmarks
+INSERT INTO bookmark (user_id, thesis_id) VALUES 
+(1, 1),
+(1, 5);

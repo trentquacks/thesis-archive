@@ -1,16 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Changed h-[85dvh] to min-h-[85dvh] -->
 <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 md:h-[85dvh] md:min-h-[600px] pt-4">
-
-    <!-- Added min-h-[400px] to ensure the sidebar never gets shorter than 400px -->
     <aside class="w-full md:w-64 bg-white flex flex-col justify-between p-4 rounded-lg">
         <nav class="flex flex-col gap-2">
             <a href="{{ url_for('thesis.dashboard') }}" class="flex items-center gap-3 p-3 ">
                 <i class="fa-solid fa-gauge"></i> Dashboard
             </a>
-            <a href="#" class="flex items-center gap-3 p-3">
+            <a href="{{ url_for('thesis.profile') }}" class="flex items-center gap-3 p-3">
                 <i class="fa-solid fa-user"></i> Profile
             </a>
             <a href="#" class="flex items-center gap-3 p-3">
@@ -24,8 +21,6 @@
             <i class="fa-solid fa-right-from-bracket"></i> Logout
         </a>
     </aside>
-    
     {% block main %}{% endblock %}
-
 </div>
 {% endblock %}

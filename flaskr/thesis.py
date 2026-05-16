@@ -231,4 +231,43 @@ def view(id):
 
     citation = f"{thesis['citation_authors']} ({thesis['year']}). {thesis['title']}."
 
-    return render_template("thesis/view.html", thesis=thesis, citation=citation)
+    is_bookmarked = False
+    if 'user_id' in session:
+        bookmark = db.execute(
+            'SELECT 1 FROM bookmark WHERE user_id = ? AND thesis_id = ?', 
+            (session['user_id'], id)
+        ).fetchone()
+        
+        if bookmark:
+            is_bookmarked = True
+
+    return render_template("thesis/view.html", thesis=thesis, citation=citation, is_bookmarked=is_bookmarked)
+
+@bp.route("/bookmark/<int:thesis_id>", methods=["POST"])
+def toggle_bookmark(thesis_id):
+    if 'user_id' not in session:
+        flash("You need to be logged in to bookmark theses.", "error")
+        return redirect(url_for('auth.login')) 
+
+    user_id = session['user_id']
+    db = get_db()
+
+    existing_bookmark = db.execute(
+        'SELECT 1 FROM bookmark WHERE user_id = ? AND thesis_id = ?', 
+        (user_id, thesis_id)
+    ).fetchone()
+
+    if existing_bookmark:
+        db.execute('DELETE FROM bookmark WHERE user_id = ? AND thesis_id = ?', (user_id, thesis_id))
+        flash("Removed from bookmarks.", "success")
+    else:
+        db.execute('INSERT INTO bookmark (user_id, thesis_id) VALUES (?, ?)', (user_id, thesis_id))
+        flash("Thesis bookmarked successfully!", "success")
+
+    db.commit()
+    
+    return redirect(request.referrer or url_for('thesis.view', id=thesis_id))
+
+@bp.route("/profile")
+def profile():
+    return render_template("thesis/profile.html")

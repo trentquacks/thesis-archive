@@ -1,0 +1,86 @@
+{% extends 'sidebar.html' %}
+
+{% block title %} Profile {% endblock %}
+
+{% block main %}
+
+{% macro password_input(label_text, input_name) %}
+<div class="flex flex-col gap-2">
+    <label class="font-bold text-sage-800">{{ label_text }}:</label>
+    <input name="{{ input_name }}" type="password" class="w-full p-3 bg-sage-50 rounded-xl outline-none transition text-sage-900 border border-sage-200">
+</div>
+{% endmacro %}
+
+<main class="flex-1 flex flex-col min-h-0">
+    
+    <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="text-sage-700 bg-sage-200 p-4 rounded-xl font-bold">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+
+        <section class="bg-sage-200 rounded-2xl p-6 md:p-8 flex flex-col items-center relative mt-12 shadow-sm shrink-0">
+            <div class="absolute -top-12 w-24 h-24 rounded-full overflow-hidden border-4 border-sage-50 bg-white shadow-md group cursor-pointer">
+                <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i class="fa-solid fa-camera text-white text-xl"></i>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center w-full max-w-md">
+                <h2 class="text-3xl font-extrabold text-sage-900 flex items-center justify-center gap-3 mb-4">
+                    Bocchi <button class="text-sage-600 hover:text-sage-800 transition"><i class="fa-solid fa-pen-to-square text-xl"></i></button>
+                </h2>
+
+                <select class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 transition bg-white text-sage-800 font-bold shadow-sm mb-6 text-center cursor-pointer appearance-none">
+                    <option selected>Bachelor of Science in Computer Science</option>
+                    <option>Bachelor of Science in Information Technology</option>
+                </select>
+
+                <div class="bg-sage-500 text-white rounded-xl p-4 text-left shadow-sm space-y-1">
+                    <p class="font-medium"><span class="font-extrabold">CvSU Email :</span> bocchi@cvsu.edu.ph</p>
+                    <p class="font-medium"><span class="font-extrabold">Student No. :</span> 202610226</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 shrink-0">
+            <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-sm border border-sage-100">
+                <i class="fa-solid fa-bookmark text-4xl text-sage-500 mb-2"></i>
+                <span class="text-3xl font-black text-sage-900">5</span>
+                <span class="text-sage-600 font-bold">Bookmarks</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-sm border border-sage-100">
+                <i class="fa-solid fa-folder-open text-4xl text-sage-500 mb-2"></i>
+                <span class="text-3xl font-black text-sage-900">3</span>
+                <span class="text-sage-600 font-bold">Projects</span>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl overflow-hidden shadow-sm border border-sage-100 shrink-0">
+            <div class="bg-sage-500 text-white p-4">
+                <h3 class="text-xl font-bold">Change Password</h3>
+            </div>
+            
+            <form class="p-6 md:p-8 flex flex-col gap-6">
+                {{ password_input('Current Password', 'current_password') }}
+                {{ password_input('New Password', 'new_password') }}
+				{{ password_input('Confirm Password', 'confirm_password') }}
+
+                <div class="flex justify-end gap-4 mt-2 border-t border-sage-100 pt-6">
+                    <button type="submit" class="px-8 py-3 rounded-xl font-bold text-white bg-sage-600 hover:bg-sage-700 transition shadow-sm hover:-translate-y-0.5 transform">
+                        Change Password
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

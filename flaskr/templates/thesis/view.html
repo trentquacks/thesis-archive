@@ -3,7 +3,7 @@
 {% block title %} View Thesis - {{ thesis.title }} {% endblock %}
 
 {% block content %}
-<main class="container max-w-6xl mx-auto mt-6">
+<main class="container max-w-6xl mx-auto mt-6 min-h-0">
     <nav class="text-sm font-semibold text-sage-600 mb-6 flex items-center gap-2 flex-wrap">
         <a href="{{ url_for('thesis.index') }}" class="hover:text-sage-800 hover:underline">Home</a>
         <span>&gt;</span>
@@ -21,20 +21,41 @@
 
     <hr class="border-t-2 border-sage-800 mb-8">
     
-    <div class="mb-8">
-        <h3 class="text-3xl font-extrabold text-sage-900 mb-2 leading-tight">{{ thesis.title }}</h3>
-        <p class="text-lg text-sage-700 font-medium mb-1">by <span class="font-bold">{{ thesis.authors }}</span></p>
-        <p class="text-sage-500 font-semibold mb-6"><i class="fa-regular fa-calendar mr-1"></i> {{ thesis.year }}</p>        
+    <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+        
+        <div class="max-w-2xl">
+            <h3 class="text-3xl font-extrabold text-sage-900 mb-2 leading-tight">{{ thesis.title }}</h3>
+            <p class="text-lg text-sage-700 font-medium mb-1">by <span class="font-bold">{{ thesis.authors }}</span></p>
+            <p class="text-sage-700 font-semibold mb-0"><i class="fa-regular fa-calendar mr-1"></i> {{ thesis.year }}</p>        
+        </div>
 
-        {% if thesis.file_path %}
-        <a href="{{ thesis.file_path }}" target="_blank" class="inline-flex items-center gap-2 bg-sage-500 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
-            <i class="fa-solid fa-file-pdf"></i> View PDF
-        </a>
+        <div class="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+            {% if thesis.file_path %}
+            <a href="{{ thesis.file_path }}" target="_blank" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-file-pdf"></i> View PDF
+            </a>
+            {% else %}
+            <button disabled class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-6 py-3 rounded-xl font-bold shadow-sm cursor-not-allowed">
+                <i class="fa-solid fa-file-pdf"></i> PDF Not Available
+            </button>
+            {% endif %}
+            
+           <form action="{{ url_for('thesis.toggle_bookmark', thesis_id=thesis['id']) }}" method="POST" class="inline-block">
+    <button type="submit" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
+        
+        {% if is_bookmarked %}
+            <i class="fa-solid fa-bookmark"></i> Bookmarked
         {% else %}
-        <button disabled class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-8 py-3 rounded-xl font-bold shadow-sm cursor-not-allowed">
-            <i class="fa-solid fa-file-pdf"></i> PDF Not Available
-        </button>
+            <i class="fa-regular fa-bookmark"></i> Bookmark
         {% endif %}
+        
+    </button>
+</form>
+            <a href="#" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-hand-holding"></i> Borrow
+            </a>
+        </div>
+        
     </div>
 
     <section class="bg-white p-8 rounded-2xl shadow-sm border border-sage-100 mb-10">
@@ -56,35 +77,35 @@
                 <tbody>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 w-1/3 md:w-1/4 font-bold text-sage-900 border-r border-sage-200">Keywords</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium">{{ thesis.keywords or 'N/A' }}</td>
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium">{{ thesis.keywords or 'N/A' }}</td>
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Citation</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium">{{ citation }}</td>
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium">{{ citation }}</td>
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Document Type</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium">{{ thesis.document_type or 'Thesis' }}</td>
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium">{{ thesis.document_type or 'Thesis' }}</td>
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Program Name</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium">{{ thesis.program_name or thesis.department_name }}</td>
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium">{{ thesis.program_name or thesis.department_name }}</td>
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Publisher</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium"> N/A </td> 
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium"> N/A </td> 
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Advisor</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium"> N/A </td> 
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium"> N/A </td> 
                     </tr>
                     <tr class="border-b border-sage-200">
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Barcode</th> 
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium"> {{ thesis.barcode or 'N/A' }} </td> 
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium"> {{ thesis.barcode or 'N/A' }} </td> 
                     </tr>
                     <tr>
                         <th class="bg-sage-300 p-4 font-bold text-sage-900 border-r border-sage-200">Call Number</th>
-                        <td class="bg-sage-50 p-4 text-sage-800 font-medium">{{ thesis.call_number or 'N/A' }}</td>
+                        <td class="bg-sage-10 p-4 text-sage-800 font-medium">{{ thesis.call_number or 'N/A' }}</td>
                     </tr>
                 </tbody>
             </table>
