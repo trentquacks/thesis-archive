@@ -10,8 +10,9 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 
-from .db import get_db
+from flaskr.db import get_db
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -42,49 +43,48 @@ def load_logged_in_user():
             get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         )
 
-
-@bp.route("/register", methods=("GET", "POST"))
+@bp.route('/register', methods=('GET', 'POST'))
 def register():
-    """
-    Register a new user.
-
-    Validates that the email is not already taken. Hashes the
-    password for security.
-    """
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        
+        student_no = request.form['student_no']
+        course = request.form['course']
+        email = request.form['email']
+        password = request.form['password']
+        
         db = get_db()
         error = None
 
-        if not email:
-            error = "Email is required."
+        if not first_name:
+            error = 'First name is required.'
+        elif not last_name:
+            error = 'Last name is required.'
+        elif not student_no:
+            error = 'Student number is required.'
+        elif not course:
+            error = 'Course is required.'
+        elif not email:
+            error = 'Email is required.'
         elif not password:
-            error = "Password is required."
-        elif password != confirm_password:
-            error = "Password not matched"
+            error = 'Password is required.'
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (email, password) VALUES (?, ?)",
-                    (email, generate_password_hash(password)),
+                    "INSERT INTO user (first_name, last_name, email, password, student_no, course) VALUES (?, ?, ?, ?, ?, ?)",
+                    (first_name, last_name, email, generate_password_hash(password), student_no, course),
                 )
                 db.commit()
             except db.IntegrityError:
-                # The email was already taken, which caused the
-                # commit to fail. Show a validation error.
                 error = f"User {email} is already registered."
             else:
-                # Success, go to the login page.
-                flash("You've been registered!")
                 return redirect(url_for("auth.login"))
 
         flash(error)
 
-    return render_template("auth/register.html")
-
+    return render_template('auth/register.html')
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
@@ -110,7 +110,7 @@ def login():
             session["role"] = user["role"]
             return redirect(url_for("index"))
 
-        flash(error)
+        flash(error, "error")
 
     return render_template("auth/login.html")
 

@@ -14,38 +14,32 @@
 <main class="flex-1 flex flex-col min-h-0">
     
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class="text-sage-700 bg-sage-200 p-4 rounded-xl font-bold">
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-
         <section class="bg-sage-200 rounded-2xl p-6 md:p-8 flex flex-col items-center relative mt-12 shadow-sm shrink-0">
-            <div class="absolute -top-12 w-24 h-24 rounded-full overflow-hidden border-4 border-sage-50 bg-white shadow-md group cursor-pointer">
-                <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <i class="fa-solid fa-camera text-white text-xl"></i>
+            <form action="{{ url_for('user.profile') }}" method="POST" enctype="multipart/form-data" id="pic-form" class="absolute -top-12 w-24 h-24 rounded-full shadow-md z-10">
+                <div class="w-full h-full rounded-full overflow-hidden border-4 border-sage-50 bg-white group cursor-pointer relative" onclick="document.getElementById('file-upload').click()">
+
+                    <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover">
+
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-camera text-white text-xl"></i>
+                    </div>
                 </div>
-            </div>
+
+                <input id="file-upload" type="file" name="profile_pic" class="hidden" accept="image/*" onchange="document.getElementById('pic-form').submit()">
+            </form>
 
             <div class="mt-12 text-center w-full max-w-md">
                 <h2 class="text-3xl font-extrabold text-sage-900 flex items-center justify-center gap-3 mb-4">
-                    Bocchi <button class="text-sage-600 hover:text-sage-800 transition"><i class="fa-solid fa-pen-to-square text-xl"></i></button>
+                    {{ g.user['first_name'] ~ ' ' ~  g.user['last_name']  }} 
                 </h2>
 
-                <select class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 transition bg-white text-sage-800 font-bold shadow-sm mb-6 text-center cursor-pointer appearance-none">
-                    <option selected>Bachelor of Science in Computer Science</option>
-                    <option>Bachelor of Science in Information Technology</option>
-                </select>
+                <div class="w-full p-3 rounded-xl bg-white text-sage-800 font-bold shadow-sm mb-6 text-center border border-sage-100">
+                    {{ g.user['course'] }}
+                </div>
 
                 <div class="bg-sage-500 text-white rounded-xl p-4 text-left shadow-sm space-y-1">
-                    <p class="font-medium"><span class="font-extrabold">CvSU Email :</span> bocchi@cvsu.edu.ph</p>
-                    <p class="font-medium"><span class="font-extrabold">Student No. :</span> 202610226</p>
+                    <p class="font-medium"><span class="font-extrabold">CvSU Email :</span> {{ g.user['email'] }}</p>
+                    <p class="font-medium"><span class="font-extrabold">Student No. :</span> {{ g.user['student_no'] }}</p>
                 </div>
             </div>
         </section>
@@ -53,12 +47,12 @@
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6 shrink-0">
             <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-sm border border-sage-100">
                 <i class="fa-solid fa-bookmark text-4xl text-sage-500 mb-2"></i>
-                <span class="text-3xl font-black text-sage-900">5</span>
-                <span class="text-sage-600 font-bold">Bookmarks</span>
+                <span class="text-3xl font-black text-sage-900">{{ total_bookmarks }}</span>
+                <class="text-sage-600 font-bold">Bookmarks</span>
             </div>
             <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-sm border border-sage-100">
                 <i class="fa-solid fa-folder-open text-4xl text-sage-500 mb-2"></i>
-                <span class="text-3xl font-black text-sage-900">3</span>
+                <span class="text-3xl font-black text-sage-900">{{ total_projects }}</span>
                 <span class="text-sage-600 font-bold">Projects</span>
             </div>
         </section>
@@ -68,7 +62,7 @@
                 <h3 class="text-xl font-bold">Change Password</h3>
             </div>
             
-            <form class="p-6 md:p-8 flex flex-col gap-6">
+            <form action="{{ url_for('user.profile') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 flex flex-col gap-6">
                 {{ password_input('Current Password', 'current_password') }}
                 {{ password_input('New Password', 'new_password') }}
 				{{ password_input('Confirm Password', 'confirm_password') }}

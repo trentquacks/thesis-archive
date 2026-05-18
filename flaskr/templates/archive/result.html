@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+
+{% block title %} Search Results {% endblock %}
+
+{% block content %}
+<main class="container max-w-6xl mx-auto mt-6">
+    <nav class="text-sm font-semibold text-sage-600 mb-6 flex items-center gap-2">
+        <a href="{{ url_for('archive.index') }}" class="hover:text-sage-800 hover:underline">Home</a> 
+        <span>&gt;</span>
+        <span class="text-sage-800 font-bold">{{ departments.name or 'All' }}</span>
+    </nav>
+
+    <section class="flex justify-between items-center mb-4 text-sage-900">
+        <h1 class="text-4xl font-bold">{{ departments.name or 'All' }}</h1>
+        <div class="text-5xl text-sage-500">
+            <i class="fa-solid {{ departments.icon }}"></i>
+        </div>
+    </section>
+
+    <hr class="border-t-2 border-sage-800 mb-8">
+
+    <p class="text-lg leading-relaxed text-sage-700 mb-10 max-w-3xl">
+        {% if departments.description %}
+            {{ departments.description }}
+        {% else %}
+            Searching for "<span class="font-bold">{{ search }}</span>"
+        {% endif %}
+    </p>
+
+    <div class="bg-sage-500 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 text-white mb-12 shadow-md">
+        <div class="text-7xl opacity-80">
+            <i class="fa-solid fa-book"></i>
+        </div>
+        <div>
+            <h2 class="text-3xl font-bold mb-2">Undergraduate Thesis & Capstone Projects</h2>
+            <p class="text-lg opacity-90 font-semibold">{{ count }} Collections | 2015-2026</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+        
+        <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            <div class="flex gap-2 bg-white p-1 rounded-xl shadow-sm border border-sage-100">
+                <button id="sort-date-btn" 
+                        data-state="{% if current_sort == 'oldest' %}oldest{% else %}newest{% endif %}" 
+                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}text-sage-600 hover:bg-sage-100{% else %}bg-sage-500 text-white shadow-sm{% endif %}">
+                    {% if current_sort == 'oldest' %}Oldest{% else %}Newest{% endif %}
+                </button>
+
+                <button id="sort-alpha-btn" 
+                        data-state="{% if current_sort == 'za' %}za{% else %}az{% endif %}" 
+                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}bg-sage-500 text-white shadow-sm{% else %}text-sage-600 hover:bg-sage-50{% endif %}">
+                    {% if current_sort == 'za' %}Z-A{% else %}A-Z{% endif %}
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 bg-white p-1 rounded-xl shadow-sm border border-sage-100 pl-4">
+                <label for="year-filter" class="font-bold text-sage-700">Year:</label>
+                <select id="year-filter" class="px-4 py-3 rounded-lg font-bold transition bg-sage-50 text-sage-800 outline-none cursor-pointer hover:bg-sage-100 border-none">
+                    <option value="" {% if not current_year %}selected{% endif %}>Any Year</option>
+                    {% for y in range(2026, 2014, -1) %}
+                    <option value="{{ y }}" {% if current_year == y|string %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <form method="get" class="flex w-full md:max-w-sm shadow-sm rounded-full">
+            <input name="q" type="text" placeholder="Search this collection..." value="{{ search or '' }}" class="w-full px-6 py-3 rounded-l-full border border-white outline-none focus:ring-2 focus:ring-sage-300 text-sage-900 bg-white">
+            <button type="submit" class="bg-sage-500 px-6 rounded-r-full text-white flex items-center justify-center hover:bg-sage-600 transition">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="flex flex-col gap-4">
+        {% if theses %}
+            {% for thesis in theses %}
+            <div class="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm border border-sage-100 hover:shadow-md hover:border-sage-300 transition">
+                
+                <div class="flex-1 pr-4">
+                    <a href="{{ url_for('archive.view', id=thesis.id) }}" class="text-xl font-bold text-sage-900 hover:text-sage-500 transition line-clamp-2 mb-1">{{ thesis.title }}</a>
+                    <p class="text-sage-600 font-medium">by {{ thesis.authors }}</p>
+                    <p class="text-sm text-sage-500 font-semibold mt-1">
+                        <i class="fa-regular fa-calendar mr-1"></i> {{ thesis.date_published | timeago }}
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+                    <a href="{{ thesis.file_path }}" target="_blank" class="bg-sage-100 text-sage-700 px-5 py-2.5 rounded-xl font-bold hover:bg-sage-200 transition flex items-center justify-center gap-2 flex-1 sm:flex-auto">
+                        <i class="fa-solid fa-file-pdf text-red-500"></i> PDF
+                    </a>
+                    
+                    <form action="{{ url_for('user.toggle_bookmark', thesis_id=thesis.id) }}" method="POST" class="inline w-full sm:w-auto ajax-bookmark">
+                        <button type="submit" 
+                                class="px-8 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 {% if thesis.is_bookmarked %} bg-sage-500 text-white hover:bg-sage-600 shadow-sm {% else %} bg-sage-100 text-sage-600 hover:bg-sage-50 shadow-sm {% endif %}" 
+                                title="{% if thesis.is_bookmarked %}Remove Bookmark{% else %}Save Bookmark{% endif %}">
+
+                            {% if thesis.is_bookmarked %}
+                            <i class="fa-solid fa-bookmark"></i>
+                            {% else %}
+                            <i class="fa-regular fa-bookmark"></i>
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+            {% endfor %}
+
+            {% if total_pages > 1 %}
+            <div class="bg-white p-4 rounded-xl border border-sage-100 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                
+                <span class="text-sage-600 font-medium text-sm">
+                    Showing 
+                    <span class="font-bold text-sage-800">{{ ((current_page - 1) * 10) + 1 if count > 0 else 0 }}</span> 
+                    to 
+                    <span class="font-bold text-sage-800">{{ [current_page * 10, count] | min }}</span> 
+                    of 
+                    <span class="font-bold text-sage-800">{{ count }}</span> entries
+                </span>
+                
+                <nav class="flex gap-1 items-center">
+                    {% set base_qs = "" %}
+                    {% for key, value in request.args.items() %}
+                        {% if key != 'page' %}
+                            {% set base_qs = base_qs ~ key ~ "=" ~ value ~ "&" %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if current_page > 1 %}
+                    <a href="?{{ base_qs }}page={{ current_page - 1 }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2">
+                        <i class="fa-solid fa-chevron-left text-xs"></i> Prev
+                    </a>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        {% if p == current_page %}
+                            <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
+                        {% else %}
+                            <a href="?{{ base_qs }}page={{ p }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if current_page < total_pages %}
+                    <a href="?{{ base_qs }}page={{ current_page + 1 }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">
+                        Next <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+
+        {% else %}
+            <div class="text-center py-16 text-sage-600 font-semibold text-lg bg-white rounded-2xl border border-sage-100 shadow-sm flex flex-col items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-5xl mb-4 opacity-40"></i>
+                No collections found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelectorAll('.ajax-bookmark').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop the specific bookmark form from reloading the page
+
+            const btn = form.querySelector('button');
+            const icon = form.querySelector('i');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.bookmarked) {
+                        icon.classList.replace('fa-regular', 'fa-solid');
+                        btn.classList.remove('bg-sage-100', 'text-sage-600', 'hover:bg-sage-50');
+                        btn.classList.add('bg-sage-500', 'text-white', 'hover:bg-sage-600');
+                        btn.title = "Remove Bookmark";
+                    } else {
+                        icon.classList.replace('fa-solid', 'fa-regular');
+                        btn.classList.remove('bg-sage-500', 'text-white', 'hover:bg-sage-600');
+                        btn.classList.add('bg-sage-100', 'text-sage-600', 'hover:bg-sage-50');
+                        btn.title = "Save Bookmark";
+                    }
+
+                    if (data.message) {
+                         showToast(data.message);
+                    }
+                }
+            } catch (error) {
+                console.error("Network error during bookmark toggle:", error);
+            }
+        });
+    });
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg bg-[#EAF0E4] text-[#4A5D4A] border-[#C5CCB7] transition-all duration-300';
+        toast.setAttribute('role', 'alert');
+        
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-check text-xl"></i>
+                <span>${message}</span>
+            </div>
+            <button type="button" class="ml-4 text-lg opacity-60 hover:opacity-100 transition focus:outline-none" onclick="this.closest('[role=\\'alert\\']').remove();">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        `;
+        
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    const dateBtn = document.getElementById('sort-date-btn');
+    const alphaBtn = document.getElementById('sort-alpha-btn');
+    const yearFilter = document.getElementById('year-filter'); 
+
+    // Helper function to update URL parameters and reload the page
+    function updateURLParameterAndReload(key, value) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (value) urlParams.set(key, value);
+        else urlParams.delete(key); 
+        
+        if (key !== 'page') urlParams.set('page', 1);
+
+        window.location.href = window.location.pathname + '?' + urlParams.toString(); 
+    }
+
+    if (dateBtn) {
+        dateBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            // Read the actual active sort from the URL (defaults to newest)
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSort = urlParams.get('sort') || 'newest';
+            
+            let nextState;
+            if (currentSort === 'newest') {
+                nextState = 'oldest';
+            } else if (currentSort === 'oldest') {
+                nextState = 'newest';
+            } else {
+                // If we are switching from Alphabetical, always default to newest
+                nextState = 'newest';
+            }
+            
+            updateURLParameterAndReload('sort', nextState);
+        });
+    }
+
+    if (alphaBtn) {
+        alphaBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSort = urlParams.get('sort') || 'newest';
+
+            let nextState;
+            if (currentSort === 'az') {
+                nextState = 'za';
+            } else if (currentSort === 'za') {
+                nextState = 'az';
+            } else {
+                nextState = 'az'; 
+            }
+            
+            updateURLParameterAndReload('sort', nextState);
+        });
+    }
+
+    if (yearFilter) {
+        yearFilter.addEventListener('change', (e) => {
+            updateURLParameterAndReload('year', e.target.value);
+        });
+    }
+});
+</script>
+{% endblock %}

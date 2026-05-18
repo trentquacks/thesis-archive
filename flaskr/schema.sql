@@ -8,12 +8,18 @@ DROP TABLE IF EXISTS branch;
 DROP TABLE IF EXISTS format;
 DROP TABLE IF EXISTS thesis;
 DROP TABLE IF EXISTS thesis_author;
-DROP TABLE IF EXISTS bookmark; -- Added drop for bookmark
+DROP TABLE IF EXISTS bookmark; 
+DROP TABLE IF EXISTS user_history; 
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
+  student_no TEXT NOT NULL,
+  course TEXT NOT NULL,
+  profile_pic TEXT DEFAULT 'default.png',
   role TEXT CHECK( role IN ('student', 'admin', 'librarian') ) DEFAULT 'student'
 );
 
@@ -51,8 +57,9 @@ CREATE TABLE thesis (
   abstract TEXT NOT NULL, -- preview text
   file_path TEXT NOT NULL, -- digital pdf sa db
 
-  -- APPROVAL WORKFLOW
-  status TEXT CHECK( status IN ('pending', 'approved', 'rejected') ) DEFAULT 'pending',
+
+-- APPROVAL WORKFLOW
+status TEXT CHECK( status IN ('pending', 'approved', 'rejected') ) DEFAULT 'pending',
 
   -- specifics
   keywords TEXT,
@@ -79,9 +86,6 @@ CREATE TABLE thesis_author (
   FOREIGN KEY (author_id) REFERENCES author (id)
 );
 
--- =========================================
--- NEW BOOKMARK TABLE
--- =========================================
 CREATE TABLE bookmark (
   user_id INTEGER NOT NULL,
   thesis_id INTEGER NOT NULL,
@@ -90,6 +94,17 @@ CREATE TABLE bookmark (
   FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
   FOREIGN KEY (thesis_id) REFERENCES thesis (id) ON DELETE CASCADE
 );
+
+CREATE TABLE user_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  action TEXT NOT NULL, -- e.g., 'Bookmarked', 'Unbookmarked', 'Submitted', 'Borrowed'
+  thesis_id INTEGER,
+  timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+  FOREIGN KEY (thesis_id) REFERENCES thesis (id) ON DELETE CASCADE
+);
+
 
 -- Information required according to SRS
 -- searchable by keyword, title, author, date year
@@ -105,8 +120,8 @@ CREATE TABLE bookmark (
 -- availability.. :C
 
 
-INSERT INTO user (email, password, role) VALUES 
-('testing@gmail.com', 'scrypt:32768:8:1$CnOYZglEnYCUPpVx$3bf12468ee0826fbf6b59c8422670a3e2429b56ed9f6dc0f60ffd354fab2ac41bee12647d5d2fcb01524dd627c9a13e519a71f93379dca9490161e300547a1dc', 'admin');
+INSERT INTO user (first_name, last_name, email, password, student_no, course, role) VALUES 
+('System', 'Admin', 'testing@gmail.com', 'scrypt:32768:8:1$CnOYZglEnYCUPpVx$3bf12468ee0826fbf6b59c8422670a3e2429b56ed9f6dc0f60ffd354fab2ac41bee12647d5d2fcb01524dd627c9a13e519a71f93379dca9490161e300547a1dc', '202600000', 'BS Computer Science', 'admin');
 
 INSERT INTO author (first_name, middle_name, last_name, student_no) VALUES 
 ('David', '', 'Wilson', '2024-0023'),
@@ -153,3 +168,77 @@ INSERT INTO thesis_author (thesis_id, author_id) VALUES
 INSERT INTO bookmark (user_id, thesis_id) VALUES 
 (1, 1),
 (1, 5);
+
+
+INSERT INTO author (first_name, middle_name, last_name, student_no) VALUES 
+('Emily', 'R.', 'Chen', '2023-0101'),
+('Michael', 'T.', 'Rodriguez', '2022-0555'),
+('Jessica', '', 'Kim', '2024-0888'),
+('David', 'L.', 'Smith', '2021-0222'),
+('Ashley', 'Marie', 'Garcia', '2025-0333');
+
+-- 20 Fake Theses across different departments
+INSERT INTO thesis (title, abstract, file_path, status, keywords, isbn, barcode, call_number, department_id, branch_id, format_id, uploader_id) VALUES 
+-- Computer Science (8)
+('Decentralized Ledger Technology in E-Voting', 'A framework for secure and verifiable digital elections using blockchain.', '/static/uploads/2026/dummy.pdf', 'approved', 'Blockchain, Voting, Security', '978-0-111-00001-0', 'BC1001', 'CS-2026-06', 8, 1, 1, 1),
+('Machine Learning for Crop Disease Detection', 'Utilizing convolutional neural networks to identify rice leaf diseases.', '/static/uploads/2025/dummy.pdf', 'pending', 'Machine Learning, Agriculture, CNN', '978-0-111-00002-0', 'BC1002', 'CS-2025-07', 8, 2, 1, 1),
+('Natural Language Processing for Indigenous Dialects', 'Creating a translation model for underrepresented Philippine languages.', '/static/uploads/2026/dummy.pdf', 'approved', 'NLP, Linguistics, Translation', '978-0-111-00003-0', 'BC1003', 'CS-2026-08', 8, 1, 1, 1),
+
+-- Information Technology (4)
+('IoT Smart Home Security Frameworks', 'Analyzing vulnerabilities in consumer-grade smart home devices.', '/static/uploads/2024/dummy.pdf', 'approved', 'IoT, Security, Smart Home', '978-0-111-00004-0', 'BC1004', 'IT-2024-01', 4, 3, 1, 1),
+('Cloud-Native App Deployment Strategies', 'Comparing cost and performance of AWS vs Azure for local startups.', '/static/uploads/2025/dummy.pdf', 'rejected', 'Cloud Computing, Deployment, AWS', '978-0-111-00005-0', 'BC1005', 'IT-2025-02', 4, 2, 2, 1),
+('Blockchain in Healthcare Data Management', 'Proposing a tamper-proof patient record system for rural clinics.', '/static/uploads/2026/dummy.pdf', 'pending', 'Blockchain, Healthcare, Database', '978-0-111-00006-0', 'BC1006', 'IT-2026-03', 4, 1, 1, 1),
+
+-- Psychology (2)
+('Impact of Remote Work on Cognitive Load', 'A quantitative study on burnout rates among work-from-home employees.', '/static/uploads/2025/dummy.pdf', 'approved', 'Cognitive Load, Remote Work, Burnout', '978-0-111-00007-0', 'BC1007', 'PSY-2025-01', 2, 1, 1, 1),
+('Social Media and Adolescent Anxiety', 'Correlating screen time with social anxiety disorders in teens.', '/static/uploads/2024/dummy.pdf', 'approved', 'Social Media, Anxiety, Adolescents', '978-0-111-00008-0', 'BC1008', 'PSY-2024-02', 2, 2, 2, 1),
+
+-- Business Administration (9)
+('Corporate Sustainability Practices post-2020', 'How ESG metrics affect investor relations in Southeast Asia.', '/static/uploads/2026/dummy.pdf', 'approved', 'Sustainability, ESG, Corporate', '978-0-111-00009-0', 'BC1009', 'BA-2026-01', 9, 3, 1, 1),
+('Microfinance Impact on Rural Enterprises', 'Evaluating the success rate of SME loans in the Calabarzon region.', '/static/uploads/2025/dummy.pdf', 'pending', 'Microfinance, SME, Economics', '978-0-111-00010-0', 'BC1010', 'BA-2025-02', 9, 1, 1, 1),
+('Gig Economy Effects on Traditional HR', 'Adapting human resource policies for freelance and contractual workers.', '/static/uploads/2026/dummy.pdf', 'approved', 'HR, Gig Economy, Management', '978-0-111-00011-0', 'BC1011', 'BA-2026-03', 9, 2, 1, 1),
+
+-- Hospitality Management (5)
+('Contactless Service in Boutique Hotels', 'Guest satisfaction metrics regarding automated check-in kiosks.', '/static/uploads/2024/dummy.pdf', 'approved', 'Hospitality, Automation, Service', '978-0-111-00012-0', 'BC1012', 'HM-2024-01', 5, 1, 1, 1),
+('Culinary Tourism in Calabarzon', 'Marketing local delicacies to boost regional tourism revenues.', '/static/uploads/2025/dummy.pdf', 'approved', 'Tourism, Culinary, Marketing', '978-0-111-00013-0', 'BC1013', 'HM-2025-02', 5, 2, 2, 1),
+
+-- Education (6)
+('Gamification in High School STEM', 'Using interactive digital platforms to improve math test scores.', '/static/uploads/2026/dummy.pdf', 'pending', 'Gamification, STEM, Pedagogy', '978-0-111-00014-0', 'BC1014', 'EDU-2026-06', 6, 3, 1, 1),
+('Inclusive Practices for Neurodivergent Students', 'Adapting classroom environments for students with autism spectrum disorder.', '/static/uploads/2025/dummy.pdf', 'approved', 'Special Education, Neurodivergent', '978-0-111-00015-0', 'BC1015', 'EDU-2025-07', 6, 1, 1, 1),
+
+-- Journalism (3)
+('Fact-Checking Algorithms in Newsrooms', 'The integration of AI tools by journalists to verify sources.', '/static/uploads/2026/dummy.pdf', 'approved', 'Journalism, AI, Fact-Checking', '978-0-111-00016-0', 'BC1016', 'JOU-2026-01', 3, 2, 1, 1),
+('Evolution of Citizen Journalism', 'How smartphones have shifted the paradigm of breaking news coverage.', '/static/uploads/2024/dummy.pdf', 'approved', 'Media, Breaking News, Citizen Journalism', '978-0-111-00017-0', 'BC1017', 'JOU-2024-02', 3, 1, 2, 1),
+
+-- Entrepreneurship (7)
+('Bootstrapping Tech Startups', 'Financial strategies for early-stage software companies in the Philippines.', '/static/uploads/2025/dummy.pdf', 'rejected', 'Startups, Finance, Bootstrapping', '978-0-111-00018-0', 'BC1018', 'ENT-2025-01', 7, 3, 1, 1),
+('Social Enterprises and Profitability', 'Balancing social missions with financial sustainability.', '/static/uploads/2026/dummy.pdf', 'approved', 'Social Enterprise, Business Model', '978-0-111-00019-0', 'BC1019', 'ENT-2026-02', 7, 1, 1, 1),
+
+-- Office Administration (1)
+('Digital Archiving Protocols for Legal Firms', 'Transitioning from physical to encrypted cloud storage solutions.', '/static/uploads/2026/dummy.pdf', 'pending', 'Archiving, Cloud Storage, Admin', '978-0-111-00020-0', 'BC1020', 'OA-2026-06', 1, 2, 1, 1);
+INSERT INTO thesis_author (thesis_id, author_id) VALUES 
+(6, 6),
+(7, 7),
+(8, 8), (8, 2), -- Co-authored
+(9, 9),
+(10, 10),
+(11, 1),
+(12, 2),
+(13, 3), (13, 4), -- Co-authored
+(14, 5),
+(15, 6),
+(16, 7),
+(17, 8),
+(18, 9), (18, 10), -- Co-authored
+(19, 1),
+(20, 2),
+(21, 3),
+(22, 4),
+(23, 5), (23, 6), -- Co-authored
+(24, 7),
+(25, 8);
+
+INSERT INTO user_history (user_id, action, thesis_id, timestamp) VALUES 
+(1, 'Bookmarked', 5, '2026-05-04 12:24:00'),
+(1, 'Unbookmarked', 5, '2026-05-04 12:25:00'),
+(1, 'Submitted', 1, '2026-04-10 00:24:00');

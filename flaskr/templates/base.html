@@ -50,7 +50,7 @@
                 {% if g.user %}
                 <div class="dropdown flex items-center gap-2 relative">
                     <div class="w-10 h-10 overflow-hidden rounded-full inline-block align-middle">
-                        <img src="https://preview.redd.it/i-finished-bocchi-the-rock-and-it-is-the-best-thing-i-have-v0-ho5ub4gfzmuc1.jpeg?width=640&crop=smart&auto=webp&s=996908c0ddb613bab3749aa7fce007e15f6ed5ea" alt="Profile Picture" class="w-full h-full object-cover">
+                        <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover">
                     </div>
                     <button class="flex items-center gap-1 p-0 m-0 bg-transparent border-none text-white cursor-pointer font-bold outline-none">
                         <span>{{ g.user['email'] }}</span>
@@ -58,8 +58,8 @@
                     </button>
                     
                     <div class="dropdown-content">
-                        <a href="{{ url_for('thesis.dashboard') }}">Dashboard</a>
-                        <a href="{{ url_for('thesis.profile') }}">Profile</a>
+                        <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('user.profile') }}">Profile</a>
                         <a href="{{ url_for('auth.logout') }}">Logout</a>
                     </div>
                 </div>
@@ -68,7 +68,37 @@
                 {% endif %}
             </nav>
         </header>
-        
+        <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        
+                        {% set bg_class = 'bg-sage-200 text-sage-800 border-sage-300' %}
+                        {% if category == 'error' %}
+                            {% set bg_class = 'bg-red-100 text-red-800 border-red-300' %}
+                        {% elif category == 'success' %}
+                            {% set bg_class = 'bg-[#EAF0E4] text-[#4A5D4A] border-[#C5CCB7]' %}
+                        {% endif %}
+                        
+                        <div class="pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg {{ bg_class }} transition-all" role="alert">
+                            <div class="flex items-center gap-3">
+                                {% if category == 'error' %}
+                                    <i class="fa-solid fa-circle-exclamation text-xl"></i>
+                                {% elif category == 'success' %}
+                                    <i class="fa-solid fa-circle-check text-xl"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-bell text-xl"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="ml-4 text-lg opacity-60 hover:opacity-100 transition focus:outline-none" onclick="this.closest('[role=\'alert\']').remove();">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         {% block content %}{% endblock %}
     </body>
 </html>

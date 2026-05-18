@@ -1,0 +1,130 @@
+{% extends 'sidebar.html' %}
+
+{% block title %} History {% endblock %}
+
+{% block main %}
+<main class="flex-1 flex flex-col gap-6 min-h-0">
+    
+    <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+        <div class="flex items-center gap-4 border-b border-white/30 pb-4">
+            <i class="fa-solid fa-clock-rotate-left text-4xl"></i>
+            <h2 class="text-3xl font-bold uppercase tracking-wider">Activity History</h2>
+        </div>
+        <p class="mt-4 text-sage-50 font-medium text-lg">
+            Track your recent actions, submissions, and bookmarks.
+        </p>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0">
+        <form action="{{ url_for('user.history') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <select name="action" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                        <option value="">All Actions</option>
+                        <option value="Bookmarked" {% if current_action == 'Bookmarked' %}selected{% endif %}>Bookmarked</option>
+                        <option value="Unbookmarked" {% if current_action == 'Unbookmarked' %}selected{% endif %}>Unbookmarked</option>
+                        <option value="Submitted" {% if current_action == 'Submitted' %}selected{% endif %}>Submitted</option>
+                    </select>
+                </div>
+                
+                <input type="date" name="date" value="{{ current_date }}" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none text-sm focus:ring-2 focus:ring-sage-500 transition">
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <select name="sort" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-1.5 rounded-lg font-bold transition shadow-sm">
+                    Apply
+                </button>
+
+                {% if current_action or current_date or current_sort == 'oldest' %}
+                <a href="{{ url_for('user.history') }}" class="bg-sage-100 border border-sage-200 hover:bg-sage-200 text-sage-600 px-4 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm" title="Clear Filters">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4">
+            
+            {% if history_events %}
+                {% for event in history_events %}
+                <div class="bg-sage-100 rounded-xl p-5 flex flex-col gap-3 shadow-sm border border-sage-200 transition hover:shadow-md hover:border-sage-300">
+                    <span class="text-sage-600 font-bold text-sm">
+                        <i class="fa-regular fa-calendar-days mr-1"></i> 
+                        {{ event.timestamp }}
+                    </span>
+                    
+                    <div class="flex items-center gap-4 pl-2">
+                        <div class="text-3xl text-sage-600 opacity-80 shrink-0 w-8 text-center">
+                            {% if event.action == 'Bookmarked' or event.action == 'Unbookmarked' %}
+                                <i class="fa-solid fa-bookmark"></i>
+                            {% elif event.action == 'Submitted' %}
+                                <i class="fa-solid fa-file-arrow-up"></i>
+                            {% else %}
+                                <i class="fa-solid fa-clock"></i>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="text-sage-800 font-medium text-lg">
+                            <span class="font-extrabold">{{ event.action }}</span> a thesis: 
+                            <a href="{{ url_for('archive.view', id=event.thesis_id) if event.thesis_id else '#' }}" class="underline decoration-sage-400 underline-offset-4 hover:text-sage-600 transition">
+                                {{ event.title or 'Unknown Document' }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+                    <i class="fa-solid fa-clock-rotate-left text-6xl mb-4 opacity-40"></i>
+                    <span>No history records found.</span>
+                </div>
+            {% endif %}
+
+        </div>
+
+        {% if total_pages > 1 %}
+        <div class="bg-sage-400 p-4 border-t border-sage-200 flex justify-center shrink-0">
+            <nav class="flex gap-2 items-center">
+                {% set base_qs = "&action=" ~ current_action ~ "&date=" ~ current_date ~ "&sort=" ~ current_sort %}
+                
+                {% if current_page > 1 %}
+                <a href="?page={{ current_page - 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2">
+                    <i class="fa-solid fa-chevron-left text-xs"></i> Prev
+                </a>
+                {% endif %}
+
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == 1 or p == total_pages or (p >= current_page - 2 and p <= current_page + 2) %}
+                        
+                        {% if p == current_page %}
+                            <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
+                        {% else %}
+                            <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                        {% endif %}
+                    
+                    {% elif p == current_page - 3 or p == current_page + 3 %}
+                        <span class="px-1 py-1 text-sage-500 font-bold cursor-default tracking-widest">...</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if current_page < total_pages %}
+                <a href="?page={{ current_page + 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">
+                    Next <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

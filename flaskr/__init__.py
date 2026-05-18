@@ -1,7 +1,39 @@
 import os
 
 from flask import Flask
+from datetime import datetime
 
+def timeago(date):
+    if not date:
+        return "unknown time"
+    
+    if isinstance(date, str):
+        try:
+            date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return date
+
+    now = datetime.utcnow()
+    diff = now - date
+    seconds = diff.total_seconds()
+
+    if seconds < 60:
+        return "just now"
+    elif seconds < 3600:
+        minutes = int(seconds / 60)
+        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+    elif seconds < 86400:
+        hours = int(seconds / 3600)
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    elif seconds < 2592000: 
+        days = int(seconds / 86400)
+        return f"{days} day{'s' if days != 1 else ''} ago"
+    elif seconds < 31536000: 
+        months = int(seconds / 2592000)
+        return f"{months} month{'s' if months != 1 else ''} ago"
+    else:
+        years = int(seconds / 31536000)
+        return f"{years} year{'s' if years != 1 else ''} ago"
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
@@ -38,16 +70,22 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # apply the blueprints to the app
-    from . import auth
-    from . import thesis
+    from .blueprints import auth
+    from .blueprints import admin
+    from .blueprints import user
+    from .blueprints import archive
 
     app.register_blueprint(auth.bp)
-    app.register_blueprint(thesis.bp)
+    app.register_blueprint(admin.bp)
+    app.register_blueprint(user.bp)
+    app.register_blueprint(archive.bp)
 
     # make url_for('index') == url_for('thesis.index')
     # in another app, you might define a separate main index here with
     # app.route, while giving the thesis blueprint a url_prefix, but for
     # the tutorial the thesis will be the main index
     app.add_url_rule("/", endpoint="index")
+
+    app.jinja_env.filters['timeago'] = timeago
 
     return app

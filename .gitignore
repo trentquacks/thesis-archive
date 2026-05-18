@@ -2,3 +2,4 @@ venv/
 pyproject.toml
 flaskr/static/uploads/
 flaskr/__pycache__/
+flaskr/blueprints/__pycache__/

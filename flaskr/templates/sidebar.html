@@ -4,16 +4,16 @@
 <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 md:h-[85dvh] md:min-h-[600px] pt-4">
     <aside class="w-full md:w-64 bg-white flex flex-col justify-between p-4 rounded-lg">
         <nav class="flex flex-col gap-2">
-            <a href="{{ url_for('thesis.dashboard') }}" class="flex items-center gap-3 p-3 ">
+            <a href="{{ url_for('user.dashboard') }}" class="flex items-center gap-3 p-3 ">
                 <i class="fa-solid fa-gauge"></i> Dashboard
             </a>
-            <a href="{{ url_for('thesis.profile') }}" class="flex items-center gap-3 p-3">
+            <a href="{{ url_for('user.profile') }}" class="flex items-center gap-3 p-3">
                 <i class="fa-solid fa-user"></i> Profile
             </a>
-            <a href="#" class="flex items-center gap-3 p-3">
+            <a href="{{ url_for('user.bookmarks') }}" class="flex items-center gap-3 p-3">
                 <i class="fa-solid fa-bookmark"></i> Bookmarks
             </a>
-            <a href="#" class="flex items-center gap-3 p-3">
+            <a href="{{ url_for('user.history') }}" class="flex items-center gap-3 p-3">
                 <i class="fa-solid fa-clock-rotate-left"></i> History
             </a>
         </nav>
