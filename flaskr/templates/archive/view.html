@@ -7,7 +7,7 @@
     <nav class="text-sm font-semibold text-sage-600 mb-6 flex items-center gap-2 flex-wrap">
         <a href="{{ url_for('index') }}" class="hover:text-sage-800 hover:underline">Home</a>
         <span>&gt;</span>
-        <a href="{{ url_for('search', dept_id=thesis.department_id) }}" class="hover:text-sage-800 hover:underline">{{ thesis.department_name }}</a>
+        <a href="{{ url_for('archive.search', dept_id=thesis.department_id) }}" class="hover:text-sage-800 hover:underline">{{ thesis.department_name }}</a>
         <span>&gt;</span>
         <span class="text-sage-800 font-bold truncate max-w-xs">{{ thesis.title }}</span>
     </nav>
