@@ -1,5 +1,5 @@
 import math 
-from flask import Blueprint, render_template, request, session 
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from werkzeug.exceptions import abort
 from flaskr.db import get_db
 
@@ -167,14 +167,128 @@ def view(id):
             'SELECT 1 FROM bookmark WHERE user_id = ? AND thesis_id = ?', 
             (session['user_id'], id)
         ).fetchone()
-        
         if bookmark:
             is_bookmarked = True
+
+    active_borrow = False
+    daily_borrows_count = 0
+    actual_time_left = 0
+    
+    if 'user_id' in session:
+        user_id = session['user_id']
+        
+        borrow_record = db.execute('''
+            SELECT 
+                CASE 
+                    WHEN is_paused = 1 THEN time_left 
+                    ELSE time_left - CAST((strftime('%s', 'now') - strftime('%s', last_tick)) AS INTEGER) 
+                END as actual_time_left
+            FROM active_borrow 
+            WHERE user_id = ? AND thesis_id = ?
+        ''', (user_id, id)).fetchone()
+        
+        if borrow_record and borrow_record['actual_time_left'] > 0:
+            active_borrow = True
+            actual_time_left = borrow_record['actual_time_left']
+            
+        daily_borrows = db.execute('''
+            SELECT COUNT(*) as count FROM user_history 
+            WHERE user_id = ? AND action = 'Borrowed' 
+            AND date(timestamp) = date('now')
+        ''', (user_id,)).fetchone()
+        
+        if daily_borrows:
+            daily_borrows_count = daily_borrows['count']
 
     return render_template(
             "archive/view.html",
             thesis=thesis,
             citation=citation,
             is_bookmarked=is_bookmarked,
-            advisor_names=advisor_names)
+            advisor_names=advisor_names,
+            active_borrow=active_borrow,
+            actual_time_left=actual_time_left,
+            daily_borrows_count=daily_borrows_count) 
 
+@bp.route("/borrow/<int:id>", methods=["POST"])
+def borrow(id):
+    if 'user_id' not in session:
+        flash("You must be logged in to borrow a thesis.", "error")
+        return redirect(url_for('auth.login')) 
+        
+    db = get_db()
+    user_id = session['user_id']
+    
+    thesis = db.execute('SELECT file_path FROM thesis WHERE id = ?', (id,)).fetchone()
+    if not thesis or not thesis['file_path']:
+        flash("This thesis does not have an available digital copy.", "error")
+        return redirect(url_for('archive.view', id=id))
+
+    active = db.execute('''
+        SELECT 1 FROM user_history 
+        WHERE user_id = ? AND thesis_id = ? AND action = 'Borrowed' 
+        AND timestamp >= datetime('now', '-2 hours')
+    ''', (user_id, id)).fetchone()
+    
+    if active:
+        return redirect(url_for('archive.read', id=id))
+        
+    daily_borrows = db.execute('''
+        SELECT COUNT(*) as count FROM user_history 
+        WHERE user_id = ? AND action = 'Borrowed' 
+        AND date(timestamp) = date('now')
+    ''', (user_id,)).fetchone()
+    
+    if daily_borrows['count'] >= 5:
+        flash("You have exceeded the allowed borrowing limit of 5 theses per day.", "error")
+        return redirect(url_for('archive.view', id=id))
+        
+    db.execute('''
+        INSERT INTO user_history (user_id, action, thesis_id)
+        VALUES (?, 'Borrowed', ?)
+    ''', (user_id, id))
+    db.commit()
+
+    db.execute('''
+        INSERT INTO user_history (user_id, action, thesis_id)
+        VALUES (?, 'Borrowed', ?)
+    ''', (user_id, id))
+    
+    db.execute('''
+        INSERT INTO active_borrow (user_id, thesis_id, time_left, last_tick, is_paused)
+        VALUES (?, ?, 7200, CURRENT_TIMESTAMP, 0)
+    ''', (user_id, id))
+    
+    flash("Thesis borrowed successfully. You have 2 hours to read it.", "success")
+    return redirect(url_for('archive.read', id=id))
+
+
+@bp.route("/read/<int:id>")
+def read(id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+        
+    db = get_db()
+    user_id = session['user_id']
+    
+    borrow_record = db.execute('''
+        SELECT id,
+            CASE 
+                WHEN is_paused = 1 THEN time_left 
+                ELSE time_left - CAST((strftime('%s', 'now') - strftime('%s', last_tick)) AS INTEGER) 
+            END as actual_time_left
+        FROM active_borrow 
+        WHERE user_id = ? AND thesis_id = ?
+    ''', (user_id, id)).fetchone()
+    
+    if not borrow_record or borrow_record['actual_time_left'] <= 0:
+        if borrow_record:
+            db.execute('DELETE FROM active_borrow WHERE id = ?', (borrow_record['id'],))
+            db.commit()
+            
+        flash("Time Expired. Your access to this PDF has ended.", "error")
+        return redirect(url_for('archive.view', id=id))
+        
+    thesis = db.execute('SELECT title, file_path FROM thesis WHERE id = ?', (id,)).fetchone()
+        
+    return render_template('archive/read.html', thesis=thesis, thesis_id=id, time_left=borrow_record['actual_time_left'])

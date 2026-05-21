@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS advisor;
 DROP TABLE IF EXISTS thesis_advisor; 
 DROP TABLE IF EXISTS bookmark; 
 DROP TABLE IF EXISTS user_history; 
+DROP TABLE IF EXISTS active_borrow; 
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,6 +121,20 @@ CREATE TABLE user_history (
   timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
   FOREIGN KEY (thesis_id) REFERENCES thesis (id) ON DELETE CASCADE
+);
+
+CREATE TABLE active_borrow (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  thesis_id INTEGER NOT NULL,
+  
+  time_left INTEGER DEFAULT 7200, -- 2 hours
+  last_tick TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  is_paused INTEGER DEFAULT 0, 
+  
+  FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+  FOREIGN KEY (thesis_id) REFERENCES thesis (id) ON DELETE CASCADE,
+  UNIQUE(user_id, thesis_id) -- user can only have one active session per thesis at a time
 );
 
 

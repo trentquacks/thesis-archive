@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %} Reading - {{ thesis.title }} {% endblock %}
+
+{% block content %}
+<main class="container max-w-6xl mx-auto mt-6 min-h-0 h-[85vh] flex flex-col">
+    <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-xl shadow-sm border border-sage-100">
+        <h2 class="text-2xl font-bold text-sage-900 truncate pr-4">
+            <i class="fa-solid fa-book-open-reader text-sage-600 mr-2"></i> {{ thesis.title }}
+        </h2>
+        
+        <div class="flex items-center gap-4 shrink-0">
+            <div class="text-red-600 font-bold bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+                <i class="fa-regular fa-clock"></i> Time Left: <span id="time-display">--:--:--</span>
+            </div>
+            <a href="{{ url_for('archive.view', id=thesis_id) }}" class="text-sage-600 hover:text-sage-800 font-semibold underline">
+                Return to details
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full flex-grow border-2 border-sage-300 rounded-xl overflow-hidden bg-gray-100 relative">
+        <iframe src="{{ thesis.file_path }}#toolbar=0" width="100%" height="100%" class="w-full h-full border-none absolute inset-0"></iframe>
+    </div>
+</main>
+
+<script>
+    let timeLeft = 2 * 60 * 60; 
+    
+    function updateTimer() {
+        if (timeLeft <= 0) {
+            alert("Time Expired. Your access to this PDF has ended.");
+            window.location.href = "{{ url_for('archive.view', id=thesis_id) }}";
+            return;
+        }
+        
+        let hours = Math.floor(timeLeft / 3600);
+        let minutes = Math.floor((timeLeft % 3600) / 60);
+        let seconds = timeLeft % 60;
+        
+        document.getElementById('time-display').innerText = 
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+    }
+    
+    updateTimer();
+</script>
+{% endblock %}

@@ -29,11 +29,17 @@
             <p class="text-sage-700 font-semibold mb-0"><i class="fa-regular fa-calendar mr-1"></i> {{ thesis.year }}</p>        
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+<div class="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
             {% if thesis.file_path %}
-            <a href="{{ thesis.file_path }}" target="_blank" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
-                <i class="fa-solid fa-file-pdf"></i> View PDF
-            </a>
+                {% if active_borrow %}
+                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="inline-flex items-center gap-2 bg-sage-700 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-800 transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-book-open-reader"></i> Read PDF Now
+                    </a>
+                {% else %}
+                    <button onclick="openBorrowModal()" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-file-pdf"></i> Borrow to View PDF
+                    </button>
+                {% endif %}
             {% else %}
             <button disabled class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-6 py-3 rounded-xl font-bold shadow-sm cursor-not-allowed">
                 <i class="fa-solid fa-file-pdf"></i> PDF Not Available
@@ -97,6 +103,58 @@
     </section>
 </main>
 
+<div id="borrowModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+        <button onclick="closeBorrowModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-700 transition-colors">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+        
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-sage-100 text-sage-600 p-3 rounded-full">
+                <i class="fa-solid fa-book-open-reader text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-sage-900">Borrow PDF</h3>
+        </div>
+        
+        {% if daily_borrows_count >= 5 %}
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg mt-4">
+                <p class="text-red-700 font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation"></i> Daily Limit Reached
+                </p>
+                <p class="text-red-600 mt-2 text-sm leading-relaxed">
+                    You have reached the maximum limit of 5 borrows for today. You cannot borrow any more theses until tomorrow.
+                </p>
+            </div>
+            <div class="flex justify-end mt-6 border-t border-gray-100 pt-4">
+                <button onclick="closeBorrowModal()" class="px-6 py-2.5 rounded-xl bg-gray-200 text-gray-800 font-bold hover:bg-gray-300 transition-colors">
+                    Close
+                </button>
+            </div>
+        {% else %}
+            <p class="text-sage-800 text-lg mb-2 mt-4 font-medium">Would you like to borrow this PDF?</p>
+            <p class="text-sage-600 text-sm mb-6 pb-6 border-b border-sage-100">
+                You will be granted a 2-hour window to read the digital copy.
+            </p>
+
+            <div class="bg-sage-50 rounded-xl p-4 mb-6 border border-sage-100 flex items-center justify-between">
+                <span class="text-sage-700 font-semibold"><i class="fa-solid fa-chart-pie mr-2"></i> Today's Borrows</span>
+                <span class="font-bold text-lg text-sage-900">{{ daily_borrows_count }} / 5</span>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-4">
+                <button onclick="closeBorrowModal()" class="px-6 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors">
+                    Cancel
+                </button>
+                <form action="{{ url_for('archive.borrow', id=thesis.id) }}" method="POST">
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-sage-500 text-white font-bold hover:bg-sage-600 shadow-md transition transform hover:-translate-y-0.5">
+                        Confirm Borrow
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
 <script>
     function copyAbstract() {
         const abstractText = document.getElementById('abstract-text').innerText;
@@ -113,5 +171,23 @@
             alert('Failed to copy abstract. Please try highlighting the text manually.');
         });
     }
+
+    function openBorrowModal() {
+        const modal = document.getElementById('borrowModal');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; 
+    }
+    
+    function closeBorrowModal() {
+        const modal = document.getElementById('borrowModal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto'; 
+    }
+
+    document.getElementById('borrowModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBorrowModal();
+        }
+    });
 </script>
 {% endblock %}

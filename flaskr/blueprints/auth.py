@@ -10,8 +10,6 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
-
 from flaskr.db import get_db
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -86,6 +84,7 @@ def register():
 
     return render_template('auth/register.html')
 
+
 @bp.route("/login", methods=("GET", "POST"))
 def login():
     """Log in a registered user by adding the user id to the session."""
@@ -104,10 +103,17 @@ def login():
             error = "Incorrect password."
 
         if error is None:
-            # store the user id in a new session and return to the index
             session.clear()
             session["user_id"] = user["id"]
             session["role"] = user["role"]
+            
+            db.execute('''
+                UPDATE active_borrow 
+                SET last_tick = CURRENT_TIMESTAMP, is_paused = 0 
+                WHERE user_id = ? AND is_paused = 1
+            ''', (user["id"],))
+            db.commit()
+            
             return redirect(url_for("index"))
 
         flash(error, "error")
@@ -118,5 +124,17 @@ def login():
 @bp.route("/logout")
 def logout():
     """Clear the current session, including the stored user id."""
+    user_id = session.get("user_id")
+    
+    if user_id:
+        db = get_db()
+        db.execute('''
+            UPDATE active_borrow 
+            SET time_left = MAX(0, time_left - CAST((strftime('%s', 'now') - strftime('%s', last_tick)) AS INTEGER)),
+                is_paused = 1 
+            WHERE user_id = ? AND is_paused = 0
+        ''', (user_id,))
+        db.commit()
+        
     session.clear()
     return redirect(url_for("index"))
