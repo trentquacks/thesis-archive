@@ -86,6 +86,21 @@ CREATE TABLE thesis_author (
   FOREIGN KEY (author_id) REFERENCES author (id)
 );
 
+CREATE TABLE advisor (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  middle_name TEXT NOT NULL,
+  last_name TEXT NOT NULL
+);
+
+CREATE TABLE thesis_advisor (
+  thesis_id INTEGER NOT NULL,
+  advisor_id INTEGER NOT NULL,
+  PRIMARY KEY (thesis_id, advisor_id),
+  FOREIGN KEY (thesis_id) REFERENCES thesis (id),
+  FOREIGN KEY (advisor_id) REFERENCES advisor (id)
+);
+
 CREATE TABLE bookmark (
   user_id INTEGER NOT NULL,
   thesis_id INTEGER NOT NULL,
@@ -148,7 +163,8 @@ INSERT INTO branch (name) VALUES
 
 INSERT INTO format (format) VALUES 
 ('Digital PDF'), 
-('Hard Copy');
+('Hard Copy'),
+('Both'); 
 
 INSERT INTO thesis (title, abstract, file_path, status, keywords, isbn, barcode, call_number, department_id, branch_id, format_id, uploader_id) VALUES 
 ('AI-driven Scheduling Systems', 'Optimizing executive calendars with machine learning.', '/static/uploads/2026/oa_schedule.pdf', 'approved', 'AI, Scheduling, Machine Learning', '978-0-009-00005-0', 'BC905', 'OA-2026-05', 1, 1, 1, 1),

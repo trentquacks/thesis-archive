@@ -19,32 +19,69 @@
         
         <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1">
             <form action="{{ url_for('user.submit') }}" method="POST" enctype="multipart/form-data" id="thesis-form" class="flex flex-col gap-8 text-sage-900">
-                
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-sage-100 pb-8">
+
                     <div class="md:col-span-1 pt-2">
                         <label class="font-extrabold text-xl text-sage-900">Authors</label>
-                        <p class="text-sm font-medium text-sage-600 mt-1">Primary author details.</p>
+                        <p class="text-sm font-medium text-sage-600 mt-1">Add all contributing authors.</p>
+                        <button type="button" id="add-author-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Add Author
+                        </button>
                     </div>
-                    <div class="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="flex flex-col gap-1">
-                            <input name="author_first_name" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="John" />
-                            <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name</span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <input name="author_last_name" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="Doe" />
-                            <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name</span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <input name="author_middle_name" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="Smith" />
-                            <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
-                        </div>
-                         <div class="flex flex-col gap-1">
-                            <input name="student_number" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="2026XXXXX" />
-                            <span class="text-sm font-semibold italic text-sage-500 pl-1">Student Number</span>
+
+                    <div class="md:col-span-3 flex flex-col gap-4" id="authors-container">
+                        <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                            <div class="flex flex-col gap-1">
+                                <input name="author_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="John" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <input name="author_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Doe" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <input name="author_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Smith" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <input name="student_number[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="2026XXXXX" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Student No.*</span>
+                            </div>
+                            <button type="button" class="remove-author-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-sage-100 pb-8 mt-6">
+                    <div class="md:col-span-1 pt-2">
+                        <label class="font-extrabold text-xl text-sage-900">Advisors</label>
+                        <p class="text-sm font-medium text-sage-600 mt-1">Add thesis advisors or panels.</p>
+                        <button type="button" id="add-advisor-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Add Advisor
+                        </button>
+                    </div>
+                    
+                    <div class="md:col-span-3 flex flex-col gap-4" id="advisors-container">
+                        <div class="advisor-group grid grid-cols-1 sm:grid-cols-3 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                            <div class="flex flex-col gap-1">
+                                <input name="advisor_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Jane" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <input name="advisor_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Doe" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <input name="advisor_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Smith" />
+                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                            </div>
+                            <button type="button" class="remove-advisor-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start border-b border-sage-100 pb-8">
                     <div class="md:col-span-1 pt-3">
                         <label class="font-extrabold text-xl text-sage-900">Research Details</label>
@@ -61,7 +98,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-sage-700 mb-2">Date Published</label>
-                                <input name="date" type="date" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" />
+                                <input name="date" id="published-date" type="date" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" />
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-sage-700 mb-2">Program</label>
@@ -92,7 +129,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-sage-700 mb-2">Format</label>
-                                <select name="format" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900 cursor-pointer">
+                                <select name="format" id="format-select" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900 cursor-pointer">
                                     <option value="" disabled selected>Select Format</option>
                                     {% for format in formats %}
                                     <option value="{{ format.id }}">{{ format.format }}</option>
@@ -109,11 +146,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div>
+                        <div id="file-upload-container" class="transition-opacity duration-300">
                             <label class="block text-sm font-bold text-sage-700 mb-2">Attach Paper (PDF)</label>
-                            <input name="file" type="file" class="w-full p-3 rounded-xl bg-sage-50 border border-sage-200 outline-none focus:ring-2 focus:ring-sage-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-sage-200 file:text-sage-800 hover:file:bg-sage-300 cursor-pointer" />
+                            <input name="file" id="file-upload" type="file" required class="w-full p-3 rounded-xl bg-sage-50 border border-sage-200 outline-none focus:ring-2 focus:ring-sage-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-sage-200 file:text-sage-800 hover:file:bg-sage-300 cursor-pointer" />
                         </div>
                     </div>
+                </div>
+
+                <div class="bg-sage-50 border border-sage-200 rounded-xl p-5 flex gap-4 items-start">
+                    <input type="checkbox" id="terms" name="terms" required class="mt-1 w-5 h-5 text-sage-600 rounded focus:ring-sage-500 cursor-pointer accent-sage-600">
+                    <label for="terms" class="text-sm font-medium text-sage-700 leading-relaxed cursor-pointer select-none">
+                        By checking this box, I confirm that I have read and understood the terms of submission. I agree that once my thesis is approved, it will be included in the Thesis Archive System and may be made available for digital viewing by authorized users in accordance with system policies. I also confirm that my submitted work is original and complies with the institution’s academic requirements.
+                    </label>
                 </div>
 
                 <div class="flex justify-end mt-4 pt-6 border-t border-sage-100">
@@ -161,7 +205,7 @@
         tagsContainer.innerHTML = '';
         tags.forEach((tag, index) => {
             const tagElement = document.createElement('div');
-            // Tags match the new styling
+            // tags match the new styling
             tagElement.className = 'flex items-center bg-sage-200 text-sage-900 px-3 py-1 rounded-md text-sm font-bold shadow-sm';
             tagElement.innerHTML = `
                 <span>${tag}</span>
@@ -178,5 +222,51 @@
         renderTags();
         errorMessage.classList.add('hidden'); 
     };
+
+    document.getElementById('published-date').valueAsDate = new Date();
+
+    const formatSelect = document.getElementById('format-select');
+    const fileUpload = document.getElementById('file-upload');
+    const fileContainer = document.getElementById('file-upload-container');
+
+    formatSelect.addEventListener('change', function() {
+        const selectedText = this.options[this.selectedIndex].text.toLowerCase();
+        
+        if (selectedText.includes('hard copy')) {
+            fileUpload.removeAttribute('required');
+            fileUpload.disabled = true;
+            fileContainer.style.opacity = '0.5';
+            fileUpload.value = ""; // clear any attached file
+        } else {
+            fileUpload.setAttribute('required', 'required');
+            fileUpload.disabled = false;
+            fileContainer.style.opacity = '1';
+        }
+    });
+
+    function setupDynamicFormGroup(buttonId, containerId, groupClass, removeBtnClass) {
+        const addBtn = document.getElementById(buttonId);
+        const container = document.getElementById(containerId);
+
+        addBtn.addEventListener('click', () => {
+            const firstGroup = container.querySelector('.' + groupClass);
+            const newGroup = firstGroup.cloneNode(true);
+
+            const inputs = newGroup.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+
+            const removeBtn = newGroup.querySelector('.' + removeBtnClass);
+            removeBtn.classList.remove('hidden');
+
+            removeBtn.addEventListener('click', function() {
+                newGroup.remove();
+            });
+
+            container.appendChild(newGroup);
+        });
+    }
+
+    setupDynamicFormGroup('add-author-btn', 'authors-container', 'author-group', 'remove-author-btn');
+    setupDynamicFormGroup('add-advisor-btn', 'advisors-container', 'advisor-group', 'remove-advisor-btn');
 </script>
 {% endblock %}

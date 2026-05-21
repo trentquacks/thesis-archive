@@ -27,7 +27,6 @@ def search(dept_id=None):
     sort = request.args.get('sort', 'newest')
     year = request.args.get('year', '')
     
-    # Pagination setup
     page = request.args.get('page', 1, type=int)
     per_page = 10
     offset = (page - 1) * per_page
@@ -59,16 +58,16 @@ def search(dept_id=None):
         conditions += """ 
             AND (thesis.title LIKE '%' || ? || '%' 
             OR thesis.abstract LIKE '%' || ? || '%' 
+            OR thesis.keywords LIKE '%' || ? || '%' 
             OR author.first_name LIKE '%' || ? || '%' 
             OR author.last_name LIKE '%' || ? || '%')
         """
-        cond_params.extend([search_term, search_term, search_term, search_term])
+        cond_params.extend([search_term] * 5)
 
     if year:
         conditions += " AND strftime('%Y', thesis.date_published) = ?"
         cond_params.append(year)
 
-    # 1. Count Total Results for Pagination
     count_sql = """
         SELECT COUNT(DISTINCT thesis.id) 
         FROM thesis 
@@ -78,7 +77,6 @@ def search(dept_id=None):
     """ + conditions
     total_results = db.execute(count_sql, cond_params).fetchone()[0]
 
-    # 2. Build the main query (Now checks for bookmarks dynamically)
     select_sql = f"""
         SELECT thesis.id, thesis.title, thesis.date_published, thesis.file_path,
                department.name AS department_name, department.icon, department.description,
@@ -152,6 +150,15 @@ def view(id):
     if thesis is None:
         abort(404, f"Thesis ID {id} doesn't exist.")
 
+    advisors = db.execute('''
+        SELECT adv.first_name || ' ' || adv.last_name AS full_name
+        FROM thesis_advisor tadv
+        JOIN advisor adv ON tadv.advisor_id = adv.id
+        WHERE tadv.thesis_id = ?
+    ''', (id,)).fetchall()
+    
+    advisor_names = ", ".join([row['full_name'] for row in advisors])
+
     citation = f"{thesis['citation_authors']} ({thesis['year']}). {thesis['title']}."
 
     is_bookmarked = False
@@ -164,4 +171,10 @@ def view(id):
         if bookmark:
             is_bookmarked = True
 
-    return render_template("archive/view.html", thesis=thesis, citation=citation, is_bookmarked=is_bookmarked)
+    return render_template(
+            "archive/view.html",
+            thesis=thesis,
+            citation=citation,
+            is_bookmarked=is_bookmarked,
+            advisor_names=advisor_names)
+

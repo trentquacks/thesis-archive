@@ -73,8 +73,7 @@
         ('Citation', citation),
         ('Document Type', thesis.document_type or 'Thesis'),
         ('Program Name', thesis.program_name or thesis.department_name),
-        ('Publisher', 'N/A'),
-        ('Advisor', 'N/A'),
+        ('Advisor', advisor_names or 'N/A'),
         ('Barcode', thesis.barcode or 'N/A'),
         ('Call Number', thesis.call_number or 'N/A')
         ] %}

@@ -58,7 +58,7 @@ def profile():
             )
             
             if unique_filename:
-                update_profile_picture(db, user_id, unique_filename)
+                update_profile_picture(db, unique_filename, user_id)
                 flash('Profile picture updated successfully!')
                 return redirect(url_for('user.profile'))
 
@@ -150,14 +150,50 @@ def submit():
         date_published = request.form.get('date')
         upload_year = str(date_published)[:4] if date_published else str(datetime.now().year)
 
-        file_path, actual_save_path, _ = save_uploaded_file(request.files.get('file'), upload_year)
+        file = request.files.get('file')
+        file_path, actual_save_path = "N/A", None
 
-        author_data = {
-            'first_name': request.form.get('author_first_name'),
-            'middle_name': request.form.get('author_middle_name', ''),
-            'last_name': request.form.get('author_last_name'),
-            'student_no': request.form.get('student_number')
-        }
+        if file and file.filename != '':
+            timestamp = int(datetime.now().timestamp())
+            prefix = f"thesis_{g.user['id']}_{timestamp}"
+            try:
+                file_path, actual_save_path, _ = save_uploaded_file(
+                    file, upload_year, prefix, allowed_extensions=['pdf'], max_size_mb=50
+                )
+            except ValueError as e:
+                flash(str(e), "error")
+                return redirect(request.url)
+
+        first_names = request.form.getlist('author_first_name[]')
+        last_names = request.form.getlist('author_last_name[]')
+        middle_names = request.form.getlist('author_middle_name[]')
+        student_numbers = request.form.getlist('student_number[]')
+
+        author_data_list = [
+            {
+                'first_name': first_names[i].strip(),
+                'middle_name': middle_names[i].strip() if i < len(middle_names) else '',
+                'last_name': last_names[i].strip(),
+                'student_no': student_numbers[i].strip()
+            }
+            for i in range(len(first_names))
+            if first_names[i].strip() and last_names[i].strip() and student_numbers[i].strip()
+        ]
+
+        adv_first_names = request.form.getlist('advisor_first_name[]')
+        adv_last_names = request.form.getlist('advisor_last_name[]')
+        adv_middle_names = request.form.getlist('advisor_middle_name[]')
+
+        advisor_data_list = [
+            {
+                'first_name': adv_first_names[i].strip(),
+                'middle_name': adv_middle_names[i].strip() if i < len(adv_middle_names) else '',
+                'last_name': adv_last_names[i].strip(),
+            }
+            for i in range(len(adv_first_names))
+            if adv_first_names[i].strip() and adv_last_names[i].strip()
+        ]
+
         thesis_data = {
             'title': request.form.get('title'),
             'abstract': request.form.get('abstract'),
@@ -168,28 +204,17 @@ def submit():
         }
 
         success, error_msg = submit_thesis_transaction(
-            db, g.user['id'], file_path, date_published, author_data, thesis_data
+            db, g.user['id'], file_path, date_published, author_data_list, advisor_data_list, thesis_data
         )
 
         if success:
             flash('Thesis submitted successfully and is pending approval!', 'success')
             return redirect(url_for('user.dashboard'))
         else:
-            if os.path.exists(actual_save_path):
+            if actual_save_path and os.path.exists(actual_save_path):
                 os.remove(actual_save_path)
             flash(f"An error occurred while saving: {error_msg}", 'error')
 
     programs, formats, branches = get_submission_form_options(db)
     return render_template("user/form.html", programs=programs, formats=formats, branches=branches)
-
-
-
-
-
-
-
-
-
-
-
 
