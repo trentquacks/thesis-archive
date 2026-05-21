@@ -15,113 +15,88 @@
         </p>
     </div>
 
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0">
+        <form action="{{ url_for('user.bookmarks') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-end">
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <select name="sort" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                        <option value="date" {% if current_sort == 'date' %}selected{% endif %}>Date Added</option>
+                        <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Title</option>
+                        <option value="author" {% if current_sort == 'author' %}selected{% endif %}>Author</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <select name="order" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                        <option value="desc" {% if current_order == 'desc' %}selected{% endif %}>Descending</option>
+                        <option value="asc" {% if current_order == 'asc' %}selected{% endif %}>Ascending</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-1.5 rounded-lg font-bold transition shadow-sm">
+                    Apply
+                </button>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
+        
 
-        <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1">
-            <table class="w-full text-left border-collapse min-w-[700px]">
-                <thead class="bg-sage-200 sticky top-0 z-10 shadow-sm">
-                    <tr>
-                        {% set title_order = 'desc' if current_sort == 'title' and current_order == 'asc' else 'asc' %}
-                        <th class="p-0 border-b border-sage-300 hover:bg-sage-300 transition group">
-                            <a href="{{ url_for('user.bookmarks', sort='title', order=title_order) }}" class="block p-4 font-extrabold text-sage-900 w-full h-full flex items-center justify-between">
-                                Title 
-                                {% if current_sort == 'title' %}
-                                <i class="fa-solid fa-sort-{{ 'up' if current_order == 'asc' else 'down' }} text-sage-800"></i>
-                                {% else %}
-                                <i class="fa-solid fa-sort text-sage-500 group-hover:text-sage-700"></i>
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        {% set author_order = 'desc' if current_sort == 'author' and current_order == 'asc' else 'asc' %}
-                        <th class="p-0 border-b border-sage-300 hover:bg-sage-300 transition group w-1/4">
-                            <a href="{{ url_for('user.bookmarks', sort='author', order=author_order) }}" class="block p-4 font-extrabold text-sage-900 w-full h-full flex items-center justify-between">
-                                Author 
-                                {% if current_sort == 'author' %}
-                                <i class="fa-solid fa-sort-{{ 'up' if current_order == 'asc' else 'down' }} text-sage-800"></i>
-                                {% else %}
-                                <i class="fa-solid fa-sort text-sage-500 group-hover:text-sage-700"></i>
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        {% set date_order = 'asc' if current_sort == 'date' and current_order == 'desc' else 'desc' %}
-                        <th class="p-0 border-b border-sage-300 hover:bg-sage-300 transition group w-48">
-                            <a href="{{ url_for('user.bookmarks', sort='date', order=date_order) }}" class="block p-4 font-extrabold text-sage-900 w-full h-full flex items-center justify-between">
-                                Date Added 
-                                {% if current_sort == 'date' %}
-                                <i class="fa-solid fa-sort-{{ 'up' if current_order == 'asc' else 'down' }} text-sage-800"></i>
-                                {% else %}
-                                <i class="fa-solid fa-sort text-sage-500 group-hover:text-sage-700"></i>
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th class="p-4 font-extrabold text-sage-900 border-b border-sage-300 text-center w-48">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-sage-100">
-                    {% if bookmarks %}
-                        {% for bookmark in bookmarks %}
-                        <tr class="hover:bg-sage-50 transition group">
-                            <td class="p-4">
-                                <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="font-bold text-sage-800 hover:text-sage-500 transition underline decoration-sage-300 decoration-2 underline-offset-4 line-clamp-2">
-                                    {{ bookmark.title }}
-                                </a>
-                            </td>
-                            <td class="p-4 text-sage-700 font-medium">
-                                {{ bookmark.author }}
-                            </td>
-                            <td class="p-4 text-sage-600 text-sm font-semibold">
-                                {{ bookmark.date_added | timeago }}
-                            </td>
-                            <td class="p-4">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="px-4 py-2 bg-sage-200 text-sage-700 hover:bg-sage-300 rounded-lg font-bold text-sm transition shadow-sm">
-                                        View
-                                    </a>
-                                    <form action="{{ url_for('user.toggle_bookmark', thesis_id=bookmark.thesis_id) }}" method="POST" class="inline">
-                                        <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-bold text-sm transition shadow-sm">
-                                            Remove
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
+        <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4">
+            {% if bookmarks %}
+                {% for bookmark in bookmarks %}
+                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
                     
-                    {% else %}
-                        <tr>
-                            <td colspan="4" class="p-6 md:p-10">
-                                <div class="bg-white rounded-xl border-2 border-sage-200 border-dashed flex flex-col items-center justify-center p-8 text-center min-h-[350px]">
-                                    
-                                    <div class="w-20 h-20 bg-sage-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                                        <i class="fa-regular fa-bookmark text-4xl text-sage-500"></i>
-                                    </div>
-
-                                    <h3 class="text-2xl font-extrabold text-sage-900 mb-2">Your reading list is empty</h3>
-
-                                    <p class="text-sage-700 text-lg max-w-md mb-8">
-                                        You haven't saved any projects yet. When you find a thesis you want to read later, just click the bookmark icon and it will show up right here.
-                                    </p>
-
-                                    <a href="{{ url_for('index') }}" class="px-8 py-3 bg-sage-500 text-white rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                                        <i class="fa-solid fa-magnifying-glass"></i> Browse the Archive
-                                    </a>
-
-                                </div>
-                            </td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    <div class="flex items-start sm:items-center gap-4">
+                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner mt-1 sm:mt-0">
+                            <i class="fa-solid fa-book-bookmark text-2xl"></i>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="text-sage-900 font-extrabold text-lg leading-tight mb-1 hover:text-sage-600 transition underline decoration-sage-300 decoration-2 underline-offset-4 line-clamp-2">
+                                {{ bookmark.title }}
+                            </a>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sage-600 font-bold text-sm mt-2">
+                                <span><i class="fa-solid fa-user-pen mr-1"></i> {{ bookmark.author }}</span>
+                                <span class="hidden sm:inline opacity-50">|</span>
+                                <span><i class="fa-regular fa-calendar-days mr-1"></i> Added {{ bookmark.date_added | timeago }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 pt-2 sm:pt-0">
+                        <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="px-4 py-2 bg-sage-200 text-sage-800 hover:bg-sage-300 rounded-lg font-bold text-sm transition shadow-sm">
+                            View
+                        </a>
+                        <form action="{{ url_for('user.toggle_bookmark', thesis_id=bookmark.thesis_id) }}" method="POST" class="inline">
+                            <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-bold text-sm transition shadow-sm">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            
+            {% else %}
+                <div class="flex flex-col items-center justify-center h-full py-10">
+                    <div class="bg-white rounded-xl border-2 border-sage-200 border-dashed flex flex-col items-center justify-center p-8 text-center max-w-lg w-full">
+                        <div class="w-20 h-20 bg-sage-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                            <i class="fa-regular fa-bookmark text-4xl text-sage-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-sage-900 mb-2">Your reading list is empty</h3>
+                        <p class="text-sage-700 text-lg mb-8">
+                            You haven't saved any projects yet. When you find a thesis you want to read later, just click the bookmark icon and it will show up right here.
+                        </p>
+                        <a href="{{ url_for('archive.index') }}" class="px-8 py-3 bg-sage-500 text-white rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Browse the Archive
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
-        <div class="bg-white p-4 border-t border-sage-200 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-
-            <span class="text-sage-00 font-medium text-sm">
+        <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+            <span class="text-sage-600 font-medium text-sm">
                 Showing 
                 <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if total_bookmarks > 0 else 0 }}</span> 
                 to 

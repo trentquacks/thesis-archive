@@ -38,3 +38,39 @@ def save_uploaded_file(file, subfolder, prefix="", allowed_extensions=None, max_
     relative_web_path = f"{base_url}/{subfolder}/{filename}"
     
     return relative_web_path, actual_save_path, filename
+
+
+def extract_contributors_from_form(form, role):
+    """Generic helper to extract either authors or advisors from form data."""
+    
+    config = {
+        'author': {
+            'prefix': 'author',
+            'id_form_name': 'student_number[]', 
+            'id_dict_key': 'student_no'
+        },
+        'advisor': {
+            'prefix': 'advisor', 
+            'id_form_name': 'faculty_no[]',
+            'id_dict_key': 'faculty_no'
+        }
+    }
+    
+    c = config[role]
+    
+    first_names = form.getlist(f"{c['prefix']}_first_name[]")
+    last_names = form.getlist(f"{c['prefix']}_last_name[]")
+    middle_names = form.getlist(f"{c['prefix']}_middle_name[]")
+    id_numbers = form.getlist(c['id_form_name'])
+
+    return [
+        {
+            'first_name': first_names[i].strip(),
+            'middle_name': middle_names[i].strip() if i < len(middle_names) else '',
+            'last_name': last_names[i].strip(),
+            c['id_dict_key']: id_numbers[i].strip() if i < len(id_numbers) else ''
+        }
+        for i in range(len(first_names))
+        # ensure first name, last name, and ID exist before adding to the list
+        if first_names[i].strip() and last_names[i].strip() and i < len(id_numbers) and id_numbers[i].strip()
+    ]

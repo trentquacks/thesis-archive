@@ -114,8 +114,8 @@ def get_user_history_paginated(db, user_id, page, action_filter, date_filter, so
         {where_sql} ORDER BY h.timestamp {order_sql}
     '''
 
-    data, _, total_pages = fetch_paginated_data(db, main_query, count_query, params, page)
-    return data, total_pages
+    data, total_items, total_pages = fetch_paginated_data(db, main_query, count_query, params, page)
+    return data, total_items, total_pages
 
 
 def get_submission_form_options(db):
@@ -123,6 +123,46 @@ def get_submission_form_options(db):
     formats = db.execute("SELECT id, format FROM format").fetchall()
     branches = db.execute("SELECT id, name FROM branch").fetchall()
     return programs, formats, branches
+
+def _process_contributors(db, thesis_id, person_data_list, role):
+    config = {
+        'author': {
+            'table': 'author',
+            'id_col': 'student_no',
+            'map_table': 'thesis_author',
+            'fk_col': 'author_id'
+        },
+        'advisor': {
+            'table': 'advisor',
+            'id_col': 'faculty_no',
+            'map_table': 'thesis_advisor',
+            'fk_col': 'advisor_id'
+        }
+    }
+    
+    c = config[role]
+    
+    for data in person_data_list:
+        unique_val = data[c['id_col']]
+        
+        person = db.execute(
+            f"SELECT id FROM {c['table']} WHERE {c['id_col']} = ?", 
+            (unique_val,)
+        ).fetchone()
+        
+        if person:
+            person_id = person['id']
+        else:
+            query = db.execute(
+                f"INSERT INTO {c['table']} (first_name, middle_name, last_name, {c['id_col']}) VALUES (?, ?, ?, ?)",
+                (data['first_name'], data['middle_name'], data['last_name'], unique_val)
+            )
+            person_id = query.lastrowid
+            
+        db.execute(
+            f"INSERT INTO {c['map_table']} (thesis_id, {c['fk_col']}) VALUES (?, ?)", 
+            (thesis_id, person_id)
+        )
 
 
 def submit_thesis_transaction(db, uploader_id, file_path, date_published, author_data_list, advisor_data_list, thesis_data):
@@ -142,38 +182,14 @@ def submit_thesis_transaction(db, uploader_id, file_path, date_published, author
         ))
         thesis_id = query.lastrowid
 
-        for author_data in author_data_list:
-            author = db.execute("SELECT id FROM author WHERE student_no = ?", (author_data['student_no'],)).fetchone()
-            if author:
-                author_id = author['id']
-            else:
-                author_query = db.execute(
-                    "INSERT INTO author (first_name, middle_name, last_name, student_no) VALUES (?, ?, ?, ?)",
-                    (author_data['first_name'], author_data['middle_name'], author_data['last_name'], author_data['student_no'])
-                )
-                author_id = author_query.lastrowid
-            db.execute("INSERT INTO thesis_author (thesis_id, author_id) VALUES (?, ?)", (thesis_id, author_id))
-
-        for adv_data in advisor_data_list:
-            advisor = db.execute(
-                "SELECT id FROM advisor WHERE first_name = ? AND last_name = ? AND middle_name = ?", 
-                (adv_data['first_name'], adv_data['last_name'], adv_data['middle_name'])
-            ).fetchone()
-            
-            if advisor:
-                advisor_id = advisor['id']
-            else:
-                adv_query = db.execute(
-                    "INSERT INTO advisor (first_name, middle_name, last_name) VALUES (?, ?, ?)",
-                    (adv_data['first_name'], adv_data['middle_name'], adv_data['last_name'])
-                )
-                advisor_id = adv_query.lastrowid
-            db.execute("INSERT INTO thesis_advisor (thesis_id, advisor_id) VALUES (?, ?)", (thesis_id, advisor_id))
+        _process_contributors(db, thesis_id, author_data_list, 'author')
+        _process_contributors(db, thesis_id, advisor_data_list, 'advisor')
 
         db.execute("INSERT INTO user_history (user_id, action, thesis_id) VALUES (?, ?, ?)", (uploader_id, 'Submitted', thesis_id))
 
         db.commit()
         return True, None
+
     except Exception as e:
         db.rollback() 
         return False, str(e)

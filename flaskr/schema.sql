@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS branch;
 DROP TABLE IF EXISTS format;
 DROP TABLE IF EXISTS thesis;
 DROP TABLE IF EXISTS thesis_author;
+DROP TABLE IF EXISTS advisor;
+DROP TABLE IF EXISTS thesis_advisor; 
 DROP TABLE IF EXISTS bookmark; 
 DROP TABLE IF EXISTS user_history; 
 
@@ -90,9 +92,9 @@ CREATE TABLE advisor (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   first_name TEXT NOT NULL,
   middle_name TEXT NOT NULL,
-  last_name TEXT NOT NULL
+  last_name TEXT NOT NULL,
+  faculty_no TEXT NOT NULL UNIQUE
 );
-
 CREATE TABLE thesis_advisor (
   thesis_id INTEGER NOT NULL,
   advisor_id INTEGER NOT NULL,

@@ -28,7 +28,7 @@
                     </select>
                 </div>
                 
-                <input type="date" name="date" value="{{ current_date }}" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none text-sm focus:ring-2 focus:ring-sage-500 transition">
+                <input type="date" name="date" value="{{ current_date }}" class="px-4 py-2 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none text-sm focus:ring-2 focus:ring-sage-500 transition">
             </div>
 
             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
@@ -91,10 +91,16 @@
             {% endif %}
 
         </div>
-
-        {% if total_pages > 1 %}
-        <div class="bg-sage-400 p-4 border-t border-sage-200 flex justify-center shrink-0">
-            <nav class="flex gap-2 items-center">
+        <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+            <span class="text-sage-600 font-medium text-sm">
+                Showing 
+                <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if total_events > 0 else 0 }}</span> 
+                to 
+                <span class="font-bold text-sage-900">{{ [current_page * 10, total_events] | min }}</span> 
+                of 
+                <span class="font-bold text-sage-900">{{ total_events | default(0) }}</span> entries
+            </span>
+            <nav class="flex gap-1 items-center">
                 {% set base_qs = "&action=" ~ current_action ~ "&date=" ~ current_date ~ "&sort=" ~ current_sort %}
                 
                 {% if current_page > 1 %}
@@ -104,17 +110,11 @@
                 {% endif %}
 
                 {% for p in range(1, total_pages + 1) %}
-                    {% if p == 1 or p == total_pages or (p >= current_page - 2 and p <= current_page + 2) %}
-                        
-                        {% if p == current_page %}
-                            <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
-                        {% else %}
-                            <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
-                        {% endif %}
-                    
-                    {% elif p == current_page - 3 or p == current_page + 3 %}
-                        <span class="px-1 py-1 text-sage-500 font-bold cursor-default tracking-widest">...</span>
-                    {% endif %}
+                {% if p == current_page %}
+                <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm transition transform hover:-translate-y-0.5 cursor-default">{{ p }}</span>
+                {% else %}
+                <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                {% endif %}
                 {% endfor %}
 
                 {% if current_page < total_pages %}
@@ -124,7 +124,6 @@
                 {% endif %}
             </nav>
         </div>
-        {% endif %}
     </div>
 </main>
 {% endblock %}

@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session, current_app
 from flaskr.db import get_db
-from flaskr.helper import (save_uploaded_file)
+from flaskr.helper import (save_uploaded_file, extract_contributors_from_form)
 from flaskr.queries import (get_submission_form_options, get_user_thesis, submit_thesis_transaction, toggle_user_bookmark,
                             update_profile_picture,
                             update_user_password, 
@@ -97,20 +97,20 @@ def history():
     date_filter = request.args.get('date', '')
     sort_order = request.args.get('sort', 'newest')
     
-    history_data, total_pages = get_user_history_paginated(
+    history_data, total_events, total_pages = get_user_history_paginated(
         get_db(), user_id, page, action_filter, date_filter, sort_order
     )
 
     return render_template(
         'user/history.html',
         history_events=history_data,
+        total_events=total_events, 
         current_page=page,
         total_pages=total_pages,
         current_action=action_filter,
         current_date=date_filter,
         current_sort=sort_order 
     )
-
 @bp.route('/bookmarks')
 def bookmarks():
     user_id = g.user['id']
@@ -132,6 +132,7 @@ def bookmarks():
         current_sort=current_sort,
         current_order=current_order 
     )
+
 @bp.route("/bookmark/<int:thesis_id>", methods=["POST"])
 def toggle_bookmark(thesis_id):
     is_bookmarked, msg = toggle_user_bookmark(get_db(), g.user['id'], thesis_id)
@@ -164,35 +165,8 @@ def submit():
                 flash(str(e), "error")
                 return redirect(request.url)
 
-        first_names = request.form.getlist('author_first_name[]')
-        last_names = request.form.getlist('author_last_name[]')
-        middle_names = request.form.getlist('author_middle_name[]')
-        student_numbers = request.form.getlist('student_number[]')
-
-        author_data_list = [
-            {
-                'first_name': first_names[i].strip(),
-                'middle_name': middle_names[i].strip() if i < len(middle_names) else '',
-                'last_name': last_names[i].strip(),
-                'student_no': student_numbers[i].strip()
-            }
-            for i in range(len(first_names))
-            if first_names[i].strip() and last_names[i].strip() and student_numbers[i].strip()
-        ]
-
-        adv_first_names = request.form.getlist('advisor_first_name[]')
-        adv_last_names = request.form.getlist('advisor_last_name[]')
-        adv_middle_names = request.form.getlist('advisor_middle_name[]')
-
-        advisor_data_list = [
-            {
-                'first_name': adv_first_names[i].strip(),
-                'middle_name': adv_middle_names[i].strip() if i < len(adv_middle_names) else '',
-                'last_name': adv_last_names[i].strip(),
-            }
-            for i in range(len(adv_first_names))
-            if adv_first_names[i].strip() and adv_last_names[i].strip()
-        ]
+        author_data_list = extract_contributors_from_form(request.form, 'author')
+        advisor_data_list = extract_contributors_from_form(request.form, 'advisor')
 
         thesis_data = {
             'title': request.form.get('title'),
@@ -212,9 +186,8 @@ def submit():
             return redirect(url_for('user.dashboard'))
         else:
             if actual_save_path and os.path.exists(actual_save_path):
-                os.remove(actual_save_path)
+                os.remove(actual_save_path) # Rollback file if DB fails
             flash(f"An error occurred while saving: {error_msg}", 'error')
 
     programs, formats, branches = get_submission_form_options(db)
     return render_template("user/form.html", programs=programs, formats=formats, branches=branches)
-
