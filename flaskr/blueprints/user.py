@@ -30,19 +30,39 @@ def require_login():
 def dashboard():
     db = get_db()
     current_user_id = session['user_id']
-    theses = get_user_thesis(db, current_user_id)
+    
+    current_view = request.args.get('view', 'authored')
 
+    theses = get_user_thesis(db, current_user_id)
     total_projects = len(theses)
     under_review = sum(1 for t in theses if t['status'] == 'pending')
     approved = sum(1 for t in theses if t['status'] == 'approved')
 
+    borrowed_theses = []
+    if current_view == 'borrowed':
+        raw_borrows = db.execute('''
+            SELECT t.id, t.title, d.icon,
+                CASE 
+                    WHEN ab.is_paused = 1 THEN ab.time_left 
+                    ELSE ab.time_left - CAST((strftime('%s', 'now') - strftime('%s', ab.last_tick)) AS INTEGER) 
+                END as actual_time_left
+            FROM active_borrow ab
+            JOIN thesis t ON ab.thesis_id = t.id
+            LEFT JOIN department d ON t.department_id = d.id
+            WHERE ab.user_id = ?
+        ''', (current_user_id,)).fetchall()
+        
+        # Only pass theses to the template that haven't expired yet
+        borrowed_theses = [b for b in raw_borrows if b['actual_time_left'] > 0]
+
     return render_template("user/dashboard.html", 
         theses=theses,
+        borrowed_theses=borrowed_theses,
+        current_view=current_view,
         total_projects=total_projects,
         under_review=under_review,
         approved=approved
-        )
-
+    )
 
 @bp.route('/profile', methods=('GET', 'POST'))
 def profile():

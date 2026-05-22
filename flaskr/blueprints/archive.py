@@ -247,7 +247,6 @@ def borrow(id):
         INSERT INTO user_history (user_id, action, thesis_id)
         VALUES (?, 'Borrowed', ?)
     ''', (user_id, id))
-    db.commit()
 
     db.execute('''
         INSERT INTO user_history (user_id, action, thesis_id)
@@ -258,6 +257,8 @@ def borrow(id):
         INSERT INTO active_borrow (user_id, thesis_id, time_left, last_tick, is_paused)
         VALUES (?, ?, 7200, CURRENT_TIMESTAMP, 0)
     ''', (user_id, id))
+
+    db.commit()
     
     flash("Thesis borrowed successfully. You have 2 hours to read it.", "success")
     return redirect(url_for('archive.read', id=id))
