@@ -66,7 +66,7 @@
         </div>
 
         <form method="get" class="flex w-full md:max-w-sm shadow-sm rounded-full">
-            <input name="q" type="text" placeholder="Search this collection..." value="{{ search or '' }}" class="w-full px-6 py-3 rounded-l-full border border-white outline-none focus:ring-2 focus:ring-sage-300 text-sage-900 bg-white">
+            <input name="q" type="text" placeholder="Search this collection..." value="{{ search or '' }}" class="w-full px-6 py-3 rounded-l-full border border-white outline-none text-sage-900 bg-white">
             <button type="submit" class="bg-sage-500 px-6 rounded-r-full text-white flex items-center justify-center hover:bg-sage-600 transition">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
@@ -87,10 +87,9 @@
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
-                    <a href="{{ thesis.file_path }}" target="_blank" class="bg-sage-100 text-sage-700 px-5 py-2.5 rounded-xl font-bold hover:bg-sage-200 transition flex items-center justify-center gap-2 flex-1 sm:flex-auto">
-                        <i class="fa-solid fa-file-pdf text-red-500"></i> PDF
-                    </a>
-                    
+                   <a href="{{ url_for('archive.view', id=thesis.id, borrow='true') }}" class="bg-sage-100 text-sage-700 px-5 py-2.5 rounded-xl font-bold hover:bg-sage-200 transition flex items-center justify-center gap-2 flex-1 sm:flex-auto">
+                        <i class="fa-solid fa-file-pdf text-red-500"></i> Borrow PDF
+                    </a> 
                     <form action="{{ url_for('user.toggle_bookmark', thesis_id=thesis.id) }}" method="POST" class="inline w-full sm:w-auto ajax-bookmark">
                         <button type="submit" 
                                 class="px-8 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 {% if thesis.is_bookmarked %} bg-sage-500 text-white hover:bg-sage-600 shadow-sm {% else %} bg-sage-100 text-sage-600 hover:bg-sage-50 shadow-sm {% endif %}" 

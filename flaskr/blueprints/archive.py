@@ -244,15 +244,15 @@ def borrow(id):
         return redirect(url_for('archive.view', id=id))
         
     db.execute('''
-        INSERT INTO user_history (user_id, action, thesis_id)
-        VALUES (?, 'Borrowed', ?)
-    ''', (user_id, id))
+            DELETE FROM active_borrow 
+            WHERE user_id = ? AND thesis_id = ?
+        ''', (user_id, id))
 
     db.execute('''
         INSERT INTO user_history (user_id, action, thesis_id)
         VALUES (?, 'Borrowed', ?)
     ''', (user_id, id))
-    
+
     db.execute('''
         INSERT INTO active_borrow (user_id, thesis_id, time_left, last_tick, is_paused)
         VALUES (?, ?, 7200, CURRENT_TIMESTAMP, 0)

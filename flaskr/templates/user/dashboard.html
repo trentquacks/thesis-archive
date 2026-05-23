@@ -3,129 +3,131 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block main %}
-<main class="flex-1 flex flex-col gap-6 min-h-0">
-    
-    <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
-        <div class="flex items-center gap-4 border-b border-white/30 pb-4">
-            <i class="fa-solid fa-gauge-high text-4xl"></i>
-            <h2 class="text-3xl font-bold uppercase tracking-wider">User Dashboard</h2>
-        </div>
-        <p class="mt-4 text-sage-50 font-medium text-lg">
-            Welcome back! Track your project submissions, monitor active reviews, and manage your archive records.
-        </p>
-    </div>
+<main class="flex-1 flex flex-col min-h-0">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
-        {% set stats = [
+    <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
+
+        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0 mt-2">
+            <div class="flex items-center gap-4 border-b border-white/30 pb-4">
+                <i class="fa-solid fa-gauge-high text-4xl"></i>
+                <h2 class="text-3xl font-bold uppercase tracking-wider">User Dashboard</h2>
+            </div>
+            <p class="mt-4 text-sage-50 font-medium text-lg">
+            Welcome back! Track your project submissions, monitor active reviews, and manage your archive records.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+            {% set stats = [
             ('fa-lightbulb', 'Projects', total_projects),
             ('fa-magnifying-glass', 'Under review', under_review),
             ('fa-certificate', 'Approved', approved)
-        ] %}
-        
-        {% for icon, label, value in stats %}
-        <div class="bg-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm border border-sage-100 text-sage-800">
-            <div class="w-12 h-12 bg-sage-50 rounded-full flex items-center justify-center text-sage-500">
-                <i class="fa-solid {{ icon }} text-2xl"></i>
+            ] %}
+
+            {% for icon, label, value in stats %}
+            <div class="bg-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm border border-sage-100 text-sage-800">
+                <div class="w-12 h-12 bg-sage-50 rounded-full flex items-center justify-center text-sage-500">
+                    <i class="fa-solid {{ icon }} text-2xl"></i>
+                </div>
+                <span class="font-bold text-lg text-sage-700">{{ label }}: <span class="text-sage-900 font-extrabold">{{ value }}</span></span>
             </div>
-            <span class="font-bold text-lg text-sage-700">{{ label }}: <span class="text-sage-900 font-extrabold">{{ value }}</span></span>
-        </div>
-        {% endfor %}
+            {% endfor %}
 
-        <a href="{{ url_for('user.submit') }}" class="bg-sage-600 text-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm hover:bg-sage-700 transition transform hover:-translate-y-1">
-            <i class="fa-solid fa-plus text-3xl"></i>
-            <span class="font-bold text-xl">Submit Project</span>
-        </a>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0 flex items-center">
-        <div class="flex bg-sage-50 p-1 rounded-lg border border-sage-200 w-full sm:w-auto">
-            <a href="{{ url_for('user.dashboard', view='authored') }}" 
-               class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view != 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
-                <i class="fa-solid fa-pen-nib mr-2"></i> Authored Projects
-            </a>
-            <a href="{{ url_for('user.dashboard', view='borrowed') }}" 
-               class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view == 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
-                <i class="fa-solid fa-book-open-reader mr-2"></i> Borrowed Theses
+            <a href="{{ url_for('user.submit') }}" class="bg-sage-600 text-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm hover:bg-sage-700 transition transform hover:-translate-y-1">
+                <i class="fa-solid fa-plus text-3xl"></i>
+                <span class="font-bold text-xl">Submit Project</span>
             </a>
         </div>
-    </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
-        <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4">
-            
-            {% if current_view == 'borrowed' %}
-                
-                {% if borrowed_theses %}
-                    {% for thesis in borrowed_theses %}
-                    <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
-                                <i class="fa-solid {{ thesis.icon or 'fa-book-open' }} text-2xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
-                                <span class="text-red-600 font-bold text-sm time-container">
-                                    <i class="fa-regular fa-clock mr-1"></i> 
-                                    <span class="borrow-timer" data-time="{{ thesis.actual_time_left }}">Calculating...</span> left
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
-                            Continue Reading
-                        </a>
-                    </div>
-                    {% endfor %}
-                {% else %}                    <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
-                        <i class="fa-solid fa-book-open text-6xl mb-4 opacity-40"></i>
-                        <span>You do not have any actively borrowed theses.</span>
-                    </div>
-                {% endif %}
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0 flex items-center">
+            <div class="flex bg-sage-50 p-1 rounded-lg border border-sage-200 w-full sm:w-auto">
+                <a href="{{ url_for('user.dashboard', view='authored') }}" 
+                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view != 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
+                    <i class="fa-solid fa-pen-nib mr-2"></i> Authored Projects
+                </a>
+                <a href="{{ url_for('user.dashboard', view='borrowed') }}" 
+                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view == 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
+                    <i class="fa-solid fa-book-open-reader mr-2"></i> Borrowed Theses
+                </a>
+            </div>
+        </div>
 
-            {% else %}
-                
-                {% set badge_colors = {
-                    'approved': 'from-[#7FB169] to-[#568A45]',
-                    'pending': 'from-[#EED575] to-[#C9A52B]',
-                    'rejected': 'from-[#E04B40] to-[#B02820]'
-                } %}
-                
-                {% if theses %}
-                    {% for thesis in theses %}
-                    <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
-                                <i class="fa-solid {{ thesis.icon or 'fa-file-lines' }} text-2xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
-                                <span class="text-sage-600 font-bold text-sm">
-                                    <i class="fa-regular fa-calendar-days mr-1"></i> Published: {{ thesis.year }}
-                                </span>
-                            </div>
+        <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex flex-col min-h-[500px] shrink-0">
+
+            <div class="p-6 md:p-8 flex-1 flex flex-col gap-4">
+
+                {% if current_view == 'borrowed' %} {% if borrowed_theses %}
+                {% for thesis in borrowed_theses %}
+                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
+                            <i class="fa-solid {{ thesis.icon or 'fa-book-open' }} text-2xl"></i>
                         </div>
-                        
-                        <div class="bg-gradient-to-b {{ badge_colors[thesis.status] }} text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-sm self-end sm:self-auto">
-                            {{ thesis.status }}
+                        <div>
+                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
+                            <span class="text-red-600 font-bold text-sm time-container">
+                                <i class="fa-regular fa-clock mr-1"></i> 
+                                <span class="borrow-timer" data-time="{{ thesis.actual_time_left }}">Calculating...</span> left
+                            </span>
                         </div>
                     </div>
-                    {% endfor %}
+
+                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
+                        Continue Reading
+                    </a>
+                </div>
+                {% endfor %}
                 {% else %}
-                    <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
-                        <i class="fa-solid fa-folder-open text-6xl mb-4 opacity-40"></i>
-                        <span>No projects submitted yet.</span>
-                    </div>
+                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+                    <i class="fa-solid fa-book-open text-6xl mb-4 opacity-40"></i>
+                    <span>You do not have any actively borrowed theses.</span>
+                </div>
                 {% endif %}
-                
-            {% endif %}
 
+                {% else %}
+                {% set badge_colors = {
+                'approved': 'from-[#7FB169] to-[#568A45]',
+                'pending': 'from-[#EED575] to-[#C9A52B]',
+                'rejected': 'from-[#E04B40] to-[#B02820]'
+                } %}
+
+                {% if theses %}
+                {% for thesis in theses %}
+                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
+                            <i class="fa-solid {{ thesis.icon or 'fa-file-lines' }} text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
+                            <span class="text-sage-600 font-bold text-sm">
+                                <i class="fa-regular fa-calendar-days mr-1"></i> Published: {{ thesis.year }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-b {{ badge_colors[thesis.status] }} text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-sm self-end sm:self-auto">
+                        {{ thesis.status }}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+                    <i class="fa-solid fa-folder-open text-6xl mb-4 opacity-40"></i>
+                    <span>No projects submitted yet.</span>
+                </div>
+                {% endif %}
+                {% endif %}
+
+            </div>
         </div>
     </div>
 </main>
+
 <script>
     document.querySelectorAll('.borrow-timer').forEach(timerElement => {
         let timeLeft = parseInt(timerElement.getAttribute('data-time'), 10);
-        
+
         if (isNaN(timeLeft)) return;
 
         const countdown = setInterval(() => {
@@ -137,7 +139,7 @@
                 let hours = Math.floor(timeLeft / 3600);
                 let minutes = Math.floor((timeLeft % 3600) / 60);
                 let seconds = timeLeft % 60;
-                
+
                 timerElement.innerText = `${hours}h ${minutes}m ${seconds}s`;
                 timeLeft--;
             }

@@ -55,36 +55,39 @@
     <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
         <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4">
             
-            {% if history_events %}
+               {% if history_events %}
                 {% for event in history_events %}
-                <div class="bg-sage-100 rounded-xl p-5 flex flex-col gap-3 shadow-sm border border-sage-200 transition hover:shadow-md hover:border-sage-300">
-                    <span class="text-sage-600 font-bold text-sm">
-                        <i class="fa-regular fa-calendar-days mr-1"></i> 
-                        {{ event.timestamp }}
-                    </span>
+                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
                     
-                    <div class="flex items-center gap-4 pl-2">
-                        <div class="text-3xl text-sage-600 opacity-80 shrink-0 w-8 text-center">
+                    <div class="flex items-start sm:items-center gap-4">
+                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner mt-1 sm:mt-0 shrink-0">
                             {% if event.action == 'Bookmarked' or event.action == 'Unbookmarked' %}
-                                <i class="fa-solid fa-bookmark"></i>
+                                <i class="fa-solid fa-bookmark text-2xl"></i>
                             {% elif event.action == 'Submitted' %}
-                                <i class="fa-solid fa-file-arrow-up"></i>
+                                <i class="fa-solid fa-file-arrow-up text-2xl"></i>
                             {% else %}
-                                <i class="fa-solid fa-clock"></i>
+                                <i class="fa-solid fa-clock-rotate-left text-2xl"></i>
                             {% endif %}
                         </div>
                         
-                        <p class="text-sage-800 font-medium text-lg">
-                            <span class="font-extrabold">{{ event.action }}</span> a thesis: 
-                            <a href="{{ url_for('archive.view', id=event.thesis_id) if event.thesis_id else '#' }}" class="underline decoration-sage-400 underline-offset-4 hover:text-sage-600 transition">
+                        <div>
+                            <a href="{{ url_for('archive.view', id=event.thesis_id) if event.thesis_id else '#' }}" class="text-sage-900 font-extrabold text-lg leading-tight mb-1 hover:text-sage-600 transition underline decoration-sage-300 decoration-2 underline-offset-4 line-clamp-2">
                                 {{ event.title or 'Unknown Document' }}
                             </a>
-                        </p>
+                            <div class="flex items-center text-sage-600 font-bold text-sm mt-2">
+                                <i class="fa-regular fa-calendar-days mr-1"></i> {{ event.timestamp }}
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div class="bg-sage-200 text-sage-800 px-5 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-sm self-end sm:self-auto shrink-0">
+                        {{ event.action }}
+                    </div>
+
                 </div>
                 {% endfor %}
             {% else %}
-                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+            <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
                     <i class="fa-solid fa-clock-rotate-left text-6xl mb-4 opacity-40"></i>
                     <span>No history records found.</span>
                 </div>
