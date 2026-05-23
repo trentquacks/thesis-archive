@@ -1,5 +1,5 @@
-import math
 import uuid
+from .shared_queries import fetch_paginated_data
 
 def get_user_thesis(db, user_id):
     return db.execute("""
@@ -10,42 +10,21 @@ def get_user_thesis(db, user_id):
         ORDER BY thesis.date_published DESC
     """, (user_id,)).fetchall()
 
-
 def update_profile_picture(db, filename, user_id):
     db.execute('UPDATE user SET profile_pic = ? WHERE id = ?', (filename, user_id))
     db.commit()
-
 
 def update_user_password(db, user_id, hashed_password):
     db.execute('UPDATE user SET password = ? WHERE id = ?', (hashed_password, user_id))
     db.commit()
 
-
 def get_user_project_count(db, user_id):
     result = db.execute('SELECT COUNT(id) as count FROM thesis WHERE uploader_id = ?', (user_id,)).fetchone()
     return result['count'] if result else 0
 
-
 def get_user_bookmark_count(db, user_id):
     result = db.execute('SELECT COUNT(thesis_id) as count FROM bookmark WHERE user_id = ?', (user_id,)).fetchone()
     return result['count'] if result else 0
-
-import math
-
-def fetch_paginated_data(db, main_query, count_query, params, page, per_page=10):
-    """automatically paginates any SQL query."""
-    
-    total_items = db.execute(count_query, params).fetchone()[0]
-   
-    paginated_query = f"{main_query} LIMIT ? OFFSET ?"
-    fetch_params = params + [per_page, (page - 1) * per_page]
-    
-    data = db.execute(paginated_query, fetch_params).fetchall()
-    
-    total_pages = max(1, math.ceil(total_items / per_page))
-    
-    return data, total_items, total_pages
-
 
 def get_user_bookmarks_paginated(db, user_id, page, current_sort, current_order):
     valid_columns = {'title': 't.title', 'author': 'a.last_name', 'date': 'b.date_bookmarked'}
@@ -70,7 +49,6 @@ def get_user_bookmarks_paginated(db, user_id, page, current_sort, current_order)
 
     return fetch_paginated_data(db, main_query, count_query, [user_id], page)
 
-
 def toggle_user_bookmark(db, user_id, thesis_id):
     existing_bookmark = db.execute(
         'SELECT 1 FROM bookmark WHERE user_id = ? AND thesis_id = ?', 
@@ -89,17 +67,13 @@ def toggle_user_bookmark(db, user_id, thesis_id):
         msg = "Removed from bookmarks."
 
     db.commit()
-    
     return is_bookmarked, msg
-
 
 def get_user_history_paginated(db, user_id, page, action_filter, date_filter, sort_order):
     filters = {'h.user_id': user_id}
 
-    if action_filter:
-        filters['h.action'] = action_filter
-    if date_filter:
-        filters['date(h.timestamp)'] = date_filter
+    if action_filter: filters['h.action'] = action_filter
+    if date_filter: filters['date(h.timestamp)'] = date_filter
 
     where_sql = "WHERE " + " AND ".join(f"{k} = ?" for k in filters.keys())
     params = list(filters.values())
@@ -117,7 +91,6 @@ def get_user_history_paginated(db, user_id, page, action_filter, date_filter, so
     data, total_items, total_pages = fetch_paginated_data(db, main_query, count_query, params, page)
     return data, total_items, total_pages
 
-
 def get_submission_form_options(db):
     programs = db.execute("SELECT id, name FROM department").fetchall()
     formats = db.execute("SELECT id, format FROM format").fetchall()
@@ -126,29 +99,15 @@ def get_submission_form_options(db):
 
 def _process_contributors(db, thesis_id, person_data_list, role):
     config = {
-        'author': {
-            'table': 'author',
-            'id_col': 'student_no',
-            'map_table': 'thesis_author',
-            'fk_col': 'author_id'
-        },
-        'advisor': {
-            'table': 'advisor',
-            'id_col': 'faculty_no',
-            'map_table': 'thesis_advisor',
-            'fk_col': 'advisor_id'
-        }
+        'author': {'table': 'author', 'id_col': 'student_no', 'map_table': 'thesis_author', 'fk_col': 'author_id'},
+        'advisor': {'table': 'advisor', 'id_col': 'faculty_no', 'map_table': 'thesis_advisor', 'fk_col': 'advisor_id'}
     }
     
     c = config[role]
     
     for data in person_data_list:
         unique_val = data[c['id_col']]
-        
-        person = db.execute(
-            f"SELECT id FROM {c['table']} WHERE {c['id_col']} = ?", 
-            (unique_val,)
-        ).fetchone()
+        person = db.execute(f"SELECT id FROM {c['table']} WHERE {c['id_col']} = ?", (unique_val,)).fetchone()
         
         if person:
             person_id = person['id']
@@ -159,11 +118,7 @@ def _process_contributors(db, thesis_id, person_data_list, role):
             )
             person_id = query.lastrowid
             
-        db.execute(
-            f"INSERT INTO {c['map_table']} (thesis_id, {c['fk_col']}) VALUES (?, ?)", 
-            (thesis_id, person_id)
-        )
-
+        db.execute(f"INSERT INTO {c['map_table']} (thesis_id, {c['fk_col']}) VALUES (?, ?)", (thesis_id, person_id))
 
 def submit_thesis_transaction(db, uploader_id, file_path, date_published, author_data_list, advisor_data_list, thesis_data):
     temp_barcode = f"PENDING-BC-{uuid.uuid4().hex[:8].upper()}"
@@ -193,3 +148,18 @@ def submit_thesis_transaction(db, uploader_id, file_path, date_published, author
     except Exception as e:
         db.rollback() 
         return False, str(e)
+
+def get_user_borrowed_theses(db, user_id):
+    raw_borrows = db.execute('''
+        SELECT t.id, t.title, d.icon,
+            CASE 
+                WHEN ab.is_paused = 1 THEN ab.time_left 
+                ELSE ab.time_left - CAST((strftime('%s', 'now') - strftime('%s', ab.last_tick)) AS INTEGER) 
+            END as actual_time_left
+        FROM active_borrow ab
+        JOIN thesis t ON ab.thesis_id = t.id
+        LEFT JOIN department d ON t.department_id = d.id
+        WHERE ab.user_id = ?
+    ''', (user_id,)).fetchall()
+    
+    return [b for b in raw_borrows if b['actual_time_left'] > 0]

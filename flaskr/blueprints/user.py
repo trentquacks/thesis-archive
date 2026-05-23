@@ -2,20 +2,15 @@ import os
 from datetime import datetime
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session, current_app
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session
 from flaskr.db import get_db
 from flaskr.helper import (save_uploaded_file, extract_contributors_from_form)
-from flaskr.queries import (get_submission_form_options, get_user_thesis, submit_thesis_transaction, toggle_user_bookmark,
-                            update_profile_picture,
-                            update_user_password, 
-                            get_user_project_count, 
-                            get_user_bookmark_count,
-                            get_user_bookmarks_paginated,
-                            get_user_history_paginated,
-                            toggle_user_bookmark,
-                            get_submission_form_options,
-                            submit_thesis_transaction
-                            )
+from flaskr.queries.user_queries import (
+    get_submission_form_options, get_user_thesis, submit_thesis_transaction, 
+    toggle_user_bookmark, update_profile_picture, update_user_password, 
+    get_user_project_count, get_user_bookmark_count, get_user_bookmarks_paginated,
+    get_user_history_paginated, get_user_borrowed_theses
+)
 bp = Blueprint("user", __name__, url_prefix="/user")
 
 @bp.before_request
@@ -40,20 +35,7 @@ def dashboard():
 
     borrowed_theses = []
     if current_view == 'borrowed':
-        raw_borrows = db.execute('''
-            SELECT t.id, t.title, d.icon,
-                CASE 
-                    WHEN ab.is_paused = 1 THEN ab.time_left 
-                    ELSE ab.time_left - CAST((strftime('%s', 'now') - strftime('%s', ab.last_tick)) AS INTEGER) 
-                END as actual_time_left
-            FROM active_borrow ab
-            JOIN thesis t ON ab.thesis_id = t.id
-            LEFT JOIN department d ON t.department_id = d.id
-            WHERE ab.user_id = ?
-        ''', (current_user_id,)).fetchall()
-        
-        # Only pass theses to the template that haven't expired yet
-        borrowed_theses = [b for b in raw_borrows if b['actual_time_left'] > 0]
+        borrowed_theses = get_user_borrowed_theses(db, current_user_id)
 
     return render_template("user/dashboard.html", 
         theses=theses,
@@ -63,7 +45,6 @@ def dashboard():
         under_review=under_review,
         approved=approved
     )
-
 @bp.route('/profile', methods=('GET', 'POST'))
 def profile():
     db = get_db()

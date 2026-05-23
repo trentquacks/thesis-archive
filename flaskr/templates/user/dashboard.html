@@ -7,7 +7,7 @@
 
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
-        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0 mt-2">
+        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
             <div class="flex items-center gap-4 border-b border-white/30 pb-4">
                 <i class="fa-solid fa-gauge-high text-4xl"></i>
                 <h2 class="text-3xl font-bold uppercase tracking-wider">User Dashboard</h2>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
 
-                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
+                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-sage-200 hover:bg-sage-300 text-sage-800 px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
                         Continue Reading
                     </a>
                 </div>
