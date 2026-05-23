@@ -2,7 +2,9 @@
 
 {% block title %} Login {% endblock %}
 
-{% block style %} {{ url_for('static', filename='style.css') }} {% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}
 
 {% block content %}
 <main class="flex-grow flex flex-col items-center justify-center">
@@ -38,28 +40,4 @@
         </form>
     </div>
 </main>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const toggleButtons = document.querySelectorAll('.toggle-password');
-        
-        toggleButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const input = document.getElementById(targetId);
-                const icon = this.querySelector('i');
-                
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}

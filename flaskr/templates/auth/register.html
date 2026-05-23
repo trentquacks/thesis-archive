@@ -2,6 +2,10 @@
 
 {% block title %} Register {% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}
+
 {% macro password_field(name, label) %}
 <div class="space-y-1 relative w-full">
     <label class="text-sm font-semibold">{{ label }}:</label>

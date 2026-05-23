@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/view.js') }}"></script>
+{% endblock %}
+
 {% block title %} View Thesis - {{ thesis.title }} {% endblock %}
 
 {% block content %}
@@ -36,7 +40,7 @@
                 <i class="fa-solid fa-book-open-reader"></i> Read PDF Now
             </a>
             {% else %}
-            <button onclick="openBorrowModal()" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
+            <button id="open-borrow-btn" class="inline-flex items-center gap-2 bg-sage-500 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-file-pdf"></i> Borrow to View PDF
             </button>
             {% endif %}
@@ -63,7 +67,7 @@
     <section class="bg-white p-8 rounded-2xl shadow-sm border border-sage-100 mb-10">
         <div class="flex items-center justify-between mb-4 border-b border-sage-100 pb-4">
             <h4 class="font-bold text-2xl text-sage-900">Abstract</h4>
-            <button onclick="copyAbstract()" id="copy-btn" class="px-5 py-2 text-sm rounded-lg bg-sage-100 text-sage-700 font-bold hover:bg-sage-200 transition-colors flex items-center gap-2">
+            <button id="copy-btn" class="px-5 py-2 text-sm rounded-lg bg-sage-100 text-sage-700 font-bold hover:bg-sage-200 transition-colors flex items-center gap-2">
                 <i class="fa-solid fa-copy"></i> Copy
             </button>
         </div>
@@ -104,7 +108,7 @@
                                 <div id="citation-text" class="flex-1 bg-white p-3 rounded-lg border border-sage-200 text-sage-800 italic shadow-inner w-full">
                                     {{ value }}
                                 </div>
-                                <button onclick="copyCitation()" id="copy-citation-btn" class="px-4 py-2 shrink-0 text-sm rounded-lg border border-sage-200 bg-white text-sage-700 font-bold transition-colors flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
+                                <button id="copy-citation-btn" class="px-4 py-2 shrink-0 text-sm rounded-lg border border-sage-200 bg-white text-sage-700 font-bold transition-colors flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
                                     <i class="fa-solid fa-copy"></i> Copy
                                 </button>
                             </div>
@@ -120,9 +124,9 @@
     </section>
 </main>
 
-<div id="borrowModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+<div id="borrowModal" data-active-borrow="{{ 'true' if active_borrow else 'false' }}" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
     <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
-        <button onclick="closeBorrowModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-700 transition-colors">
+        <button class="close-borrow-btn absolute top-6 right-6 text-gray-400 hover:text-gray-700 transition-colors">
             <i class="fa-solid fa-xmark text-2xl"></i>
         </button>
 
@@ -143,7 +147,7 @@
             </p>
         </div>
         <div class="flex justify-end mt-6 border-t border-gray-100 pt-4">
-            <button onclick="closeBorrowModal()" class="px-6 py-2.5 rounded-xl bg-gray-200 text-gray-800 font-bold hover:bg-gray-300 transition-colors">
+            <button class="close-borrow-btn px-6 py-2.5 rounded-xl bg-gray-200 text-gray-800 font-bold hover:bg-gray-300 transition-colors">
                 Close
             </button>
         </div>
@@ -159,7 +163,7 @@
         </div>
 
         <div class="flex justify-end gap-3 mt-4">
-            <button onclick="closeBorrowModal()" class="px-6 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors">
+            <button class="close-borrow-btn px-6 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors">
                 Cancel
             </button>
             <form action="{{ url_for('archive.borrow', id=thesis.id) }}" method="POST">
@@ -171,73 +175,5 @@
         {% endif %}
     </div>
 </div>
-
-<script>
-    function copyAbstract() {
-        const abstractText = document.getElementById('abstract-text').innerText;
-        const copyBtn = document.getElementById('copy-btn');
-        const originalHTML = '<i class="fa-solid fa-copy"></i> Copy';
-
-        navigator.clipboard.writeText(abstractText).then(() => {
-            copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-600"></i> Copied!';
-            setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-            alert('Failed to copy abstract. Please try highlighting the text manually.');
-        });
-    }
-
-    function openBorrowModal() {
-        const modal = document.getElementById('borrowModal');
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; 
-    }
-
-    function closeBorrowModal() {
-        const modal = document.getElementById('borrowModal');
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto'; 
-    }
-
-    document.getElementById('borrowModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeBorrowModal();
-        }
-    });
-
-    function copyCitation() {
-        const citationText = document.getElementById('citation-text').innerText;
-        const copyBtn = document.getElementById('copy-citation-btn');
-        const originalHTML = '<i class="fa-solid fa-copy"></i> Copy';
-
-        navigator.clipboard.writeText(citationText).then(() => {
-            copyBtn.innerHTML = '<i class="fa-solid fa-check text-green-600"></i> Copied!';
-            copyBtn.classList.replace('bg-white', 'bg-green-50'); 
-            copyBtn.classList.replace('border-sage-200', 'border-green-200');
-
-            setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
-                copyBtn.classList.replace('bg-green-50', 'bg-white');
-                copyBtn.classList.replace('border-green-200', 'border-sage-200');
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-            alert('Failed to copy citation. Please try highlighting the text manually.');
-        });
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        if (urlParams.get('borrow') === 'true') {
-            
-            {% if not active_borrow %}
-                openBorrowModal();
-            {% endif %}
-            
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    });
-</script>
 {% endblock %}
+

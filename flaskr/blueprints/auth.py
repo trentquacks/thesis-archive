@@ -1,5 +1,6 @@
 import functools
 
+from datetime import datetime 
 from flask import Blueprint
 from flask import flash
 from flask import g
@@ -11,9 +12,9 @@ from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flaskr.db import get_db
+from flaskr.queries.auth_queries import get_user_by_email, increment_failed_attempts, lock_user_account, reset_failed_attempts
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
-
 
 def login_required(view):
     """View decorator that redirects anonymous users to the login page."""
@@ -85,41 +86,51 @@ def register():
     return render_template('auth/register.html')
 
 
-@bp.route("/login", methods=("GET", "POST"))
+@bp.route('/login', methods=('GET', 'POST'))
 def login():
-    """Log in a registered user by adding the user id to the session."""
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
         db = get_db()
         error = None
-        user = db.execute(
-            "SELECT * FROM user WHERE email = ?", (email,)
-        ).fetchone()
-
+        
+        user = get_user_by_email(db, email) 
+        
         if user is None:
-            error = "Incorrect email."
-        elif not check_password_hash(user["password"], password):
-            error = "Incorrect password."
-
-        if error is None:
-            session.clear()
-            session["user_id"] = user["id"]
-            session["role"] = user["role"]
+            error = 'Incorrect email or password.'
+        else:
+            if user['lockout_until']:
+                lockout_time = datetime.strptime(user['lockout_until'], '%Y-%m-%d %H:%M:%S')
+                if datetime.now() < lockout_time:
+                    # lockout status display
+                    time_left = int((lockout_time - datetime.now()).total_seconds() / 60) or 1
+                    error = f'Account locked due to multiple failed attempts. Try again in {time_left} minute(s).'
+                else:
+                    # allow login after 10 minutes
+                    reset_failed_attempts(db, user['id'])
+                    user = get_user_by_email(db, email) # refresh the user dictionary
             
-            db.execute('''
-                UPDATE active_borrow 
-                SET last_tick = CURRENT_TIMESTAMP, is_paused = 0 
-                WHERE user_id = ? AND is_paused = 1
-            ''', (user["id"],))
-            db.commit()
+            # validate password
+            if error is None:
+                if not check_password_hash(user['password'], password):
+                    error = 'Incorrect email or password.'
+                    increment_failed_attempts(db, user['id'])
+                    
+                    # if wrong attempt 5 times
+                    updated_user = get_user_by_email(db, email)
+                    if updated_user['failed_attempts'] >= 5:
+                        lock_user_account(db, user['id'])
+                        error = 'Account locked due to 5 failed attempts. Try again in 10 minutes.'
+                else:
+                    reset_failed_attempts(db, user['id'])
+                    session.clear()
+                    session['user_id'] = user['id']
+                    return redirect(url_for('index'))
+                    
+        if error:
+            flash(error, 'error')
             
-            return redirect(url_for("index"))
-
-        flash(error, "error")
-
-    return render_template("auth/login.html")
-
+    return render_template('auth/login.html')
 
 @bp.route("/logout")
 def logout():

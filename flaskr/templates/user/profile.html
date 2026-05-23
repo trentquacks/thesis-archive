@@ -2,6 +2,10 @@
 
 {% block title %} Profile {% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}
+
 {% block main %}
 
 {% macro password_input(label_text, input_name) %}
@@ -16,7 +20,7 @@
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
         <section class="bg-sage-200 rounded-2xl p-6 md:p-8 flex flex-col items-center relative mt-12 shadow-sm shrink-0">
             <form action="{{ url_for('user.profile') }}" method="POST" enctype="multipart/form-data" id="pic-form" class="absolute -top-12 w-24 h-24 rounded-full shadow-md z-10">
-                <div class="w-full h-full rounded-full overflow-hidden border-4 border-sage-50 bg-white group cursor-pointer relative" onclick="document.getElementById('file-upload').click()">
+                <div id="profile-pic-trigger" class="w-full h-full rounded-full overflow-hidden border-4 border-sage-50 bg-white group cursor-pointer relative">
 
                     <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover">
 
@@ -25,9 +29,8 @@
                     </div>
                 </div>
 
-                <input id="file-upload" type="file" name="profile_pic" class="hidden" accept="image/*" onchange="document.getElementById('pic-form').submit()">
+                <input id="file-upload" type="file" name="profile_pic" class="hidden" accept="image/*">
             </form>
-
             <div class="mt-12 text-center w-full max-w-md">
                 <h2 class="text-3xl font-extrabold text-sage-900 flex items-center justify-center gap-3 mb-4">
                     {{ g.user['first_name'] ~ ' ' ~  g.user['last_name']  }} 

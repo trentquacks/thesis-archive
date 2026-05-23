@@ -2,6 +2,10 @@
 
 {% block title %} Dashboard {% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+
 {% block main %}
 <main class="flex-1 flex flex-col min-h-0">
 
@@ -123,27 +127,4 @@
         </div>
     </div>
 </main>
-
-<script>
-    document.querySelectorAll('.borrow-timer').forEach(timerElement => {
-        let timeLeft = parseInt(timerElement.getAttribute('data-time'), 10);
-
-        if (isNaN(timeLeft)) return;
-
-        const countdown = setInterval(() => {
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                timerElement.innerText = "Expired";
-                timerElement.closest('.time-container').classList.replace('text-red-600', 'text-gray-500');
-            } else {
-                let hours = Math.floor(timeLeft / 3600);
-                let minutes = Math.floor((timeLeft % 3600) / 60);
-                let seconds = timeLeft % 60;
-
-                timerElement.innerText = `${hours}h ${minutes}m ${seconds}s`;
-                timeLeft--;
-            }
-        }, 1000);
-    });
-</script>
 {% endblock %}

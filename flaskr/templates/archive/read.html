@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/read.js') }}"></script>
+{% endblock %}
+
 {% block title %} Reading - {{ thesis.title }} {% endblock %}
 
 {% block content %}
@@ -9,7 +13,7 @@
         
         <div class="flex items-center gap-4 shrink-0">
             <div class="text-red-600 font-bold bg-red-50 px-4 py-2 rounded-lg border border-red-200">
-				<i class="fa-regular fa-clock"></i> &nbsp; Time Left: <span id="time-display">--:--:--</span>
+                <i class="fa-regular fa-clock"></i> &nbsp; Time Left: <span id="time-display" data-time-left="{{ time_left }}">--:--:--</span>
             </div>
             
             <a href="{{ url_for('archive.view', id=thesis_id) }}" 
@@ -23,28 +27,4 @@
         <iframe src="{{ thesis.file_path }}#toolbar=0" width="100%" height="100%" class="w-full h-full border-none absolute inset-0"></iframe>
     </div>
 </main>
-
-<script>
-    let timeLeft = parseInt("{{ time_left }}", 10);
-
-    if (isNaN(timeLeft)) {
-        timeLeft = 0; 
-    }
-
-    const countdown = setInterval(() => {
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            window.location.reload(); 
-        } else {
-            let hours = Math.floor(timeLeft / 3600);
-            let minutes = Math.floor((timeLeft % 3600) / 60);
-            let seconds = timeLeft % 60;
-            
-            document.getElementById('time-display').innerText = 
-                `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            
-            timeLeft--;
-        }
-    }, 1000);
-</script>
 {% endblock %}

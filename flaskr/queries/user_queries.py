@@ -1,5 +1,6 @@
 import uuid
 from .shared_queries import fetch_paginated_data
+from datetime import datetime, timedelta
 
 def get_user_thesis(db, user_id):
     return db.execute("""
@@ -163,3 +164,32 @@ def get_user_borrowed_theses(db, user_id):
     ''', (user_id,)).fetchall()
     
     return [b for b in raw_borrows if b['actual_time_left'] > 0]
+
+def increment_failed_attempts(db, user_id):
+    db.execute(
+        'UPDATE users SET failed_attempts = failed_attempts + 1 WHERE id = ?',
+        (user_id,)
+    )
+    db.commit()
+
+def lock_user_account(db, user_id):
+    lockout_time = datetime.now() + timedelta(minutes=10)
+    db.execute(
+        'UPDATE users SET lockout_until = ? WHERE id = ?',
+        (lockout_time.strftime('%Y-%m-%d %H:%M:%S'), user_id)
+    )
+    db.commit()
+
+def reset_failed_attempts(db, user_id):
+    db.execute(
+        'UPDATE users SET failed_attempts = 0, lockout_until = NULL WHERE id = ?',
+        (user_id,)
+    )
+    db.commit()
+
+def get_user_by_email(db, email):
+    """Retrieves a user record by their email address."""
+    return db.execute(
+        'SELECT * FROM users WHERE email = ?', 
+        (email,)
+    ).fetchone()

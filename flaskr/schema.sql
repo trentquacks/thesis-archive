@@ -23,7 +23,9 @@ CREATE TABLE user (
   student_no TEXT NOT NULL,
   course TEXT NOT NULL,
   profile_pic TEXT DEFAULT 'default.png',
-  role TEXT CHECK( role IN ('student', 'admin', 'librarian') ) DEFAULT 'student'
+  role TEXT CHECK( role IN ('student', 'admin', 'librarian') ) DEFAULT 'student',
+  failed_attempts INTEGER DEFAULT 0,
+  lockout_until DATETIME
 );
 
 CREATE TABLE author (
