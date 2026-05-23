@@ -28,3 +28,23 @@ def get_user_by_email(db, email):
         'SELECT * FROM user WHERE email = ?', 
         (email,)
     ).fetchone()
+
+def pause_user_borrows(db, user_id):
+    """Pauses the countdown for any active thesis borrows for the user."""
+    db.execute('''
+        UPDATE active_borrow 
+        SET time_left = MAX(0, time_left - CAST((strftime('%s', 'now') - strftime('%s', last_tick)) AS INTEGER)),
+            is_paused = 1 
+        WHERE user_id = ? AND is_paused = 0
+    ''', (user_id,))
+    db.commit()
+
+def unpause_user_borrows(db, user_id):
+    """Resumes the countdown for any paused thesis borrows for the user."""
+    db.execute('''
+        UPDATE active_borrow 
+        SET last_tick = CURRENT_TIMESTAMP, is_paused = 0 
+        WHERE user_id = ? AND is_paused = 1
+    ''', (user_id,))
+    db.commit()
+

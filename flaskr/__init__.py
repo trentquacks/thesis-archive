@@ -1,7 +1,9 @@
 import os
+from authlib.integrations.flask_client import OAuth
 from flask import Flask
 from datetime import datetime
 
+oauth = OAuth()
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
@@ -13,12 +15,10 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
 
         UPLOAD_FOLDER=os.path.join(app.root_path, 'static', 'uploads'),
-        UPLOAD_URL='/static/uploads'
+        UPLOAD_URL='/static/uploads',
+        GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", os.environ.get("GOOGLE_CLIENT_ID")),
+        GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", os.environ.get("GOOGLE_CLIENT_SECRET"))
     )
-
-    upload_path = os.path.join(app.root_path, 'static', 'uploads')
-    os.makedirs(upload_path, exist_ok=True) 
-    app.config['UPLOAD_FOLDER'] = upload_path
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -29,6 +29,13 @@ def create_app(test_config=None):
 
     # ensure the instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
+
+    oauth.init_app(app)
+    oauth.register(
+        name='google',
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
 
 
     # register the database commands

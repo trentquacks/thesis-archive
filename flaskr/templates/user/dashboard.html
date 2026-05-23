@@ -103,7 +103,10 @@
                             <i class="fa-solid {{ thesis.icon or 'fa-file-lines' }} text-2xl"></i>
                         </div>
                         <div>
-                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
+                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1"><a href="{{ url_for('archive.view', id=thesis['id']) }}" class="font-bold text-sage-900 hover:text-sage-600 hover:underline underline-offset-4 transition-colors cursor-pointer">
+                                    {{ thesis['title'] }}
+                                </a>
+                            </h4>
                             <span class="text-sage-600 font-bold text-sm">
                                 <i class="fa-regular fa-calendar-days mr-1"></i> Published: {{ thesis.year }}
                             </span>

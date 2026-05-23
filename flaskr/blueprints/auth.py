@@ -11,8 +11,9 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+from flaskr import oauth
 from flaskr.db import get_db
-from flaskr.queries.auth_queries import get_user_by_email, increment_failed_attempts, lock_user_account, reset_failed_attempts
+from flaskr.queries.auth_queries import get_user_by_email, increment_failed_attempts, lock_user_account, reset_failed_attempts, unpause_user_borrows, pause_user_borrows
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -45,35 +46,23 @@ def load_logged_in_user():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        
-        student_no = request.form['student_no']
-        course = request.form['course']
         email = request.form['email']
         password = request.form['password']
-        
         db = get_db()
         error = None
 
-        if not first_name:
-            error = 'First name is required.'
-        elif not last_name:
-            error = 'Last name is required.'
-        elif not student_no:
-            error = 'Student number is required.'
-        elif not course:
-            error = 'Course is required.'
-        elif not email:
+        if not email:
             error = 'Email is required.'
+        elif not email.endswith('@cvsu.edu.ph'):
+            error = 'Registration is restricted to @cvsu.edu.ph emails only.'
         elif not password:
             error = 'Password is required.'
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (first_name, last_name, email, password, student_no, course) VALUES (?, ?, ?, ?, ?, ?)",
-                    (first_name, last_name, email, generate_password_hash(password), student_no, course),
+                    "INSERT INTO user (email, password) VALUES (?, ?)",
+                    (email, generate_password_hash(password)),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -82,9 +71,7 @@ def register():
                 return redirect(url_for("auth.login"))
 
         flash(error)
-
     return render_template('auth/register.html')
-
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -125,12 +112,101 @@ def login():
                     reset_failed_attempts(db, user['id'])
                     session.clear()
                     session['user_id'] = user['id']
+                    unpause_user_borrows(db, user['id'])
                     return redirect(url_for('index'))
                     
         if error:
             flash(error, 'error')
             
     return render_template('auth/login.html')
+
+@bp.route('/login/google')
+def google_login():
+    redirect_uri = url_for('auth.google_callback', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri, hd='cvsu.edu.ph')
+
+@bp.route('/auth/google/callback')
+def google_callback():
+    from flaskr import oauth
+    token = oauth.google.authorize_access_token()
+    user_info = token.get('userinfo')
+    
+    email = user_info.get('email')
+    first_name = user_info.get('given_name', '')
+    last_name = user_info.get('family_name', '')
+    
+    if not email.endswith('@cvsu.edu.ph'):
+        flash("Only @cvsu.edu.ph emails are allowed.", "error")
+        return redirect(url_for('auth.login'))
+
+    db = get_db()
+    user = get_user_by_email(db, email)
+
+    if user is None:
+        session['oauth_email'] = email
+        session['oauth_first_name'] = first_name
+        session['oauth_last_name'] = last_name
+        return redirect(url_for('auth.complete_profile'))
+
+    # if user exists, log them in
+    session.clear()
+    session['user_id'] = user['id']
+    
+    unpause_user_borrows(db, user['id'])
+
+    flash('Successfully logged in!', 'success')
+    return redirect(url_for('index'))
+
+@bp.route('/complete-profile', methods=('GET', 'POST'))
+def complete_profile():
+    email = session.get('oauth_email')
+    first_name = session.get('oauth_first_name')
+    last_name = session.get('oauth_last_name')
+
+    if not email:
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        student_no = request.form['student_no']
+        course = request.form['course']
+        
+        db = get_db()
+        error = None
+
+        if not student_no:
+            error = 'Student number is required.'
+        elif not course:
+            error = 'Course is required.'
+
+        if error is None:
+            try:
+                # insert the user with preferably a unhackable random password..
+                dummy_password = '!OAUTH_LOGIN_ONLY!' 
+                db.execute(
+                    "INSERT INTO user (first_name, last_name, email, password, student_no, course) VALUES (?, ?, ?, ?, ?, ?)",
+                    (first_name, last_name, email, dummy_password, student_no, course),
+                )
+                db.commit()
+            except db.IntegrityError:
+                error = f"User {email} is already registered."
+            else:
+                user = get_user_by_email(db, email)
+                
+                # clear temp OAuth data
+                session.pop('oauth_email', None)
+                session.pop('oauth_first_name', None)
+                session.pop('oauth_last_name', None)
+                
+                # log the user in
+                session.clear()
+                session['user_id'] = user['id']
+                flash('Account created successfully!', 'success')
+                return redirect(url_for("index"))
+
+        if error:
+            flash(error, 'error')
+
+    return render_template('auth/complete_profile.html', email=email, first_name=first_name, last_name=last_name)
 
 @bp.route("/logout")
 def logout():
@@ -139,12 +215,7 @@ def logout():
     
     if user_id:
         db = get_db()
-        db.execute('''
-            UPDATE active_borrow 
-            SET time_left = MAX(0, time_left - CAST((strftime('%s', 'now') - strftime('%s', last_tick)) AS INTEGER)),
-                is_paused = 1 
-            WHERE user_id = ? AND is_paused = 0
-        ''', (user_id,))
+        pause_user_borrows(db, user_id)
         db.commit()
         
     session.clear()

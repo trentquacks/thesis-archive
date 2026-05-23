@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, g 
 from werkzeug.exceptions import abort
 from flaskr.db import get_db
 from flaskr.queries.archive_queries import (
@@ -43,6 +43,19 @@ def view(id):
 
     if thesis is None:
         abort(404, f"Thesis ID {id} doesn't exist.")
+
+    if thesis['status'] != 'approved':
+        if g.user is None:
+            flash("You do not have permission to view this thesis.", "error")
+            return redirect(url_for('archive.index'))
+        
+        # check permissions
+        is_uploader = (g.user['id'] == thesis['uploader_id'])
+        is_admin = (g.user['role'] == 'admin')
+        
+        if not (is_uploader or is_admin):
+            flash("This thesis is currently pending approval or rejected.", "error")
+            return redirect(url_for('archive.index'))
 
     advisor_names = get_thesis_advisors_string(db, id)
     citation = f"{thesis['citation_authors']} ({thesis['year']}). {thesis['title']}."

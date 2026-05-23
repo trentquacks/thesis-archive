@@ -67,16 +67,27 @@
                 {{ password_field('confirm_password', 'Confirm Password') }}
             </div>
 
-            <div class="pt-4 flex flex-col items-center gap-3">
-                <button type="submit" class="createacc-btn">
+            <div class="pt-4 flex flex-col items-center gap-3 w-full">
+                <button type="submit" class="createacc-btn w-full max-w-[200px]">
                     Create Account
                 </button>
+
                 <div class="text-center text-gray-500 text-sm">
                     Have an account already? <br>
                     <a href="{{ url_for('auth.login') }}" class="text-[#7E8C69] hover:underline underline-offset-4 font-semibold">Login Here</a>
                 </div>
-            </div>
 
+                <div class="w-full flex items-center py-2">
+                    <div class="flex-grow border-t border-sage-300"></div>
+                    <span class="flex-shrink-0 mx-4 text-sage-600 text-sm font-bold">OR</span>
+                    <div class="flex-grow border-t border-sage-300"></div>
+                </div>
+
+                <a href="{{ url_for('auth.google_login') }}" class="w-full flex items-center justify-center gap-3 bg-white text-sage-800 font-bold py-3 px-4 rounded-[1rem] hover:bg-sage-100 hover:shadow-md transition-all">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="w-5 h-5">
+                    Sign up with CvSU Account
+                </a>
+            </div>
         </form>
     </div>
 </main>

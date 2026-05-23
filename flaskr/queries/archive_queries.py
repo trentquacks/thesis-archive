@@ -31,6 +31,17 @@ def get_search_results(db, user_id, dept_id, search_term, sort, year, page, per_
         conditions += " AND strftime('%Y', thesis.date_published) = ?"
         cond_params.append(year)
 
+    if user_id:
+        user = db.execute("SELECT role FROM user WHERE id = ?", (user_id,)).fetchone()
+        if user and user['role'] == 'admin':
+            pass # admins can see all statuses in search
+        else:
+            conditions += " AND (thesis.status = 'approved' OR thesis.uploader_id = ?)"
+            cond_params.append(user_id)
+    else:
+        # guests only see approved
+        conditions += " AND thesis.status = 'approved'"
+
     count_sql = """
         SELECT COUNT(DISTINCT thesis.id) FROM thesis 
         JOIN thesis_author ON thesis.id = thesis_author.thesis_id 
@@ -41,7 +52,7 @@ def get_search_results(db, user_id, dept_id, search_term, sort, year, page, per_
     total_results = db.execute(count_sql, cond_params).fetchone()[0]
 
     select_sql = f"""
-        SELECT thesis.id, thesis.title, thesis.date_published, thesis.file_path,
+        SELECT thesis.id, thesis.title, thesis.date_published, thesis.file_path, thesis.status,
                department.name AS department_name, department.icon, department.description,
                GROUP_CONCAT(author.first_name || ' ' || author.last_name, ', ') AS authors,
                {'EXISTS(SELECT 1 FROM bookmark WHERE thesis_id = thesis.id AND user_id = ?)' if user_id else '0'} AS is_bookmarked
@@ -70,6 +81,7 @@ def get_search_results(db, user_id, dept_id, search_term, sort, year, page, per_
 def get_thesis_details(db, thesis_id):
     query = """
         SELECT t.id, t.title, t.abstract, t.keywords, t.file_path, t.call_number, t.barcode,
+            t.status, t.uploader_id, 
             strftime('%Y', t.date_published) AS year, d.name AS department_name, 
             d.description AS program_name, d.id as department_id, d.icon, f.format AS document_type,
             GROUP_CONCAT(a.first_name || ' ' || a.last_name, ', ') AS authors,

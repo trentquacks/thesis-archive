@@ -25,6 +25,34 @@
 
     <hr class="border-t-2 border-sage-800 mb-8">
 
+    {% if thesis.status and thesis.status != 'approved' %}
+    <div class="mb-8 p-4 rounded-xl border-l-4 shadow-sm flex items-start gap-4 
+        {% if thesis.status == 'pending' %} bg-amber-50 border-amber-500 text-amber-900
+        {% elif thesis.status == 'rejected' %} bg-red-50 border-red-500 text-red-900 {% endif %}">
+        
+        <div class="mt-1">
+            {% if thesis.status == 'pending' %}
+            <i class="fa-solid fa-clock text-amber-500 text-2xl"></i>
+            {% elif thesis.status == 'rejected' %}
+            <i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>
+            {% endif %}
+        </div>
+        
+        <div>
+            <h4 class="font-extrabold text-lg uppercase tracking-wide">
+                {{ thesis.status }} SUBMISSION
+            </h4>
+            <p class="text-sm mt-1 font-medium opacity-90">
+                {% if thesis.status == 'pending' %}
+                This thesis is currently under review. It is only visible to you and administrators, and will not appear in public search results until approved.
+                {% elif thesis.status == 'rejected' %}
+                This thesis has been rejected by an administrator and will not be published to the archive.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
 
         <div class="max-w-2xl">

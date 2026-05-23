@@ -45,10 +45,14 @@ def dashboard():
         under_review=under_review,
         approved=approved
     )
+
 @bp.route('/profile', methods=('GET', 'POST'))
 def profile():
     db = get_db()
     user_id = g.user['id']
+
+    user_record = db.execute('SELECT password FROM user WHERE id = ?', (user_id,)).fetchone()
+    has_password = user_record['password'] != '!OAUTH_LOGIN_ONLY!'
 
     if request.method == 'POST':
         if 'profile_pic' in request.files:
@@ -63,22 +67,28 @@ def profile():
                 flash('Profile picture updated successfully!')
                 return redirect(url_for('user.profile'))
 
-        elif 'current_password' in request.form:
-            current_password = request.form['current_password']
+        elif 'new_password' in request.form:
             new_password = request.form['new_password']
             confirm_password = request.form['confirm_password']
-            
             error = None
-            if not check_password_hash(g.user['password'], current_password):
-                error = 'Incorrect current password.'
-            elif new_password != confirm_password:
-                error = 'New passwords do not match.'
+            
+            if has_password:
+                current_password = request.form.get('current_password')
+                if not current_password:
+                    error = 'Current password is required.'
+                elif not check_password_hash(user_record['password'], current_password):
+                    error = 'Incorrect current password.'
+                    
+            if not error:
+                if new_password != confirm_password:
+                    error = 'New passwords do not match.'
                 
             if error is None:
-                update_user_password(db, generate_password_hash(new_password), user_id)
+                update_user_password(db, user_id, generate_password_hash(new_password))
                 flash('Password successfully updated!', "success")
                 return redirect(url_for('user.profile'))
-            flash(error)
+            
+            flash(error, 'error')
 
     total_projects = get_user_project_count(db, user_id)
     total_bookmarks = get_user_bookmark_count(db, user_id)
@@ -86,9 +96,9 @@ def profile():
     return render_template(
         'user/profile.html', 
         total_projects=total_projects, 
-        total_bookmarks=total_bookmarks
+        total_bookmarks=total_bookmarks,
+        has_password=has_password
     )
-
 @bp.route('/history')
 def history():
     user_id = g.user['id']

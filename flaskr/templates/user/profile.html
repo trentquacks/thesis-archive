@@ -4,6 +4,7 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script> 
 {% endblock %}
 
 {% block main %}
@@ -11,7 +12,13 @@
 {% macro password_input(label_text, input_name) %}
 <div class="flex flex-col gap-2">
     <label class="font-bold text-sage-800">{{ label_text }}:</label>
-    <input name="{{ input_name }}" type="password" class="w-full p-3 bg-sage-50 rounded-xl outline-none transition text-sage-900 border border-sage-200">
+    <div class="relative w-full">
+        <input name="{{ input_name }}" id="{{ input_name }}" type="password" class="w-full p-3 pr-12 bg-sage-50 rounded-xl outline-none transition text-sage-900 border border-sage-200">
+        
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition cursor-pointer toggle-password" data-target="{{ input_name }}">
+            <i class="fa-solid fa-eye-slash text-lg"></i>
+        </div>
+    </div>
 </div>
 {% endmacro %}
 
@@ -62,22 +69,34 @@
 
         <section class="bg-white rounded-2xl overflow-hidden shadow-sm border border-sage-100 shrink-0">
             <div class="bg-sage-500 text-white p-4">
-                <h3 class="text-xl font-bold">Change Password</h3>
+                <h3 class="text-xl font-bold">
+                    {% if has_password %} Change Password {% else %} Set Account Password {% endif %}
+                </h3>
             </div>
-            
-            <form action="{{ url_for('user.profile') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 flex flex-col gap-6">
+
+            <form action="{{ url_for('user.profile') }}" method="POST" class="p-6 md:p-8 flex flex-col gap-6">
+
+                {% if has_password %}
                 {{ password_input('Current Password', 'current_password') }}
+                {% else %}
+                <div class="bg-sage-50 p-4 rounded-xl border border-sage-200">
+                    <p class="text-sm text-sage-700 font-medium">
+                    <i class="fa-solid fa-circle-info mr-2"></i>
+                    Since you registered via Google, you do not have a password yet. Setting one will allow you to log in manually using your email.
+                    </p>
+                </div>
+                {% endif %}
+
                 {{ password_input('New Password', 'new_password') }}
-				{{ password_input('Confirm Password', 'confirm_password') }}
+                {{ password_input('Confirm Password', 'confirm_password') }}
 
                 <div class="flex justify-end gap-4 mt-2 border-t border-sage-100 pt-6">
                     <button type="submit" class="px-8 py-3 rounded-xl font-bold text-white bg-sage-600 hover:bg-sage-700 transition shadow-sm hover:-translate-y-0.5 transform">
-                        Change Password
+                        {% if has_password %} Change Password {% else %} Set Password {% endif %}
                     </button>
                 </div>
             </form>
         </section>
-
     </div>
 </main>
 {% endblock %}
