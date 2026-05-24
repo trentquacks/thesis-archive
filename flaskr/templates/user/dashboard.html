@@ -90,10 +90,10 @@
 
                 {% else %}
                 {% set badge_colors = {
-                'approved': 'from-[#7FB169] to-[#568A45]',
-                'pending': 'from-[#EED575] to-[#C9A52B]',
-                'rejected': 'from-[#E04B40] to-[#B02820]'
-                } %}
+                'approved': 'bg-green-100 text-green-700 border border-green-200',
+                'pending': 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+                'rejected': 'bg-red-100 text-red-700 border border-red-200'
+                }%}
 
                 {% if theses %}
                 {% for thesis in theses %}
@@ -113,7 +113,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-b {{ badge_colors[thesis.status] }} text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-sm self-end sm:self-auto">
+                    <div class="{{ badge_colors[thesis.status] }} px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider shadow-sm text-center">
                         {{ thesis.status }}
                     </div>
                 </div>

@@ -7,16 +7,28 @@
             <a href="{{ url_for('user.profile') }}" class="flex items-center gap-3 p-3">
                 <i class="fa-solid fa-user"></i> Profile
             </a>
-            <a href="{{ url_for('user.dashboard') }}" class="flex items-center gap-3 p-3 ">
-                <i class="fa-solid fa-gauge"></i> Dashboard
-            </a>
-            <a href="{{ url_for('user.bookmarks') }}" class="flex items-center gap-3 p-3">
-                <i class="fa-solid fa-bookmark"></i> Bookmarks
-            </a>
-            <a href="{{ url_for('user.history') }}" class="flex items-center gap-3 p-3">
-                <i class="fa-solid fa-clock-rotate-left"></i> History
-            </a>
+            
+            {% if g.user and g.user['role'] == 'admin' %}
+                <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3 p-3 ">
+                    <i class="fa-solid fa-chart-pie"></i> Admin Dashboard
+                </a>
+                <a href="{{ url_for('admin.review') }}" class="flex items-center gap-3 p-3">
+                    <i class="fa-solid fa-list-check"></i> Review Theses
+                </a>
+            {% else %}
+                <a href="{{ url_for('user.dashboard') }}" class="flex items-center gap-3 p-3 ">
+                    <i class="fa-solid fa-gauge"></i> Dashboard
+                </a>
+                <a href="{{ url_for('user.bookmarks') }}" class="flex items-center gap-3 p-3">
+                    <i class="fa-solid fa-bookmark"></i> Bookmarks
+                </a>
+                <a href="{{ url_for('user.history') }}" class="flex items-center gap-3 p-3">
+                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                </a>
+            {% endif %}
+            
         </nav>
+        
         <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 p-3">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
         </a>

@@ -1,0 +1,252 @@
+{% extends 'sidebar.html' %}
+
+{% block title %} Thesis Review {% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/review.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+<main class="flex-1 flex flex-col min-h-0 gap-6 relative w-full overflow-hidden">
+
+    <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
+
+        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+            <div class="flex items-center gap-4 border-b border-white/30 pb-4">
+                <i class="fa-solid fa-list-check text-4xl"></i>
+                <h2 class="text-3xl font-bold uppercase tracking-wider">Review Records</h2>
+            </div>
+            <p class="mt-4 text-sage-50 font-medium text-lg">
+                Manage incoming thesis submissions, update statuses, and maintain the archive database.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 shrink-0">
+            {% set stats = [
+                ('fa-hourglass-half', 'Pending Review', total_pending, 'text-yellow-600'),
+                ('fa-circle-check', 'Approved Records', total_approved, 'text-green-600'),
+                ('fa-circle-xmark', 'Rejected Records', total_rejected, 'text-red-600')
+            ] %}
+
+            {% for icon, label, value, color in stats %}
+            <div class="bg-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm border border-sage-100 text-sage-800">
+                <div class="w-12 h-12 bg-sage-50 rounded-full flex items-center justify-center text-sage-500">
+                    <i class="fa-solid {{ icon }} text-2xl {{ color }}"></i>
+                </div>
+                <span class="font-bold text-lg text-sage-700 text-center">{{ label }}: <br class="sm:hidden"><span class="text-sage-900 font-extrabold">{{ value }}</span></span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0">
+            <form action="{{ url_for('admin.review') }}" method="GET" class="flex flex-col xl:flex-row gap-4 items-center justify-between w-full">
+                
+                <div class="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full xl:w-auto">
+                    <div class="w-full sm:w-auto flex-1">
+                        <select name="status" class="w-full px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                            <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending Review</option>
+                            <option value="approved" {% if current_status == 'approved' %}selected{% endif %}>Approved</option>
+                            <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="w-full sm:w-auto flex-1">
+                        <select name="department" class="w-full px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition max-w-[200px] truncate">
+                            <option value="all">All Departments</option>
+                            {% for dept in departments %}
+                            <option value="{{ dept['id'] }}" {% if current_dept|string == dept['id']|string %}selected{% endif %}>{{ dept['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="w-full sm:w-auto flex-1">
+                        <select name="sort" class="w-full px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
+                    <button type="submit" class="w-full sm:w-auto bg-sage-600 hover:bg-sage-700 text-white px-6 py-1.5 rounded-lg font-bold transition shadow-sm">
+                        Apply
+                    </button>
+                    
+                    {% if current_status != 'pending' or current_dept != 'all' or current_sort != 'newest' %}
+                    <a href="{{ url_for('admin.review') }}" class="w-full sm:w-auto bg-sage-100 border border-sage-200 hover:bg-sage-200 text-sage-600 px-4 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm" title="Clear Filters">
+                        <i class="fa-solid fa-rotate-right mr-2 sm:mr-0"></i> <span class="sm:hidden">Reset Filters</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex flex-col min-h-[500px] shrink-0">
+            
+            <div class="p-4 sm:p-6 md:p-8 flex-1 flex flex-col gap-4">
+
+                {% set badge_colors = {
+                    'approved': 'bg-green-100 text-green-700 border border-green-200',
+                    'pending': 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+                    'rejected': 'bg-red-100 text-red-700 border border-red-200'
+                } %}
+
+                {% if theses %}
+                    {% for thesis in theses %}
+                    <div class="bg-sage-50 rounded-xl p-4 sm:p-5 border border-sage-200 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300 min-w-0">
+                        
+                        <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 w-full">
+                            <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner hidden md:flex shrink-0 items-center justify-center">
+                                <i class="fa-solid fa-file-pdf text-2xl"></i>
+                            </div>
+                            
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-sage-900 font-extrabold text-lg sm:text-xl leading-tight mb-1 truncate" title="{{ thesis['title'] }}">
+                                    {{ thesis['title'] }}
+                                </h4>
+                                <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-sage-600 font-bold text-xs sm:text-sm mt-2">
+                                    <span class="truncate max-w-[200px] sm:max-w-xs"><i class="fa-solid fa-building mr-1"></i> {{ thesis['department_name'] }}</span>
+                                    <span class="whitespace-nowrap"><i class="fa-regular fa-calendar mr-1"></i> {{ thesis['date_added'].strftime('%b %d, %Y') if thesis['date_added'] else 'Unknown' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between xl:justify-end gap-3 w-full xl:w-auto shrink-0 pt-2 xl:pt-0 border-t border-sage-200 xl:border-none">
+                            <div class="{{ badge_colors[thesis.status] }} px-3 sm:px-4 py-1.5 rounded-full font-bold text-[10px] sm:text-xs uppercase tracking-wider shadow-sm text-center whitespace-nowrap">
+                                {{ thesis.status }}
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a href="{{ url_for('archive.view', id=thesis.id) }}" class="bg-white hover:bg-sage-300 text-sage-700 px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition whitespace-nowrap">
+                                    View
+                                </a>
+
+                                {% if thesis.status in ['pending', 'approved'] %}
+                                <a href="{{ url_for('admin.edit', id=thesis.id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition flex items-center gap-1 whitespace-nowrap">
+                                    Edit
+                                </a>
+                                {% endif %}
+                                
+                                {% if thesis.status == 'pending' %}
+                                <button type="button" 
+                                        data-title="{{ thesis.title }}" 
+                                        data-url="{{ url_for('admin.update_status', id=thesis.id, new_status='approved') }}" 
+                                        class="open-approve-btn bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition shrink-0" title="Approve">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                                
+                                <button type="button" 
+                                        data-title="{{ thesis.title }}" 
+                                        data-url="{{ url_for('admin.update_status', id=thesis.id, new_status='rejected') }}" 
+                                        class="open-reject-btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition shrink-0" title="Reject">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16 px-4 text-center">
+                        <i class="fa-solid fa-folder-open text-6xl mb-4 opacity-40"></i>
+                        <span>No records found for the selected filters.</span>
+                    </div>
+                {% endif %}
+
+            </div>
+            
+            <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0 rounded-b-xl">
+                <span class="text-sage-600 font-medium text-sm text-center md:text-left w-full md:w-auto">
+                    Showing 
+                    <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if total_theses > 0 else 0 }}</span> 
+                    to 
+                    <span class="font-bold text-sage-900">{{ [current_page * 10, total_theses] | min }}</span> 
+                    of 
+                    <span class="font-bold text-sage-900">{{ total_theses | default(0) }}</span> entries
+                </span>
+
+                <nav class="flex gap-1 items-center justify-center w-full md:w-auto">
+                    {% set base_qs = "&status=" ~ current_status ~ "&department=" ~ current_dept ~ "&sort=" ~ current_sort %}
+                    
+                    {% if current_page > 1 %}
+                    <a href="?page={{ current_page - 1 }}{{ base_qs }}" class="px-2 sm:px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 sm:mr-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-chevron-left text-xs"></i> <span class="hidden sm:inline">Prev</span>
+                    </a>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                    {% if p == current_page %}
+                    <span class="px-2 sm:px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm transition transform hover:-translate-y-0.5 cursor-default text-sm sm:text-base">{{ p }}</span>
+                    {% else %}
+                    <a href="?page={{ p }}{{ base_qs }}" class="px-2 sm:px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition text-sm sm:text-base">{{ p }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if current_page < total_pages %}
+                    <a href="?page={{ current_page + 1 }}{{ base_qs }}" class="px-2 sm:px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 sm:ml-2 text-sm sm:text-base">
+                        <span class="hidden sm:inline">Next</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% macro review_modal(action, bg_light, text_color, bg_dark, hover_dark, icon, title, desc, warning, btn_text) %}
+<div id="{{ action }}Modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+        <button type="button" class="close-{{ action }}-btn absolute top-4 sm:top-6 right-4 sm:right-6 text-gray-400 hover:text-gray-700 transition-colors">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+            <div class="{{ bg_light }} {{ text_color }} p-3 rounded-full shrink-0">
+                <i class="fa-solid {{ icon }} text-xl"></i>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-gray-900">{{ title }}</h3>
+        </div>
+
+        <p class="text-gray-800 text-base sm:text-lg mb-2 mt-4 font-medium">{{ desc }}</p>
+        <p class="text-gray-600 text-xs sm:text-sm mb-6 pb-6 border-b border-gray-100">
+            <span id="{{ action }}-thesis-title" class="font-bold text-gray-800 block mb-1"></span>
+            {{ warning }}
+        </p>
+
+        <div class="flex justify-end gap-2 sm:gap-3 mt-4">
+            <button type="button" class="close-{{ action }}-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors text-sm sm:text-base">
+                Cancel
+            </button>
+            <form id="{{ action }}Form" action="" method="POST">
+                <button type="submit" class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl {{ bg_dark }} text-white font-bold {{ hover_dark }} shadow-md transition transform hover:-translate-y-0.5 text-sm sm:text-base">
+                    {{ btn_text }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+
+{{ review_modal(
+    action='approve', 
+    bg_light='bg-green-100', text_color='text-green-600', bg_dark='bg-green-600', hover_dark='hover:bg-green-700', 
+    icon='fa-check', 
+    title='Approve Record', 
+    desc='Are you sure you want to approve this submission?', 
+    warning='Once approved, this thesis will be published to the archive and become visible to all users.', 
+    btn_text='Confirm Approve'
+) }}
+
+{{ review_modal(
+    action='reject', 
+    bg_light='bg-red-100', text_color='text-red-600', bg_dark='bg-red-600', hover_dark='hover:bg-red-700', 
+    icon='fa-xmark', 
+    title='Reject Record', 
+    desc='Are you sure you want to reject this submission?', 
+    warning='This action will mark the record as rejected and it will not be published to the archive.', 
+    btn_text='Confirm Reject'
+) }}
+
+{% endblock %}

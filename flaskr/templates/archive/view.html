@@ -112,7 +112,7 @@
         ('Keywords', thesis.keywords or 'N/A', 'fa-tags'),
         ('Citation', citation, 'fa-quote-right'),
         ('Document Type', thesis.document_type or 'Thesis', 'fa-file-lines'),
-        ('Program Name', thesis.program_name or thesis.department_name, 'fa-graduation-cap'),
+        ('Program Name', thesis.department_name, 'fa-graduation-cap'),
         ('Advisor', advisor_names or 'N/A', 'fa-chalkboard-user'),
         ('Barcode', thesis.barcode or 'N/A', 'fa-barcode'),
         ('Call Number', thesis.call_number or 'N/A', 'fa-hashtag')

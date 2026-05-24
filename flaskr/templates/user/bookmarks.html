@@ -68,7 +68,7 @@
                     </div>
                     
                     <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 pt-2 sm:pt-0">
-                        <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="px-4 py-2 bg-sage-200 text-sage-800 hover:bg-sage-300 rounded-lg font-bold text-sm transition shadow-sm">
+                        <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="bg-white hover:bg-sage-300 text-sage-700 px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition">
                             View
                         </a>
                         <form action="{{ url_for('user.toggle_bookmark', thesis_id=bookmark.thesis_id) }}" method="POST" class="inline">
