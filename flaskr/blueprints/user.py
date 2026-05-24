@@ -5,8 +5,9 @@ from werkzeug.security import generate_password_hash
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session
 from flaskr.db import get_db
 from flaskr.helper import (save_uploaded_file, extract_contributors_from_form)
+from flaskr.queries.shared_queries import get_form_dropdown_options
 from flaskr.queries.user_queries import (
-    get_submission_form_options, get_user_thesis, submit_thesis_transaction, 
+    get_user_thesis, submit_thesis_transaction, 
     toggle_user_bookmark, update_profile_picture, update_user_password, 
     get_user_project_count, get_user_bookmark_count, get_user_bookmarks_paginated,
     get_user_history_paginated, get_user_borrowed_theses
@@ -200,5 +201,5 @@ def submit():
                 os.remove(actual_save_path) # Rollback file if DB fails
             flash(f"An error occurred while saving: {error_msg}", 'error')
 
-    programs, formats, branches = get_submission_form_options(db)
+    programs, formats, branches = get_form_dropdown_options(db)
     return render_template("user/form.html", programs=programs, formats=formats, branches=branches)

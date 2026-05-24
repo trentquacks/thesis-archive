@@ -3,9 +3,10 @@ from datetime import datetime
 from flask import Blueprint, render_template, g, redirect, url_for, flash, request
 from flaskr.db import get_db
 from flaskr.helper import extract_contributors_from_form, save_uploaded_file
+from flaskr.queries.shared_queries import get_form_dropdown_options
 from flaskr.queries.admin_queries import (
     get_thesis_stats, get_departments_list, get_filtered_review_theses, 
-    update_thesis_status_and_log, get_thesis_by_id, get_form_options, 
+    update_thesis_status_and_log, get_thesis_by_id, 
     update_thesis_record, get_thesis_authors, get_thesis_advisors
 )
 bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -131,7 +132,7 @@ def edit(id):
             flash("Thesis record updated successfully.", "success")
             return redirect(url_for('admin.review'))
 
-    departments, branches, formats = get_form_options(db)
+    departments, branches, formats = get_form_dropdown_options(db)
     authors = get_thesis_authors(db, id)
     advisors = get_thesis_advisors(db, id)
     

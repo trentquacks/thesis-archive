@@ -1,6 +1,5 @@
 import uuid
 from .shared_queries import fetch_paginated_data
-from datetime import datetime, timedelta
 
 def get_user_thesis(db, user_id):
     return db.execute("""
@@ -92,12 +91,6 @@ def get_user_history_paginated(db, user_id, page, action_filter, date_filter, so
     data, total_items, total_pages = fetch_paginated_data(db, main_query, count_query, params, page)
     return data, total_items, total_pages
 
-def get_submission_form_options(db):
-    programs = db.execute("SELECT id, name FROM department").fetchall()
-    formats = db.execute("SELECT id, format FROM format").fetchall()
-    branches = db.execute("SELECT id, name FROM branch").fetchall()
-    return programs, formats, branches
-
 def _process_contributors(db, thesis_id, person_data_list, role):
     config = {
         'author': {'table': 'author', 'id_col': 'student_no', 'map_table': 'thesis_author', 'fk_col': 'author_id'},
@@ -164,32 +157,3 @@ def get_user_borrowed_theses(db, user_id):
     ''', (user_id,)).fetchall()
     
     return [b for b in raw_borrows if b['actual_time_left'] > 0]
-
-def increment_failed_attempts(db, user_id):
-    db.execute(
-        'UPDATE users SET failed_attempts = failed_attempts + 1 WHERE id = ?',
-        (user_id,)
-    )
-    db.commit()
-
-def lock_user_account(db, user_id):
-    lockout_time = datetime.now() + timedelta(minutes=10)
-    db.execute(
-        'UPDATE users SET lockout_until = ? WHERE id = ?',
-        (lockout_time.strftime('%Y-%m-%d %H:%M:%S'), user_id)
-    )
-    db.commit()
-
-def reset_failed_attempts(db, user_id):
-    db.execute(
-        'UPDATE users SET failed_attempts = 0, lockout_until = NULL WHERE id = ?',
-        (user_id,)
-    )
-    db.commit()
-
-def get_user_by_email(db, email):
-    """Retrieves a user record by their email address."""
-    return db.execute(
-        'SELECT * FROM users WHERE email = ?', 
-        (email,)
-    ).fetchone()
