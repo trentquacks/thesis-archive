@@ -4,12 +4,14 @@ from datetime import datetime
 from flask import Blueprint, render_template, g, redirect, url_for, flash, request
 from flaskr.db import get_db
 from flaskr.helper import extract_contributors_from_form, save_uploaded_file
+from flask import jsonify
 from flaskr.queries.shared_queries import get_form_dropdown_options
 from flaskr.queries.admin_queries import (
     get_thesis_stats, get_departments_list, get_filtered_review_theses, 
     update_thesis_status_and_log, get_thesis_by_id, 
     update_thesis_record, get_thesis_authors, get_thesis_advisors, delete_thesis_record,
-    get_dashboard_stats, get_traffic_data, get_department_distribution, get_projects_tracking_data
+    get_dashboard_stats, get_traffic_data, get_department_distribution, get_projects_tracking_data,
+    get_thesis_borrow_history
 )
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -24,6 +26,38 @@ def admin_required(view):
         return view(**kwargs)
     return wrapped_view
 
+@bp.route('/api/thesis/<int:id>/borrows')
+@admin_required
+def api_thesis_borrows(id):
+    db = get_db()
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'newest')
+
+    borrows, total, pages = get_thesis_borrow_history(db, id, sort, page)
+
+    borrow_list = []
+    for b in borrows:
+        try:
+            dt = datetime.strptime(b['timestamp'], '%Y-%m-%d %H:%M:%S')
+            formatted_date = dt.strftime('%B %d, %Y at %I:%M %p')
+        except (ValueError, TypeError):
+            formatted_date = b['timestamp']
+
+        pic = b['profile_pic'] if b['profile_pic'] else 'default.png' # no profile pic fallback
+        pic_url = url_for('static', filename=f'uploads/profile_pics/{pic}')
+
+        borrow_list.append({
+            'name': f"{b['first_name']} {b['last_name']}",
+            'profile_pic': pic_url,
+            'date': formatted_date
+        })
+
+    return jsonify({
+        'borrows': borrow_list,
+        'total': total,
+        'pages': pages,
+        'current_page': page
+    })
 
 @bp.route("/dashboard/stats")
 @admin_required

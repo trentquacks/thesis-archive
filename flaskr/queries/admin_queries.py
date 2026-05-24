@@ -38,6 +38,24 @@ def get_filtered_review_theses(db, status_filter, department_filter, sort_filter
         
     return fetch_paginated_data(db, main_query, count_query, params, page)
 
+def get_thesis_borrow_history(db, thesis_id, sort_order='newest', page=1, per_page=5):
+    """Fetches the paginated borrow history for a specific thesis."""
+    count_query = "SELECT COUNT(*) FROM user_history WHERE thesis_id = ? AND action = 'Borrowed'"
+    
+    main_query = """
+        SELECT u.first_name, u.last_name, u.profile_pic, h.timestamp
+        FROM user_history h
+        JOIN user u ON h.user_id = u.id
+        WHERE h.thesis_id = ? AND h.action = 'Borrowed'
+    """
+    
+    if sort_order == 'oldest':
+        main_query += " ORDER BY h.timestamp ASC"
+    else:
+        main_query += " ORDER BY h.timestamp DESC"
+
+    return fetch_paginated_data(db, main_query, count_query, [thesis_id], page, per_page)
+
 def update_thesis_status_and_log(db, thesis_id, user_id, new_status):
     """
     Updates the thesis status, logs it in user_history, and commits to the DB.
