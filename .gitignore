@@ -6,3 +6,4 @@ flaskr/queries/__pycache__/
 flaskr/blueprints/__pycache__/
 .DS_Store
 tests/
+instance/
