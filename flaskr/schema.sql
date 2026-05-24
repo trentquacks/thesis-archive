@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS thesis_advisor;
 DROP TABLE IF EXISTS bookmark; 
 DROP TABLE IF EXISTS user_history; 
 DROP TABLE IF EXISTS active_borrow; 
+DROP TABLE IF EXISTS daily_traffic; 
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +26,8 @@ CREATE TABLE user (
   profile_pic TEXT DEFAULT 'default.png',
   role TEXT CHECK( role IN ('student', 'admin', 'librarian') ) DEFAULT 'student',
   failed_attempts INTEGER DEFAULT 0,
-  lockout_until DATETIME
+  lockout_until DATETIME,
+  date_registered TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
 );
 
 CREATE TABLE author (
@@ -71,6 +73,9 @@ status TEXT CHECK( status IN ('pending', 'approved', 'rejected') ) DEFAULT 'pend
   isbn TEXT,
   barcode TEXT,
   call_number TEXT, -- used for finding in shelves easily
+
+  -- analytics
+  views INTEGER DEFAULT 0,
 
   -- foreigns
   department_id INTEGER NOT NULL, 
@@ -139,6 +144,12 @@ CREATE TABLE active_borrow (
   UNIQUE(user_id, thesis_id) -- user can only have one active session per thesis at a time
 );
 
+-- for statistics reasons
+CREATE TABLE daily_traffic (
+  visit_date DATE PRIMARY KEY,
+  guest_visits INTEGER DEFAULT 0,
+  registered_visits INTEGER DEFAULT 0
+);
 
 -- Information required according to SRS
 -- searchable by keyword, title, author, date year

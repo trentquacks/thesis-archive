@@ -13,6 +13,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flaskr import oauth
 from flaskr.db import get_db
+from flaskr.queries.shared_queries import track_daily_traffic
 from flaskr.queries.auth_queries import get_user_by_email, increment_failed_attempts, lock_user_account, reset_failed_attempts, unpause_user_borrows, pause_user_borrows
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -34,6 +35,7 @@ def login_required(view):
 def load_logged_in_user():
     """If a user id is stored in the session, load the user object from
     the database into ``g.user``."""
+    db = get_db()
     user_id = session.get("user_id")
 
     if user_id is None:
@@ -42,6 +44,8 @@ def load_logged_in_user():
         g.user = (
             get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         )
+
+    track_daily_traffic(db, is_registered=(g.user is not None))
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():

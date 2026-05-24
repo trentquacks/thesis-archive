@@ -1,0 +1,15 @@
+<div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0 flex items-center justify-center sm:justify-start">
+    <div class="flex flex-col sm:flex-row bg-sage-50 p-1 rounded-lg border border-sage-200 w-full sm:w-auto">
+        {% set tabs = [('admin.dashboard_stats', 'Stats View', 'fa-chart-simple'), 
+                       ('admin.dashboard_projects', 'Projects View', 'fa-folder-open'), 
+                       ('admin.dashboard_accounts', 'Registered Accounts', 'fa-users')] %}
+        
+        {% for route, label, icon in tabs %}
+        <a href="{{ url_for(route) }}" 
+           class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all 
+                  {% if request.endpoint == route %}bg-white shadow-sm text-sage-800{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-200/50{% endif %}">
+            <i class="fa-solid {{ icon }} mr-2"></i> {{ label }}
+        </a>
+        {% endfor %}
+    </div>
+</div>

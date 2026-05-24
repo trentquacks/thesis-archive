@@ -150,3 +150,7 @@ def process_borrow_logic(db, user_id, thesis_id):
 def remove_expired_borrow(db, borrow_id):
     db.execute('DELETE FROM active_borrow WHERE id = ?', (borrow_id,))
     db.commit()
+
+def increment_thesis_views(db, thesis_id):
+    db.execute("UPDATE thesis SET views = views + 1 WHERE id = ?", (thesis_id,))
+    db.commit()

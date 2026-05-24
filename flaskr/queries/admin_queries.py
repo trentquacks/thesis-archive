@@ -1,4 +1,7 @@
 from flaskr.queries.shared_queries import fetch_paginated_data
+from flask import current_app
+from datetime import datetime
+import os
 
 def get_thesis_stats(db):
     """Returns the total count for pending, approved, and rejected theses."""
@@ -142,3 +145,181 @@ def update_thesis_record(db, thesis_id, user_id, data, file_path=None, authors=N
         (user_id, action_text, thesis_id)
     )
     db.commit()
+
+
+def delete_thesis_record(db, thesis_id, user_id):
+    """Safely deletes a thesis, its mappings, and optionally its physical file."""
+    thesis = db.execute("SELECT title, file_path FROM thesis WHERE id = ?", (thesis_id,)).fetchone()
+    
+    if not thesis:
+        return None
+        
+    # delete the physical file from the server if it exists
+    if thesis['file_path']:
+        actual_path = thesis['file_path'].lstrip('/') 
+        if os.path.exists(actual_path):
+            try:
+                os.remove(actual_path)
+            except OSError:
+                pass 
+
+    db.execute("DELETE FROM thesis_author WHERE thesis_id = ?", (thesis_id,))
+    db.execute("DELETE FROM thesis_advisor WHERE thesis_id = ?", (thesis_id,))
+    db.execute("DELETE FROM thesis WHERE id = ?", (thesis_id,))
+    
+    action_text = f"Deleted record: {thesis['title']}"
+    db.execute(
+        "INSERT INTO user_history (user_id, action, thesis_id) VALUES (?, ?, NULL)",
+        (user_id, action_text)
+    )
+    
+    db.commit()
+    return thesis['title']
+
+
+def get_dashboard_stats(db):
+    """Fetches overview statistics for the main admin dashboard."""
+    # total thesis & this week
+    total_thesis = db.execute("SELECT COUNT(id) FROM thesis").fetchone()[0]
+    thesis_week = db.execute("SELECT COUNT(id) FROM thesis WHERE date_added >= datetime('now', '-7 days')").fetchone()[0]
+    
+    # approved and rejected & this Week
+    approved_total = db.execute("SELECT COUNT(id) FROM thesis WHERE status = 'approved'").fetchone()[0]
+    approved_week = db.execute("SELECT COUNT(id) FROM thesis WHERE status = 'approved' AND date_added >= datetime('now', '-7 days')").fetchone()[0]
+    
+    rejected_total = db.execute("SELECT COUNT(id) FROM thesis WHERE status = 'rejected'").fetchone()[0]
+    rejected_week = db.execute("SELECT COUNT(id) FROM thesis WHERE status = 'rejected' AND date_added >= datetime('now', '-7 days')").fetchone()[0]
+    
+    # deleted records & last year
+    deleted_total = db.execute("SELECT COUNT(id) FROM user_history WHERE action LIKE 'Deleted record:%'").fetchone()[0]
+    deleted_last_year = db.execute("SELECT COUNT(id) FROM user_history WHERE action LIKE 'Deleted record:%' AND timestamp >= datetime('now', '-1 year')").fetchone()[0]
+    
+    # registered accounts
+    total_users = db.execute("SELECT COUNT(id) FROM user").fetchone()[0]
+    
+    # fake data for template
+    users_week = db.execute("SELECT COUNT(id) FROM user WHERE date_registered >= datetime('now', '-7 days')").fetchone()[0]
+    
+    return {
+        'total_thesis': total_thesis,
+        'thesis_week': thesis_week,
+        'approved_total': approved_total,
+        'approved_week': approved_week,
+        'rejected_total': rejected_total,
+        'rejected_week': rejected_week,
+        'deleted_total': deleted_total,
+        'deleted_last_year': deleted_last_year,
+        'total_users': total_users,
+        'users_week': users_week
+    }
+
+def get_traffic_data(db, time_range='7days'):
+    """Fetches traffic data scaled by days or months based on the requested time range."""
+    
+    if time_range == '30days':
+        query = """
+            WITH RECURSIVE dates(date) AS (
+                SELECT date('now', '-29 days') UNION ALL
+                SELECT date(date, '+1 day') FROM dates WHERE date < date('now')
+            )
+            SELECT d.date, COALESCE(t.guest_visits, 0) as guests, COALESCE(t.registered_visits, 0) as registered
+            FROM dates d LEFT JOIN daily_traffic t ON d.date = t.visit_date ORDER BY d.date ASC
+        """
+        rows = db.execute(query).fetchall()
+        labels = [datetime.strptime(row['date'], '%Y-%m-%d').strftime('%b %d') for row in rows]
+        
+    elif time_range == '1year':
+        query = """
+            WITH RECURSIVE months(ym) AS (
+                SELECT strftime('%Y-%m', date('now', '-11 months')) UNION ALL
+                SELECT strftime('%Y-%m', date(ym || '-01', '+1 month')) FROM months WHERE ym < strftime('%Y-%m', 'now')
+            )
+            SELECT m.ym as date, SUM(COALESCE(t.guest_visits, 0)) as guests, SUM(COALESCE(t.registered_visits, 0)) as registered
+            FROM months m LEFT JOIN daily_traffic t ON strftime('%Y-%m', t.visit_date) = m.ym
+            GROUP BY m.ym ORDER BY m.ym ASC
+        """
+        rows = db.execute(query).fetchall()
+        labels = [datetime.strptime(row['date'], '%Y-%m').strftime('%b %Y') for row in rows]
+        
+    elif time_range == 'all':
+        first_record = db.execute("SELECT MIN(visit_date) as min_date FROM daily_traffic").fetchone()
+        start_date = first_record['min_date'] if first_record and first_record['min_date'] else datetime.now().strftime('%Y-%m-%d')
+        
+        query = f"""
+            WITH RECURSIVE months(ym) AS (
+                SELECT strftime('%Y-%m', '{start_date}') UNION ALL
+                SELECT strftime('%Y-%m', date(ym || '-01', '+1 month')) FROM months WHERE ym < strftime('%Y-%m', 'now')
+            )
+            SELECT m.ym as date, SUM(COALESCE(t.guest_visits, 0)) as guests, SUM(COALESCE(t.registered_visits, 0)) as registered
+            FROM months m LEFT JOIN daily_traffic t ON strftime('%Y-%m', t.visit_date) = m.ym
+            GROUP BY m.ym ORDER BY m.ym ASC
+        """
+        rows = db.execute(query).fetchall()
+        labels = [datetime.strptime(row['date'], '%Y-%m').strftime('%b %Y') for row in rows]
+        
+    else:
+        # Default: Last 7 Days (Daily)
+        query = """
+            WITH RECURSIVE dates(date) AS (
+                SELECT date('now', '-6 days') UNION ALL
+                SELECT date(date, '+1 day') FROM dates WHERE date < date('now')
+            )
+            SELECT d.date, COALESCE(t.guest_visits, 0) as guests, COALESCE(t.registered_visits, 0) as registered
+            FROM dates d LEFT JOIN daily_traffic t ON d.date = t.visit_date ORDER BY d.date ASC
+        """
+        rows = db.execute(query).fetchall()
+        labels = [datetime.strptime(row['date'], '%Y-%m-%d').strftime('%b %d') for row in rows]
+
+    guests = [row['guests'] for row in rows]
+    registered = [row['registered'] for row in rows]
+    
+    return labels, guests, registered
+
+def get_department_distribution(db):
+    """Fetches the number of theses per department for the pie chart."""
+    rows = db.execute('''
+        SELECT d.name, COUNT(t.id) as count
+        FROM department d
+        LEFT JOIN thesis t ON d.id = t.department_id
+        GROUP BY d.id, d.name
+        ORDER BY count DESC
+    ''').fetchall()
+    
+    labels = [row['name'] for row in rows]
+    counts = [row['count'] for row in rows]
+    
+    return labels, counts
+
+from flaskr.queries.shared_queries import fetch_paginated_data
+
+def get_projects_tracking_data(db, sort_filter, page, per_page=10):
+    """Fetches engagement stats (views, borrows, recent borrowers) for approved projects."""
+    count_query = "SELECT COUNT(id) FROM thesis WHERE status = 'approved'"
+    
+    # counts borrows and grabs the names of the most recent borrowers
+    main_query = """
+        SELECT t.id, t.title, t.views, d.name as department_name,
+               (SELECT COUNT(*) FROM user_history uh WHERE uh.thesis_id = t.id AND uh.action = 'Borrowed') as borrow_count,
+               (
+                   SELECT GROUP_CONCAT(first_name || ' ' || last_name, ', ') 
+                   FROM (
+                       SELECT u.first_name, u.last_name 
+                       FROM user_history uh 
+                       JOIN user u ON uh.user_id = u.id 
+                       WHERE uh.thesis_id = t.id AND uh.action = 'Borrowed' 
+                       ORDER BY uh.timestamp DESC LIMIT 3
+                   )
+               ) as recent_borrowers
+        FROM thesis t
+        JOIN department d ON t.department_id = d.id
+        WHERE t.status = 'approved'
+    """
+    
+    if sort_filter == 'most_viewed':
+        main_query += " ORDER BY t.views DESC"
+    elif sort_filter == 'most_borrowed':
+        main_query += " ORDER BY borrow_count DESC"
+    else:
+        main_query += " ORDER BY t.date_published DESC"
+        
+    return fetch_paginated_data(db, main_query, count_query, [], page, per_page)

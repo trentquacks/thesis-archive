@@ -1,4 +1,5 @@
 import functools
+from werkzeug.security import check_password_hash
 from datetime import datetime
 from flask import Blueprint, render_template, g, redirect, url_for, flash, request
 from flaskr.db import get_db
@@ -7,7 +8,8 @@ from flaskr.queries.shared_queries import get_form_dropdown_options
 from flaskr.queries.admin_queries import (
     get_thesis_stats, get_departments_list, get_filtered_review_theses, 
     update_thesis_status_and_log, get_thesis_by_id, 
-    update_thesis_record, get_thesis_authors, get_thesis_advisors
+    update_thesis_record, get_thesis_authors, get_thesis_advisors, delete_thesis_record,
+    get_dashboard_stats, get_traffic_data, get_department_distribution, get_projects_tracking_data
 )
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -23,11 +25,38 @@ def admin_required(view):
     return wrapped_view
 
 
-@bp.route("/dashboard")
+@bp.route("/dashboard/stats")
 @admin_required
-def dashboard():
-    return render_template("admin/dashboard.html")
+def dashboard_stats():
+    db = get_db()
+    stats = get_dashboard_stats(db)
+    graph_labels, graph_guests, graph_registered = get_traffic_data(db, request.args.get('time_range', '7days'))
+    dept_labels, dept_counts = get_department_distribution(db)
+    
+    return render_template("admin/dashboard/stats.html", 
+                           stats=stats, 
+                           graph_labels=graph_labels, 
+                           graph_guests=graph_guests, 
+                           graph_registered=graph_registered,
+                           dept_labels=dept_labels, 
+                           dept_counts=dept_counts)
 
+@bp.route("/dashboard/projects")
+@admin_required
+def dashboard_projects():
+    db = get_db()
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'most_viewed')
+    projects, total, pages = get_projects_tracking_data(db, sort, page)
+    
+    return render_template("admin/dashboard/projects.html", 
+                           projects=projects, total_projects=total, 
+                           total_pages=pages, current_page=page, current_sort=sort)
+
+@bp.route("/dashboard/accounts")
+@admin_required
+def dashboard_accounts():
+    return render_template("admin/dashboard/accounts.html")
 
 @bp.route("/review")
 @admin_required
@@ -145,3 +174,25 @@ def edit(id):
         authors=authors,
         advisors=advisors
     )
+
+@bp.route('/thesis/<int:id>/delete', methods=['POST'])
+@admin_required
+def delete(id):
+    db = get_db()
+    
+    admin_password = request.form.get('admin_password')
+    
+    admin_record = db.execute('SELECT password FROM user WHERE id = ?', (g.user['id'],)).fetchone()
+    
+    if not admin_password or not check_password_hash(admin_record['password'], admin_password):
+        flash("Incorrect password. Deletion cancelled.", "error")
+        return redirect(request.referrer or url_for('admin.review'))
+        
+    deleted_title = delete_thesis_record(db, id, g.user['id'])
+    
+    if deleted_title:
+        flash(f"Project '{deleted_title}' was successfully deleted.", "success")
+    else:
+        flash("Thesis record not found.", "error")
+        
+    return redirect(request.referrer or url_for('admin.review'))

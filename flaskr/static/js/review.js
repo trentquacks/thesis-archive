@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // 3. close modal by clicking outside the white box
+        // close modal by clicking outside the white box
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.add('hidden');
@@ -34,5 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    ['approve', 'reject'].forEach(setupModal);
+    ['approve', 'reject', 'delete'].forEach(setupModal);
 });

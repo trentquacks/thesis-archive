@@ -126,6 +126,12 @@
                                     Edit
                                 </a>
                                 {% endif %}
+                                <button type="button" 
+                                        data-title="{{ thesis.title }}" 
+                                        data-url="{{ url_for('admin.delete', id=thesis.id) }}" 
+                                        class="open-delete-btn bg-gray-50 hover:bg-red-100 text-gray-500 hover:text-red-700 px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition shrink-0" title="Delete Record">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
                                 
                                 {% if thesis.status == 'pending' %}
                                 <button type="button" 
@@ -194,7 +200,7 @@
     </div>
 </main>
 
-{% macro review_modal(action, bg_light, text_color, bg_dark, hover_dark, icon, title, desc, warning, btn_text) %}
+{% macro review_modal(action, bg_light, text_color, bg_dark, hover_dark, icon, title, desc, warning, btn_text, require_password=False) %}
 <div id="{{ action }}Modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
     <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
         <button type="button" class="close-{{ action }}-btn absolute top-4 sm:top-6 right-4 sm:right-6 text-gray-400 hover:text-gray-700 transition-colors">
@@ -209,21 +215,29 @@
         </div>
 
         <p class="text-gray-800 text-base sm:text-lg mb-2 mt-4 font-medium">{{ desc }}</p>
-        <p class="text-gray-600 text-xs sm:text-sm mb-6 pb-6 border-b border-gray-100">
+        <p class="text-gray-600 text-xs sm:text-sm mb-4 pb-4 border-b border-gray-100">
             <span id="{{ action }}-thesis-title" class="font-bold text-gray-800 block mb-1"></span>
             {{ warning }}
         </p>
 
-        <div class="flex justify-end gap-2 sm:gap-3 mt-4">
-            <button type="button" class="close-{{ action }}-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors text-sm sm:text-base">
-                Cancel
-            </button>
-            <form id="{{ action }}Form" action="" method="POST">
+        <form id="{{ action }}Form" action="" method="POST" class="mt-4">
+            
+            {% if require_password %}
+            <div class="mb-6 bg-red-50 p-4 rounded-xl border border-red-100">
+                <label class="block text-sm font-bold text-red-900 mb-2"><i class="fa-solid fa-lock mr-1"></i> Admin Password Required</label>
+                <input type="password" name="admin_password" required placeholder="Enter your password to confirm" class="w-full bg-white border border-red-200 text-gray-900 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none transition shadow-sm">
+            </div>
+            {% endif %}
+
+            <div class="flex justify-end gap-2 sm:gap-3">
+                <button type="button" class="close-{{ action }}-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors text-sm sm:text-base">
+                    Cancel
+                </button>
                 <button type="submit" class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl {{ bg_dark }} text-white font-bold {{ hover_dark }} shadow-md transition transform hover:-translate-y-0.5 text-sm sm:text-base">
                     {{ btn_text }}
                 </button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endmacro %}
@@ -247,6 +261,17 @@
     desc='Are you sure you want to reject this submission?', 
     warning='This action will mark the record as rejected and it will not be published to the archive.', 
     btn_text='Confirm Reject'
+) }}
+
+{{ review_modal(
+    action='delete', 
+    bg_light='bg-red-100', text_color='text-red-600', bg_dark='bg-red-600', hover_dark='hover:bg-red-700', 
+    icon='fa-trash-can', 
+    title='Delete Record', 
+    desc='Are you absolutely sure you want to delete this submission?', 
+    warning='This action is PERMANENT and cannot be undone. The digital file and all associated metadata will be wiped.', 
+    btn_text='Confirm Delete',
+    require_password=True
 ) }}
 
 {% endblock %}

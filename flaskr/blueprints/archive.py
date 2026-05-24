@@ -4,7 +4,8 @@ from flaskr.db import get_db
 from flaskr.queries.archive_queries import (
     get_all_departments, get_search_results, get_thesis_details, 
     get_thesis_advisors_string, check_user_bookmark, get_active_borrow_record, 
-    get_daily_borrow_count, process_borrow_logic, remove_expired_borrow
+    get_daily_borrow_count, process_borrow_logic, remove_expired_borrow,
+    increment_thesis_views
 )
 
 bp = Blueprint("archive", __name__)
@@ -68,6 +69,7 @@ def view(id):
     active_borrow = actual_time_left > 0
     
     daily_borrows_count = get_daily_borrow_count(db, user_id)
+    increment_thesis_views(db, id)
 
     return render_template(
         "archive/view.html", thesis=thesis, citation=citation, is_bookmarked=is_bookmarked,
