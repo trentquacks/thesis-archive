@@ -11,12 +11,12 @@
 
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
-        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+        <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
             <div class="flex items-center gap-4 border-b border-white/30 pb-4">
                 <i class="fa-solid fa-gauge-high text-4xl"></i>
                 <h2 class="text-3xl font-bold uppercase tracking-wider">User Dashboard</h2>
             </div>
-            <p class="mt-4 text-sage-50 font-medium text-lg">
+            <p class="mt-4 text-white opacity-90 font-medium text-lg">
             Welcome back! Track your project submissions, monitor active reviews, and manage your archive records.
             </p>
         </div>
@@ -29,46 +29,46 @@
             ] %}
 
             {% for icon, label, value in stats %}
-            <div class="bg-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm border border-sage-100 text-sage-800">
-                <div class="w-12 h-12 bg-sage-50 rounded-full flex items-center justify-center text-sage-500">
+            <div class="bg-theme-surface p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm border border-theme-border text-theme-text">
+                <div class="w-12 h-12 bg-theme-tertiary rounded-full flex items-center justify-center text-theme-primary border border-theme-border">
                     <i class="fa-solid {{ icon }} text-2xl"></i>
                 </div>
-                <span class="font-bold text-lg text-sage-700">{{ label }}: <span class="text-sage-900 font-extrabold">{{ value }}</span></span>
+                <span class="font-bold text-lg text-theme-muted">{{ label }}: <span class="text-theme-text font-extrabold">{{ value }}</span></span>
             </div>
             {% endfor %}
 
-            <a href="{{ url_for('user.submit') }}" class="bg-sage-600 text-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm hover:bg-sage-700 transition transform hover:-translate-y-1">
+            <a href="{{ url_for('user.submit') }}" class="bg-theme-primary text-white p-6 flex flex-col items-center justify-center gap-3 rounded-xl shadow-sm hover:bg-theme-primary-hover transition transform hover:-translate-y-1">
                 <i class="fa-solid fa-plus text-3xl"></i>
                 <span class="font-bold text-xl">Submit Project</span>
             </a>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0 flex items-center">
-            <div class="flex bg-sage-50 p-1 rounded-lg border border-sage-200 w-full sm:w-auto">
+        <div class="bg-theme-surface p-4 rounded-xl shadow-sm border border-theme-border shrink-0 flex items-center">
+            <div class="flex bg-theme-secondary p-1 rounded-lg border border-theme-border w-full sm:w-auto">
                 <a href="{{ url_for('user.dashboard', view='authored') }}" 
-                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view != 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
+                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view != 'borrowed' %}bg-theme-primary text-white shadow-sm{% else %}text-theme-muted hover:text-theme-text hover:bg-theme-tertiary{% endif %}">
                     <i class="fa-solid fa-pen-nib mr-2"></i> Authored Projects
                 </a>
                 <a href="{{ url_for('user.dashboard', view='borrowed') }}" 
-                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view == 'borrowed' %}bg-sage-600 text-white shadow-sm{% else %}text-sage-600 hover:text-sage-800 hover:bg-sage-100{% endif %}">
+                   class="flex-1 sm:flex-none text-center px-6 py-2 rounded-md font-bold transition-all {% if current_view == 'borrowed' %}bg-theme-primary text-white shadow-sm{% else %}text-theme-muted hover:text-theme-text hover:bg-theme-tertiary{% endif %}">
                     <i class="fa-solid fa-book-open-reader mr-2"></i> Borrowed Theses
                 </a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex flex-col min-h-[500px] shrink-0">
+        <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border flex flex-col min-h-[500px] shrink-0">
 
             <div class="p-6 md:p-8 flex-1 flex flex-col gap-4">
 
                 {% if current_view == 'borrowed' %} {% if borrowed_theses %}
                 {% for thesis in borrowed_theses %}
-                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
+                <div class="bg-theme-tertiary rounded-xl p-5 border border-theme-border flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-theme-primary">
                     <div class="flex items-center gap-4">
-                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
+                        <div class="bg-theme-surface p-3 rounded-lg text-theme-primary border border-theme-border shadow-inner">
                             <i class="fa-solid {{ thesis.icon or 'fa-book-open' }} text-2xl"></i>
                         </div>
                         <div>
-                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
+                            <h4 class="text-theme-text font-extrabold text-lg leading-tight mb-1">{{ thesis.title }}</h4>
                             <span class="text-red-600 font-bold text-sm time-container">
                                 <i class="fa-regular fa-clock mr-1"></i> 
                                 <span class="borrow-timer" data-time="{{ thesis.actual_time_left }}">Calculating...</span> left
@@ -76,13 +76,13 @@
                         </div>
                     </div>
 
-                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-sage-200 hover:bg-sage-300 text-sage-800 px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
+                    <a href="{{ url_for('archive.read', id=thesis.id) }}" class="bg-theme-secondary hover:bg-theme-border text-theme-text px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition self-end sm:self-auto">
                         Continue Reading
                     </a>
                 </div>
                 {% endfor %}
                 {% else %}
-                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+                <div class="flex flex-col items-center justify-center h-full text-theme-muted font-semibold text-lg py-16">
                     <i class="fa-solid fa-book-open text-6xl mb-4 opacity-40"></i>
                     <span>You do not have any actively borrowed theses.</span>
                 </div>
@@ -97,17 +97,17 @@
 
                 {% if theses %}
                 {% for thesis in theses %}
-                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
+                <div class="bg-theme-tertiary rounded-xl p-5 border border-theme-border flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-theme-primary">
                     <div class="flex items-center gap-4">
-                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner">
+                        <div class="bg-theme-surface p-3 rounded-lg text-theme-primary border border-theme-border shadow-inner">
                             <i class="fa-solid {{ thesis.icon or 'fa-file-lines' }} text-2xl"></i>
                         </div>
                         <div>
-                            <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1"><a href="{{ url_for('archive.view', id=thesis['id']) }}" class="font-bold text-sage-900 hover:text-sage-600 hover:underline underline-offset-4 transition-colors cursor-pointer">
+                            <h4 class="text-theme-text font-extrabold text-lg leading-tight mb-1"><a href="{{ url_for('archive.view', id=thesis['id']) }}" class="font-bold text-theme-text hover:text-theme-primary hover:underline underline-offset-4 transition-colors cursor-pointer">
                                     {{ thesis['title'] }}
                                 </a>
                             </h4>
-                            <span class="text-sage-600 font-bold text-sm">
+                            <span class="text-theme-muted font-bold text-sm">
                                 <i class="fa-regular fa-calendar-days mr-1"></i> Published: {{ thesis.year }}
                             </span>
                         </div>
@@ -127,7 +127,7 @@
                 </div>
                 {% endfor %}
                 {% else %}
-                <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16">
+                <div class="flex flex-col items-center justify-center h-full text-theme-muted font-semibold text-lg py-16">
                     <i class="fa-solid fa-folder-open text-6xl mb-4 opacity-40"></i>
                     <span>No projects submitted yet.</span>
                 </div>
@@ -139,8 +139,8 @@
     </div>
 </main>
 <div id="feedbackModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
-        <button type="button" class="close-feedback-btn absolute top-4 sm:top-6 right-4 sm:right-6 text-gray-400 hover:text-gray-700 transition-colors">
+    <div class="bg-theme-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative border border-theme-border">
+        <button type="button" class="close-feedback-btn absolute top-4 sm:top-6 right-4 sm:right-6 text-theme-muted hover:text-theme-text transition-colors">
             <i class="fa-solid fa-xmark text-2xl"></i>
         </button>
 
@@ -148,14 +148,14 @@
             <div class="bg-red-100 text-red-600 p-3 rounded-full shrink-0">
                 <i class="fa-solid fa-comment-dots text-xl"></i>
             </div>
-            <h3 class="text-xl sm:text-2xl font-extrabold text-gray-900">Admin Feedback</h3>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-theme-text">Admin Feedback</h3>
         </div>
 
         <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-gray-800 font-medium whitespace-pre-wrap max-h-64 overflow-y-auto custom-scrollbar" id="feedbackContent">
             </div>
 
         <div class="mt-6 flex justify-end">
-            <button type="button" class="close-feedback-btn px-6 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors text-sm sm:text-base">
+            <button type="button" class="close-feedback-btn px-6 py-2.5 rounded-xl bg-theme-secondary text-theme-text font-bold hover:brightness-95 transition-colors text-sm sm:text-base">
                 Close
             </button>
         </div>

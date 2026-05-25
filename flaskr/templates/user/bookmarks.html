@@ -5,22 +5,22 @@
 {% block main %}
 <main class="flex-1 flex flex-col gap-6 min-h-0">
 
-    <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+    <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
         <div class="flex items-center gap-4 border-b border-white/30 pb-4">
             <i class="fa-solid fa-bookmark text-4xl"></i>
             <h2 class="text-3xl font-bold uppercase tracking-wider">Bookmarks</h2>
         </div>
-        <p class="mt-4 text-sage-50 font-medium text-lg">
+        <p class="mt-4 text-white opacity-90 font-medium text-lg">
         Manage and easily access your saved undergraduate theses and capstone projects.
         </p>
     </div>
 
-<div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0">
+    <div class="bg-theme-surface p-4 rounded-xl shadow-sm border border-theme-border shrink-0">
         <form action="{{ url_for('user.bookmarks') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
             
             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
                 <div class="flex items-center gap-2">
-                    <select name="sort" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                    <select name="sort" class="px-4 py-2.5 rounded-lg text-theme-text bg-theme-tertiary border border-theme-border font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-theme-primary transition">
                         <option value="date" {% if current_sort == 'date' %}selected{% endif %}>Date Added</option>
                         <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Title</option>
                         <option value="author" {% if current_sort == 'author' %}selected{% endif %}>Author</option>
@@ -28,7 +28,7 @@
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <select name="order" class="px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-sage-500 transition">
+                    <select name="order" class="px-4 py-2.5 rounded-lg text-theme-text bg-theme-tertiary border border-theme-border font-bold outline-none cursor-pointer text-sm focus:ring-2 focus:ring-theme-primary transition">
                         <option value="desc" {% if current_order == 'desc' %}selected{% endif %}>Descending</option>
                         <option value="asc" {% if current_order == 'asc' %}selected{% endif %}>Ascending</option>
                     </select>
@@ -36,30 +36,29 @@
             </div>
 
             <div class="w-full md:w-auto flex justify-end">
-                <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-6 py-1.5 rounded-lg font-bold transition shadow-sm w-full md:w-auto">
+                <button type="submit" class="bg-theme-primary hover:bg-theme-primary-hover text-white px-6 py-1.5 rounded-lg font-bold transition shadow-sm w-full md:w-auto">
                     Apply
                 </button>
             </div>
             
         </form>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
+    <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border flex-1 flex flex-col min-h-0 overflow-hidden">
         
-
         <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4">
             {% if bookmarks %}
                 {% for bookmark in bookmarks %}
-                <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-sage-300">
+                <div class="bg-theme-tertiary rounded-xl p-5 border border-theme-border flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 shrink-0 transition hover:shadow-md hover:border-theme-primary">
                     
                     <div class="flex items-start sm:items-center gap-4">
-                        <div class="bg-white p-3 rounded-lg text-sage-600 border border-sage-200 shadow-inner mt-1 sm:mt-0">
+                        <div class="bg-theme-surface p-3 rounded-lg text-theme-primary border border-theme-border shadow-inner mt-1 sm:mt-0">
                             <i class="fa-solid fa-book-bookmark text-2xl"></i>
                         </div>
                         <div>
-                            <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="text-sage-900 font-extrabold text-lg leading-tight mb-1 hover:text-sage-600 transition underline decoration-sage-300 decoration-2 underline-offset-4 line-clamp-2">
+                            <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="text-theme-text font-extrabold text-lg leading-tight mb-1 hover:text-theme-primary transition underline decoration-theme-border decoration-2 underline-offset-4 line-clamp-2">
                                 {{ bookmark.title }}
                             </a>
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sage-600 font-bold text-sm mt-2">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-theme-muted font-bold text-sm mt-2">
                                 <span><i class="fa-solid fa-user-pen mr-1"></i> {{ bookmark.author }}</span>
                                 <span class="hidden sm:inline opacity-50">|</span>
                                 <span><i class="fa-regular fa-calendar-days mr-1"></i> Added {{ bookmark.date_added | timeago }}</span>
@@ -68,7 +67,7 @@
                     </div>
                     
                     <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 pt-2 sm:pt-0">
-                        <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="bg-white hover:bg-sage-300 text-sage-700 px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition">
+                        <a href="{{ url_for('archive.view', id=bookmark.thesis_id) }}" class="bg-theme-secondary hover:bg-theme-border text-theme-text px-3 py-2 rounded-lg font-bold text-sm shadow-sm transition">
                             View
                         </a>
                         <form action="{{ url_for('user.toggle_bookmark', thesis_id=bookmark.thesis_id) }}" method="POST" class="inline">
@@ -82,15 +81,15 @@
             
             {% else %}
                 <div class="flex flex-col items-center justify-center h-full py-10">
-                    <div class="bg-white rounded-xl border-2 border-sage-200 border-dashed flex flex-col items-center justify-center p-8 text-center max-w-lg w-full">
-                        <div class="w-20 h-20 bg-sage-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                            <i class="fa-regular fa-bookmark text-4xl text-sage-500"></i>
+                    <div class="bg-theme-surface rounded-xl border-2 border-theme-border border-dashed flex flex-col items-center justify-center p-8 text-center max-w-lg w-full">
+                        <div class="w-20 h-20 bg-theme-secondary rounded-full flex items-center justify-center mb-6 shadow-inner">
+                            <i class="fa-regular fa-bookmark text-4xl text-theme-primary"></i>
                         </div>
-                        <h3 class="text-2xl font-extrabold text-sage-900 mb-2">Your reading list is empty</h3>
-                        <p class="text-sage-700 text-lg mb-8">
+                        <h3 class="text-2xl font-extrabold text-theme-text mb-2">Your reading list is empty</h3>
+                        <p class="text-theme-muted text-lg mb-8">
                             You haven't saved any projects yet. When you find a thesis you want to read later, just click the bookmark icon and it will show up right here.
                         </p>
-                        <a href="{{ url_for('archive.index') }}" class="px-8 py-3 bg-sage-500 text-white rounded-xl font-bold shadow-md hover:bg-sage-600 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <a href="{{ url_for('archive.index') }}" class="px-8 py-3 bg-theme-primary text-white rounded-xl font-bold shadow-md hover:bg-theme-primary-hover transition transform hover:-translate-y-0.5 flex items-center gap-2">
                             <i class="fa-solid fa-magnifying-glass"></i> Browse the Archive
                         </a>
                     </div>
@@ -98,33 +97,33 @@
             {% endif %}
         </div>
 
-        <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
-            <span class="text-sage-600 font-medium text-sm">
+        <div class="bg-theme-surface p-4 border-t border-theme-border flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+            <span class="text-theme-muted font-medium text-sm">
                 Showing 
-                <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if total_bookmarks > 0 else 0 }}</span> 
+                <span class="font-bold text-theme-text">{{ ((current_page - 1) * 10) + 1 if total_bookmarks > 0 else 0 }}</span> 
                 to 
-                <span class="font-bold text-sage-900">{{ [current_page * 10, total_bookmarks] | min }}</span> 
+                <span class="font-bold text-theme-text">{{ [current_page * 10, total_bookmarks] | min }}</span> 
                 of 
-                <span class="font-bold text-sage-900">{{ total_bookmarks | default(0) }}</span> entries
+                <span class="font-bold text-theme-text">{{ total_bookmarks | default(0) }}</span> entries
             </span>
 
             <nav class="flex gap-1 items-center">
                 {% if current_page > 1 %}
-                <a href="{{ url_for('user.bookmarks', page=current_page-1, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2">
+                <a href="{{ url_for('user.bookmarks', page=current_page-1, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition flex items-center gap-1 mr-2">
                     <i class="fa-solid fa-chevron-left text-xs"></i> Prev
                 </a>
                 {% endif %}
 
                 {% for p in range(1, total_pages + 1) %}
                 {% if p == current_page %}
-                <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm transition transform hover:-translate-y-0.5 cursor-default">{{ p }}</span>
+                <span class="px-3 py-1 rounded-md bg-theme-primary text-white font-bold shadow-sm transition transform hover:-translate-y-0.5 cursor-default">{{ p }}</span>
                 {% else %}
-                <a href="{{ url_for('user.bookmarks', page=p, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                <a href="{{ url_for('user.bookmarks', page=p, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition">{{ p }}</a>
                 {% endif %}
                 {% endfor %}
 
                 {% if current_page < total_pages %}
-                <a href="{{ url_for('user.bookmarks', page=current_page+1, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">
+                <a href="{{ url_for('user.bookmarks', page=current_page+1, sort=current_sort, order=current_order) }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition flex items-center gap-1 ml-2">
                     Next <i class="fa-solid fa-chevron-right text-xs"></i>
                 </a>
                 {% endif %}

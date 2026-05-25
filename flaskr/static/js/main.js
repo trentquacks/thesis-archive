@@ -12,9 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// theme toggler
+const VALID_THEMES = ['sage-light', 'dark', 'cvsu'];
 
-const savedTheme = localStorage.getItem('theme');
+let savedTheme = localStorage.getItem('theme');
+
+if (!VALID_THEMES.includes(savedTheme)) {
+    savedTheme = null;
+}
+
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'sage-light');
 
@@ -28,8 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         themeSelector.addEventListener('change', (e) => {
             const selectedTheme = e.target.value;
-            document.documentElement.setAttribute('data-theme', selectedTheme);
-            localStorage.setItem('theme', selectedTheme);
+            // Only apply and save if it's a valid theme
+            if (VALID_THEMES.includes(selectedTheme)) {
+                document.documentElement.setAttribute('data-theme', selectedTheme);
+                localStorage.setItem('theme', selectedTheme);
+            }
         });
     }
 });

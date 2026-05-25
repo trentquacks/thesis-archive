@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}{% endblock %} | Project Archive</title>
-        
+
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
         <script>
@@ -12,6 +12,17 @@
                 theme: {
                     extend: {
                         colors: {
+                            theme: {
+                                base: 'var(--bg-base)',
+                                surface: 'var(--bg-surface)',
+                                tertiary: 'var(--bg-tertiary)', 
+                                secondary: 'var(--bg-secondary)',
+                                primary: 'var(--theme-primary)',
+                                'primary-hover': 'var(--theme-primary-hover)',
+                                text: 'var(--text-main)',
+                                muted: 'var(--text-muted)',
+                                border: 'var(--border-subtle)'
+                            },
                             sage: {
                                 50: 'var(--color-sage-50)',
                                 100: 'var(--color-sage-100)',
@@ -23,11 +34,11 @@
                                 700: 'var(--color-sage-700)',
                                 800: 'var(--color-sage-800)',
                                 900: 'var(--color-sage-900)',
-                            }
+                            },
                         },
                         fontFamily: {
-                            serif: ['Crimson Pro', 'serif'],
-                        }
+                                serif: ['Crimson Pro', 'serif'],
+                            }
                     }
                 }
             }
@@ -38,8 +49,9 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     </head>
 
-    <body class="bg-sage-50 font-serif text-sage-800 leading-relaxed p-6 md:p-10">
-        <header class="bg-sage-500 rounded-xl px-8 py-4 flex justify-between items-center text-white font-extrabold max-w-6xl mx-auto shadow-sm">
+    <body class="bg-theme-base font-serif text-theme-text leading-relaxed p-6 md:p-10 transition-colors duration-300">
+        
+        <header class="bg-theme-primary rounded-xl px-8 py-4 flex justify-between items-center text-white font-extrabold max-w-6xl mx-auto shadow-sm transition-colors duration-300">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-graduation-cap text-3xl"></i>
                 <h1 class="text-2xl font-bold">Project Archive</h1>
@@ -49,18 +61,17 @@
                 <a href="{{ url_for('index') }}" class="text-white hover:underline font-bold">Home</a>
                 <a href="#" class="text-white hover:underline font-bold">About</a>
                 <a href="#" class="text-white hover:underline font-bold">FAQ</a>
-                <div class="relative inline-block text-left">
-                    <select id="theme-selector" class="bg-sage-600 text-white font-bold px-3 py-1.5 rounded-lg border border-sage-300 outline-none cursor-pointer hover:bg-sage-700 transition text-sm">
-                        <option value="sage-light">Sage Light</option>
-                        <option value="dark">Dark Mode</option>
-                        <option value="ocean">Ocean Blue</option>
-                    </select>
-                </div>
+                
+                <select id="theme-selector" class="bg-theme-primary-hover text-white font-bold px-3 py-1.5 rounded-lg border border-theme-border outline-none cursor-pointer hover:opacity-90 transition text-sm">
+                    <option value="sage-light">Sage Light</option>
+                    <option value="dark">Dark Mode</option>
+                    <option value="cvsu">CvSU Theme</option>
+                </select>
                 
                 {% if g.user %}
                 <div class="dropdown flex items-center gap-2 relative">
                     <div class="w-10 h-10 overflow-hidden rounded-full inline-block align-middle">
-                        <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover">
+                        <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover border-2 border-theme-secondary">
                     </div>
                     <button class="flex items-center gap-1 p-0 m-0 bg-transparent border-none text-white cursor-pointer font-bold outline-none">
                         <span>{{ g.user['first_name'] + ' ' +g.user['last_name'] }}</span>
@@ -78,16 +89,18 @@
                 {% endif %}
             </nav>
         </header>
+
         <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
                         
-                        {% set bg_class = 'bg-sage-200 text-sage-800 border-sage-300' %}
+                        {% set bg_class = 'bg-theme-surface text-theme-text border-theme-border' %}
+                        
                         {% if category == 'error' %}
                             {% set bg_class = 'bg-red-100 text-red-800 border-red-300' %}
                         {% elif category == 'success' %}
-                            {% set bg_class = 'bg-[#EAF0E4] text-[#4A5D4A] border-[#C5CCB7]' %}
+                            {% set bg_class = 'bg-[var(--toast-success-bg)] text-[var(--toast-success-text)] border-[var(--toast-success-border)]' %}
                         {% endif %}
                         
                         <div class="pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg {{ bg_class }} transition-all" role="alert">
@@ -109,6 +122,7 @@
                 {% endif %}
             {% endwith %}
         </div>
+        
         {% block content %}{% endblock %}
     </body>
 </html>

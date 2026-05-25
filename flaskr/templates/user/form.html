@@ -9,47 +9,47 @@
 {% block main %}
 <main class="flex-1 flex flex-col gap-6 min-h-0">
     
-    <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+    <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
         <div class="flex items-center gap-4 border-b border-white/30 pb-4">
             <i class="fa-solid fa-file-arrow-up text-4xl"></i>
             <h2 class="text-3xl font-bold uppercase tracking-wider">Submit Project</h2>
         </div>
-        <p class="mt-4 text-sage-50 font-medium text-lg">
+        <p class="mt-4 text-white opacity-90 font-medium text-lg">
             Upload a new undergraduate thesis or capstone project to the university archive.
         </p>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 flex flex-col min-h-0 overflow-hidden">
+    <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border flex-1 flex flex-col min-h-0 overflow-hidden">
         
         <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1">
-            <form action="{{ url_for('user.submit') }}" method="POST" enctype="multipart/form-data" id="thesis-form" class="flex flex-col gap-8 text-sage-900">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-sage-100 pb-8">
-
+            <form action="{{ url_for('user.submit') }}" method="POST" enctype="multipart/form-data" id="thesis-form" class="flex flex-col gap-8 text-theme-text">
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-theme-border pb-8">
                     <div class="md:col-span-1 pt-2">
-                        <label class="font-extrabold text-xl text-sage-900">Authors</label>
-                        <p class="text-sm font-medium text-sage-600 mt-1">Add all contributing authors.</p>
-                        <button type="button" id="add-author-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add Author
+                        <label class="font-extrabold text-xl text-theme-text">Authors</label>
+                        <p class="text-sm font-medium text-theme-muted mt-1">Add all contributing authors.</p>
+                        <button type="button" id="add-author-btn" class="mt-4 text-sm font-bold bg-theme-secondary text-theme-text px-3 py-2 rounded-lg hover:brightness-95 transition flex items-center gap-2 border border-theme-border">
+                            <i class="fa-solid fa-plus text-theme-primary"></i> Add Author
                         </button>
                     </div>
 
                     <div class="md:col-span-3 flex flex-col gap-4" id="authors-container">
-                        <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                        <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
                             <div class="flex flex-col gap-1">
-                                <input name="author_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="John" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                                <input name="author_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="John" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="author_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Doe" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                                <input name="author_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Doe" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="author_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Smith" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                                <input name="author_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Smith" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="student_number[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="2026XXXXX" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Student No.*</span>
+                                <input name="student_number[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="2026XXXXX" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Student No.*</span>
                             </div>
                             <button type="button" class="remove-author-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
                                 <i class="fa-solid fa-xmark"></i>
@@ -57,32 +57,33 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-sage-100 pb-8 mt-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-theme-border pb-8 mt-6">
                     <div class="md:col-span-1 pt-2">
-                        <label class="font-extrabold text-xl text-sage-900">Advisors</label>
-                        <p class="text-sm font-medium text-sage-600 mt-1">Add thesis advisors or panels.</p>
-                        <button type="button" id="add-advisor-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add Advisor
+                        <label class="font-extrabold text-xl text-theme-text">Advisors</label>
+                        <p class="text-sm font-medium text-theme-muted mt-1">Add thesis advisors or panels.</p>
+                        <button type="button" id="add-advisor-btn" class="mt-4 text-sm font-bold bg-theme-secondary text-theme-text px-3 py-2 rounded-lg hover:brightness-95 transition flex items-center gap-2 border border-theme-border">
+                            <i class="fa-solid fa-plus text-theme-primary"></i> Add Advisor
                         </button>
                     </div>
                     
                     <div class="md:col-span-3 flex flex-col gap-4" id="advisors-container">
-                        <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                        <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
                             <div class="flex flex-col gap-1">
-                                <input name="advisor_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Kita" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                                <input name="advisor_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Kita" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="advisor_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Ikuyo" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                                <input name="advisor_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Ikuyo" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="advisor_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Goat" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                                <input name="advisor_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Goat" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <input name="faculty_no[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" placeholder="Faculty Number" />
-                                <span class="text-sm font-semibold italic text-sage-500 pl-1">Faculty Number*</span>
+                                <input name="faculty_no[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Faculty Number" />
+                                <span class="text-sm font-semibold italic text-theme-muted pl-1">Faculty Number*</span>
                             </div>
                             <button type="button" class="remove-advisor-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
                                 <i class="fa-solid fa-xmark"></i>
@@ -90,27 +91,28 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start border-b border-sage-100 pb-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start border-b border-theme-border pb-8">
                     <div class="md:col-span-1 pt-3">
-                        <label class="font-extrabold text-xl text-sage-900">Research Details</label>
+                        <label class="font-extrabold text-xl text-theme-text">Research Details</label>
                     </div>
                     <div class="md:col-span-3 flex flex-col gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-sage-700 mb-2">Research Title</label>
-                            <input name="title" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="Enter full thesis title..." />
+                            <label class="block text-sm font-bold text-theme-text mb-2">Research Title</label>
+                            <input name="title" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Enter full thesis title..." />
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-sage-700 mb-2">Abstract</label>
-                            <textarea name="abstract" rows="6" class="w-full p-3 rounded-xl resize-none outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" placeholder="Write your research's abstract..."></textarea>
+                            <label class="block text-sm font-bold text-theme-text mb-2">Abstract</label>
+                            <textarea name="abstract" rows="6" class="w-full p-3 rounded-xl resize-none outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Write your research's abstract..."></textarea>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-bold text-sage-700 mb-2">Date Published</label>
-                                <input name="date" id="published-date" type="date" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900" />
+                                <label class="block text-sm font-bold text-theme-text mb-2">Date Published</label>
+                                <input name="date" id="published-date" type="date" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text" />
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-sage-700 mb-2">Program</label>
-                                <select name="program" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900 cursor-pointer">
+                                <label class="block text-sm font-bold text-theme-text mb-2">Program</label>
+                                <select name="program" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text cursor-pointer">
                                     {% for program in programs %}
                                     <option value="{{ program.id }}">{{ program.name }}</option>
                                     {% endfor %}
@@ -118,10 +120,10 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-sage-700 mb-2">Keywords <span class="font-medium italic text-sage-500">(Max 5)</span></label>
-                            <div class="bg-sage-50 border border-sage-200 rounded-xl p-3 flex flex-wrap items-center gap-2 outline-none focus-within:ring-2 focus-within:ring-sage-500 focus-within:bg-white transition">
+                            <label class="block text-sm font-bold text-theme-text mb-2">Keywords <span class="font-medium italic text-theme-muted">(Max 5)</span></label>
+                            <div class="bg-theme-tertiary border border-theme-border rounded-xl p-3 flex flex-wrap items-center gap-2 outline-none focus-within:ring-2 focus-within:ring-theme-primary focus-within:bg-theme-base transition">
                                 <div id="tags-container" class="flex flex-wrap items-center gap-2"></div>
-                                <input id="tag-input" type="text" placeholder="Type and press Enter" class="flex-1 min-w-[150px] p-1 border-none outline-none text-sage-900 bg-transparent placeholder-sage-400" />
+                                <input id="tag-input" type="text" placeholder="Type and press Enter" class="flex-1 min-w-[150px] p-1 border-none outline-none text-theme-text bg-transparent placeholder-theme-muted" />
                                 <input type="hidden" name="keywords" id="hidden-keywords">
                             </div>
                             <p id="error-message" class="mt-2 text-sm text-red-500 font-bold hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> You can only add up to 5 tags.</p>
@@ -131,13 +133,13 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
                     <div class="md:col-span-1 pt-3">
-                        <label class="font-extrabold text-xl text-sage-900">Document Files</label>
+                        <label class="font-extrabold text-xl text-theme-text">Document Files</label>
                     </div>
                     <div class="md:col-span-3 flex flex-col gap-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-bold text-sage-700 mb-2">Format</label>
-                                <select name="format" id="format-select" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900 cursor-pointer">
+                                <label class="block text-sm font-bold text-theme-text mb-2">Format</label>
+                                <select name="format" id="format-select" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text cursor-pointer">
                                     <option value="" disabled selected>Select Format</option>
                                     {% for format in formats %}
                                     <option value="{{ format.id }}">{{ format.format }}</option>
@@ -145,8 +147,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-sage-700 mb-2">Branch</label>
-                                <select name="branch" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 focus:bg-white transition bg-sage-50 border border-sage-200 text-sage-900 cursor-pointer">
+                                <label class="block text-sm font-bold text-theme-text mb-2">Branch</label>
+                                <select name="branch" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text cursor-pointer">
                                     <option value="" disabled selected>Select Branch</option>
                                     {% for branch in branches %}
                                     <option value="{{ branch.id }}">{{ branch.name }}</option>
@@ -155,22 +157,22 @@
                             </div>
                         </div>
                         <div id="file-upload-container" class="transition-opacity duration-300">
-                            <label class="block text-sm font-bold text-sage-700 mb-2">Attach Paper (PDF)</label>
-                            <input name="file" id="file-upload" type="file" required class="w-full p-3 rounded-xl bg-sage-50 border border-sage-200 outline-none focus:ring-2 focus:ring-sage-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-sage-200 file:text-sage-800 hover:file:bg-sage-300 cursor-pointer" />
-                            <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                            <label class="block text-sm font-bold text-theme-text mb-2">Attach Paper (PDF)</label>
+                            <input name="file" id="file-upload" type="file" required class="w-full p-3 rounded-xl bg-theme-tertiary border border-theme-border outline-none focus:ring-2 focus:ring-theme-primary transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-theme-secondary file:text-theme-text hover:file:brightness-95 cursor-pointer text-theme-text" />
+                            <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-sage-50 border border-sage-200 rounded-xl p-5 flex gap-4 items-start">
-                    <input type="checkbox" id="terms" name="terms" required class="mt-1 w-5 h-5 text-sage-600 rounded focus:ring-sage-500 cursor-pointer accent-sage-600">
-                    <label for="terms" class="text-sm font-medium text-sage-700 leading-relaxed cursor-pointer select-none">
+                <div class="bg-theme-tertiary border border-theme-border rounded-xl p-5 flex gap-4 items-start">
+                    <input type="checkbox" id="terms" name="terms" required class="mt-1 w-5 h-5 text-theme-primary rounded focus:ring-theme-primary cursor-pointer accent-theme-primary">
+                    <label for="terms" class="text-sm font-medium text-theme-text opacity-90 leading-relaxed cursor-pointer select-none">
                         By checking this box, I confirm that I have read and understood the terms of submission. I agree that once my thesis is approved, it will be included in the Thesis Archive System and may be made available for digital viewing by authorized users in accordance with system policies. I also confirm that my submitted work is original and complies with the institution’s academic requirements.
                     </label>
                 </div>
 
-                <div class="flex justify-end mt-4 pt-6 border-t border-sage-100">
-                    <button type="submit" class="bg-sage-600 text-white px-10 py-3 rounded-xl font-bold hover:bg-sage-700 transition shadow-sm hover:-translate-y-0.5 flex items-center gap-2">
+                <div class="flex justify-end mt-4 pt-6 border-t border-theme-border">
+                    <button type="submit" class="bg-theme-primary text-white px-10 py-3 rounded-xl font-bold hover:bg-theme-primary-hover transition shadow-sm hover:-translate-y-0.5 flex items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Submit Project
                     </button>
                 </div>

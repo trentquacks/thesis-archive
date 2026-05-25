@@ -11,12 +11,12 @@
 <main class="flex-1 flex flex-col min-h-0 gap-6">
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
-        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+        <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
             <div class="flex items-center gap-4 border-b border-white/30 pb-4">
                 <i class="fa-solid fa-chart-pie text-4xl"></i>
                 <h2 class="text-3xl font-bold uppercase tracking-wider">System Dashboard</h2>
             </div>
-            <p class="mt-4 text-sage-50 font-medium text-lg">
+            <p class="mt-4 text-white opacity-90 font-medium text-lg">
                 Overview of archive statistics, project lists, and user accounts.
             </p>
         </div>
@@ -24,80 +24,80 @@
         {% include 'admin/dashboard/dashboard_nav.html' %}
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-sage-100 flex flex-col justify-between transition hover:shadow-md">
+            <div class="bg-theme-surface p-6 rounded-xl shadow-sm border border-theme-border flex flex-col justify-between transition hover:shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sage-600 font-bold text-xs uppercase tracking-wider">Total Theses</h3>
+                    <h3 class="text-theme-muted font-bold text-xs uppercase tracking-wider">Total Theses</h3>
                     <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center">
                         <i class="fa-solid fa-book"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-3xl font-extrabold text-sage-900">{{ stats.total_thesis }}</span>
+                    <span class="text-3xl font-extrabold text-theme-text">{{ stats.total_thesis }}</span>
                     <p class="text-xs font-bold text-green-600 mt-2 flex items-center gap-1">
                         <i class="fa-solid fa-arrow-trend-up"></i> +{{ stats.thesis_week }} this week
                     </p>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-sage-100 flex flex-col justify-between transition hover:shadow-md">
+            <div class="bg-theme-surface p-6 rounded-xl shadow-sm border border-theme-border flex flex-col justify-between transition hover:shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sage-600 font-bold text-xs uppercase tracking-wider">Status Overview</h3>
+                    <h3 class="text-theme-muted font-bold text-xs uppercase tracking-wider">Status Overview</h3>
                     <div class="bg-purple-50 text-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
                 </div>
                 <div class="flex gap-4">
                     <div class="flex-1">
-                        <p class="text-[10px] font-bold text-sage-500 uppercase tracking-wide">Approved</p>
+                        <p class="text-[10px] font-bold text-theme-muted uppercase tracking-wide">Approved</p>
                         <span class="text-xl font-extrabold text-green-600">{{ stats.approved_total }}</span>
                         <p class="text-[10px] font-bold text-green-600 mt-1">+{{ stats.approved_week }} wk</p>
                     </div>
-                    <div class="w-px bg-sage-100"></div>
+                    <div class="w-px bg-theme-border"></div>
                     <div class="flex-1">
-                        <p class="text-[10px] font-bold text-sage-500 uppercase tracking-wide">Rejected</p>
+                        <p class="text-[10px] font-bold text-theme-muted uppercase tracking-wide">Rejected</p>
                         <span class="text-xl font-extrabold text-red-600">{{ stats.rejected_total }}</span>
                         <p class="text-[10px] font-bold text-red-600 mt-1">+{{ stats.rejected_week }} wk</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-sage-100 flex flex-col justify-between transition hover:shadow-md">
+            <div class="bg-theme-surface p-6 rounded-xl shadow-sm border border-theme-border flex flex-col justify-between transition hover:shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sage-600 font-bold text-xs uppercase tracking-wider">Deleted Theses</h3>
+                    <h3 class="text-theme-muted font-bold text-xs uppercase tracking-wider">Deleted Theses</h3>
                     <div class="bg-red-50 text-red-600 w-10 h-10 rounded-full flex items-center justify-center">
                         <i class="fa-solid fa-trash-can"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-3xl font-extrabold text-sage-900">{{ stats.deleted_total }}</span>
+                    <span class="text-3xl font-extrabold text-theme-text">{{ stats.deleted_total }}</span>
                     <p class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1">
                         <i class="fa-solid fa-clock-rotate-left"></i> {{ stats.deleted_last_year }} in the last year
                     </p>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-sage-100 flex flex-col justify-between transition hover:shadow-md">
+            <div class="bg-theme-surface p-6 rounded-xl shadow-sm border border-theme-border flex flex-col justify-between transition hover:shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sage-600 font-bold text-xs uppercase tracking-wider">Registered Accounts</h3>
+                    <h3 class="text-theme-muted font-bold text-xs uppercase tracking-wider">Registered Accounts</h3>
                     <div class="bg-orange-50 text-orange-600 w-10 h-10 rounded-full flex items-center justify-center">
                         <i class="fa-solid fa-users"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-3xl font-extrabold text-sage-900">{{ stats.total_users }}</span>
-                    <p class="text-xs font-bold text-sage-500 mt-2 flex items-center gap-1">
-                        <i class="fa-solid fa-user-plus"></i> +{{ stats.users_week }} this week
+                    <span class="text-3xl font-extrabold text-theme-text">{{ stats.total_users }}</span>
+                    <p class="text-xs font-bold text-theme-muted mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-user-plus text-theme-primary"></i> +{{ stats.users_week }} this week
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-col gap-6 shrink-0">
-            <div class="bg-white rounded-xl shadow-sm border border-sage-100 p-6 w-full">
+            <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border p-6 w-full">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-extrabold text-sage-900">Site Visits</h3>
+                    <h3 class="text-lg font-extrabold text-theme-text">Site Visits</h3>
                     <form method="GET" action="{{ url_for('admin.dashboard_stats') }}" id="timeRangeForm">
-                        <select name="time_range" onchange="this.form.submit()" class="text-sm font-bold bg-sage-50 px-4 py-2 rounded-lg border border-sage-200">
+                        <select name="time_range" onchange="this.form.submit()" class="text-sm font-bold bg-theme-tertiary text-theme-text px-4 py-2 rounded-lg border border-theme-border focus:outline-none focus:ring-2 focus:ring-theme-primary">
                             <option value="7days" {% if time_range == '7days' %}selected{% endif %}>Last 7 Days</option>
                             <option value="30days" {% if time_range == '30days' %}selected{% endif %}>Last 30 Days</option>
                             <option value="1year" {% if time_range == '1year' %}selected{% endif %}>Past Year</option>
@@ -110,8 +110,8 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-sage-100 p-6 w-full">
-                <h3 class="text-lg font-extrabold text-sage-900 mb-6">Collections per Program</h3>
+            <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border p-6 w-full">
+                <h3 class="text-lg font-extrabold text-theme-text mb-6">Collections per Program</h3>
                 <div class="relative w-full h-[350px]">
                     <canvas id="deptChart" data-labels='{{ dept_labels | tojson }}' data-counts='{{ dept_counts | tojson }}'></canvas>
                 </div>

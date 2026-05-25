@@ -7,33 +7,33 @@
 {% endblock %}
 
 {% block content %}
-<main class="flex-grow flex flex-col items-center justify-center pt-10">
-    <div class="bg-white border border-sage-200 w-full max-w-lg p-8 rounded-xl shadow-sm">
+<main class="flex-grow flex flex-col items-center justify-center pt-10 pb-10">
+    <div class="bg-theme-surface border border-theme-border w-full max-w-lg p-8 rounded-xl shadow-sm">
         
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-sage-100 text-sage-600 rounded-full mb-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-theme-secondary text-theme-primary rounded-full mb-4 border border-theme-border">
                 <i class="fa-brands fa-google text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-sage-800 mb-2">Almost there!</h1>
-            <p class="text-sage-600 text-sm">We need a few more details to finalize your CvSU account setup.</p>
+            <h1 class="text-2xl font-bold text-theme-text mb-2">Almost there!</h1>
+            <p class="text-theme-muted text-sm">We need a few more details to finalize your CvSU account setup.</p>
         </div>
 
         <form method="post" class="space-y-5">
             
-            <div class="bg-sage-50 p-4 rounded-lg border border-sage-200 mb-6 flex flex-col gap-1">
-                <span class="text-xs text-sage-600 uppercase font-bold tracking-wider">Linked Google Account</span>
-                <span class="font-bold text-sage-800 text-lg">{{ first_name }} {{ last_name }}</span>
-                <span class="text-sm text-sage-600">{{ email }}</span>
+            <div class="bg-theme-tertiary p-4 rounded-lg border border-theme-border mb-6 flex flex-col gap-1">
+                <span class="text-xs text-theme-muted uppercase font-bold tracking-wider">Linked Google Account</span>
+                <span class="font-bold text-theme-text text-lg">{{ first_name }} {{ last_name }}</span>
+                <span class="text-sm text-theme-muted">{{ email }}</span>
             </div>
 
             <div class="space-y-1">
-                <label class="text-sm font-bold text-sage-700">Student Number:</label>
-                <input name="student_no" type="text" id="student_no" class="w-full bg-white border border-sage-300 text-sage-800 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-all" placeholder="e.g. 202610226" required>
+                <label class="text-sm font-bold text-theme-text">Student Number:</label>
+                <input name="student_no" type="text" id="student_no" class="w-full bg-theme-base border border-theme-border text-theme-text p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary transition-all placeholder-theme-muted" placeholder="e.g. 202610226" required>
             </div>
             
             <div class="space-y-1">
-                <label class="text-sm font-bold text-sage-700">Program / Course:</label>
-                <select name="course" class="w-full bg-white border border-sage-300 text-sage-800 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-all cursor-pointer" required>
+                <label class="text-sm font-bold text-theme-text">Program / Course:</label>
+                <select name="course" class="w-full bg-theme-base border border-theme-border text-theme-text p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary transition-all cursor-pointer" required>
                     <option value="" disabled selected>Select your program</option>
                     <option value="BS Business Administration">BS Business Administration</option>
                     <option value="BS Computer Science">BS Computer Science</option>
@@ -48,7 +48,7 @@
             </div>
 
             <div class="pt-6">
-                <button type="submit" class="w-full bg-sage-500 hover:bg-sage-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-colors">
+                <button type="submit" class="w-full bg-theme-primary hover:bg-theme-primary-hover text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-colors">
                     Complete Registration
                 </button>
             </div>

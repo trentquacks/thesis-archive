@@ -10,58 +10,58 @@
 <main class="flex-1 flex flex-col min-h-0 gap-6">
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
-        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+        <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
             <div class="flex items-center gap-4 border-b border-white/30 pb-4">
                 <i class="fa-solid fa-pen-to-square text-4xl"></i>
                 <h2 class="text-3xl font-bold uppercase tracking-wider">Edit Record</h2>
             </div>
-            <p class="mt-4 text-sage-50 font-medium text-lg">
+            <p class="mt-4 text-white opacity-90 font-medium text-lg">
                 Modifying details for Project ID: {{ thesis.id }}
             </p>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 shrink-0">
+        <div class="bg-theme-surface p-4 rounded-xl shadow-sm border border-theme-border shrink-0">
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
                 <a href="{{ url_for('admin.review') }}" 
-                   class="bg-sage-50 border border-sage-200 hover:bg-sage-200 text-sage-700 px-6 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm w-full sm:w-auto">
+                   class="bg-theme-secondary border border-theme-border hover:brightness-95 text-theme-text px-6 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm w-full sm:w-auto">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Back to Review
                 </a>
                 
-                <a href="{{ url_for('archive.view', id=thesis.id) }}" target="_blank" class="bg-sage-50 border border-sage-200 hover:bg-sage-50 text-sage-700 px-6 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm w-full sm:w-auto">
+                <a href="{{ url_for('archive.view', id=thesis.id) }}" target="_blank" class="bg-theme-secondary border border-theme-border hover:brightness-95 text-theme-text px-6 py-2.5 rounded-lg font-bold transition flex items-center justify-center shadow-sm w-full sm:w-auto">
                     <i class="fa-solid fa-eye mr-2"></i> Thesis Details
                 </a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex-1 shrink-0 p-6 md:p-8">
+        <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border flex-1 shrink-0 p-6 md:p-8">
             <form action="{{ url_for('admin.edit', id=thesis.id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pb-4">
                     <div class="md:col-span-1 pt-2">
-                        <label class="font-extrabold text-xl text-sage-900">Authors</label>
-                        <button type="button" id="add-author-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add Author
+                        <label class="font-extrabold text-xl text-theme-text">Authors</label>
+                        <button type="button" id="add-author-btn" class="mt-4 text-sm font-bold bg-theme-secondary border border-theme-border text-theme-text px-3 py-2 rounded-lg hover:brightness-95 transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-theme-primary"></i> Add Author
                         </button>
                     </div>
                     <div class="md:col-span-3 flex flex-col gap-4" id="authors-container">
                         {% if authors %}
                             {% for author in authors %}
-                            <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                            <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
                                 <div class="flex flex-col gap-1">
-                                    <input name="author_first_name[]" value="{{ author.first_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                                    <input name="author_first_name[]" value="{{ author.first_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="author_last_name[]" value="{{ author.last_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                                    <input name="author_last_name[]" value="{{ author.last_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="author_middle_name[]" value="{{ author.middle_name }}" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                                    <input name="author_middle_name[]" value="{{ author.middle_name }}" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="student_number[]" value="{{ author.student_no }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Student No.*</span>
+                                    <input name="student_number[]" value="{{ author.student_no }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Student No.*</span>
                                 </div>
                                 <button type="button" class="remove-author-btn {% if loop.index == 1 %}hidden{% endif %} absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
                                     <i class="fa-solid fa-xmark"></i>
@@ -69,45 +69,45 @@
                             </div>
                             {% endfor %}
                         {% else %}
-                            <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
-                                <div class="flex flex-col gap-1"><input name="author_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span></div>
-                                <div class="flex flex-col gap-1"><input name="author_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span></div>
-                                <div class="flex flex-col gap-1"><input name="author_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span></div>
-                                <div class="flex flex-col gap-1"><input name="student_number[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Student No.*</span></div>
+                            <div class="author-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
+                                <div class="flex flex-col gap-1"><input name="author_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span></div>
+                                <div class="flex flex-col gap-1"><input name="author_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span></div>
+                                <div class="flex flex-col gap-1"><input name="author_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span></div>
+                                <div class="flex flex-col gap-1"><input name="student_number[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Student No.*</span></div>
                                 <button type="button" class="remove-author-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <hr class="border-sage-100">
+                <hr class="border-theme-border">
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pb-4">
                     <div class="md:col-span-1 pt-2">
-                        <label class="font-extrabold text-xl text-sage-900">Advisors</label>
-                        <button type="button" id="add-advisor-btn" class="mt-4 text-sm font-bold bg-sage-100 text-sage-700 px-3 py-2 rounded-lg hover:bg-sage-200 transition flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add Advisor
+                        <label class="font-extrabold text-xl text-theme-text">Advisors</label>
+                        <button type="button" id="add-advisor-btn" class="mt-4 text-sm font-bold bg-theme-secondary border border-theme-border text-theme-text px-3 py-2 rounded-lg hover:brightness-95 transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-theme-primary"></i> Add Advisor
                         </button>
                     </div>
                     <div class="md:col-span-3 flex flex-col gap-4" id="advisors-container">
                         {% if advisors %}
                             {% for advisor in advisors %}
-                            <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
+                            <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
                                 <div class="flex flex-col gap-1">
-                                    <input name="advisor_first_name[]" value="{{ advisor.first_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span>
+                                    <input name="advisor_first_name[]" value="{{ advisor.first_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="advisor_last_name[]" value="{{ advisor.last_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span>
+                                    <input name="advisor_last_name[]" value="{{ advisor.last_name }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="advisor_middle_name[]" value="{{ advisor.middle_name }}" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span>
+                                    <input name="advisor_middle_name[]" value="{{ advisor.middle_name }}" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <input name="faculty_no[]" value="{{ advisor.faculty_no }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" />
-                                    <span class="text-sm font-semibold italic text-sage-500 pl-1">Faculty No.*</span>
+                                    <input name="faculty_no[]" value="{{ advisor.faculty_no }}" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" />
+                                    <span class="text-sm font-semibold italic text-theme-muted pl-1">Faculty No.*</span>
                                 </div>
                                 <button type="button" class="remove-advisor-btn {% if loop.index == 1 %}hidden{% endif %} absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
                                     <i class="fa-solid fa-xmark"></i>
@@ -115,51 +115,51 @@
                             </div>
                             {% endfor %}
                         {% else %}
-                            <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-sage-50 p-4 rounded-xl border border-sage-200 relative group transition-all">
-                                <div class="flex flex-col gap-1"><input name="advisor_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">First Name*</span></div>
-                                <div class="flex flex-col gap-1"><input name="advisor_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Last Name*</span></div>
-                                <div class="flex flex-col gap-1"><input name="advisor_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Middle Name</span></div>
-                                <div class="flex flex-col gap-1"><input name="faculty_no[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-sage-500 bg-white border border-sage-200 text-sage-900" /><span class="text-sm font-semibold italic text-sage-500 pl-1">Faculty No.*</span></div>
+                            <div class="advisor-group grid grid-cols-1 sm:grid-cols-4 gap-4 bg-theme-tertiary p-4 rounded-xl border border-theme-border relative group transition-all">
+                                <div class="flex flex-col gap-1"><input name="advisor_first_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span></div>
+                                <div class="flex flex-col gap-1"><input name="advisor_last_name[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Last Name*</span></div>
+                                <div class="flex flex-col gap-1"><input name="advisor_middle_name[]" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Middle Name</span></div>
+                                <div class="flex flex-col gap-1"><input name="faculty_no[]" required type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary bg-theme-base border border-theme-border text-theme-text" /><span class="text-sm font-semibold italic text-theme-muted pl-1">Faculty No.*</span></div>
                                 <button type="button" class="remove-advisor-btn hidden absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <hr class="border-sage-100">
+                <hr class="border-theme-border">
 
                 <div>
-                    <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Project Title *</label>
-                    <input type="text" name="title" value="{{ thesis.title }}" required class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner">
+                    <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Project Title *</label>
+                    <input type="text" name="title" value="{{ thesis.title }}" required class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Abstract *</label>
-                    <textarea name="abstract" rows="6" required class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner leading-relaxed">{{ thesis.abstract }}</textarea>
+                    <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Abstract *</label>
+                    <textarea name="abstract" rows="6" required class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner leading-relaxed">{{ thesis.abstract }}</textarea>
                 </div>
 
-                <hr class="border-sage-100">
+                <hr class="border-theme-border">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Program / Department *</label>
-                        <select name="department_id" required class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-bold cursor-pointer transition">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Program / Department *</label>
+                        <select name="department_id" required class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-bold cursor-pointer transition">
                             {% for dept in departments %}
                             <option value="{{ dept.id }}" {% if thesis.department_id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Campus Branch *</label>
-                        <select name="branch_id" required class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-bold cursor-pointer transition">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Campus Branch *</label>
+                        <select name="branch_id" required class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-bold cursor-pointer transition">
                             {% for branch in branches %}
                             <option value="{{ branch.id }}" {% if thesis.branch_id == branch.id %}selected{% endif %}>{{ branch.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Format *</label>
-                        <select name="format_id" required class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-bold cursor-pointer transition">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Format *</label>
+                        <select name="format_id" required class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-bold cursor-pointer transition">
                             {% for format in formats %}
                             <option value="{{ format.id }}" {% if thesis.format_id == format.id %}selected{% endif %}>{{ format.format }}</option>
                             {% endfor %}
@@ -167,24 +167,24 @@
                     </div>
                 </div>
 
-                <hr class="border-sage-100">
+                <hr class="border-theme-border">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Replace Attached PDF</label>
-                        <p class="text-sm text-sage-500 font-medium mb-3">Leave empty if you want to keep the current file.</p>
-                        <input name="file" id="file-upload" type="file" accept=".pdf" class="w-full p-3 rounded-xl bg-sage-50 border border-sage-200 outline-none focus:ring-2 focus:ring-sage-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-sage-200 file:text-sage-800 hover:file:bg-sage-300 cursor-pointer" />
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Replace Attached PDF</label>
+                        <p class="text-sm text-theme-muted font-medium mb-3">Leave empty if you want to keep the current file.</p>
+                        <input name="file" id="file-upload" type="file" accept=".pdf" class="w-full p-3 rounded-xl bg-theme-tertiary border border-theme-border outline-none focus:ring-2 focus:ring-theme-primary transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-theme-secondary file:text-theme-text hover:file:brightness-95 cursor-pointer text-theme-text" />
                     </div>
                     
                     {% if thesis.file_path %}
                     <div class="w-full">
-                        <div class="bg-sage-50 border border-sage-200 rounded-xl p-2 flex items-center gap-4">
-                            <div class="bg-sage-200 text-sage-600 w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                        <div class="bg-theme-tertiary border border-theme-border rounded-xl p-2 flex items-center gap-4">
+                            <div class="bg-theme-secondary text-theme-primary border border-theme-border w-11 h-11 rounded-full flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-file-pdf text-lg"></i>
                             </div>
                             <div class="flex flex-col flex-1 overflow-hidden">
-                                <p class="text-[10px] font-bold text-sage-500 uppercase tracking-wide">Current File</p>
-                                <a href="{{ thesis.file_path }}" target="_blank" class="text-sage-800 text-sm font-bold hover:text-sage-600 transition truncate w-full" title="{{ thesis.file_path.split('/')[-1] }}">
+                                <p class="text-[10px] font-bold text-theme-muted uppercase tracking-wide">Current File</p>
+                                <a href="{{ thesis.file_path }}" target="_blank" class="text-theme-text text-sm font-bold hover:text-theme-primary transition truncate w-full" title="{{ thesis.file_path.split('/')[-1] }}">
                                     {{ thesis.file_path.split('/')[-1] }}
                                 </a>
                             </div>
@@ -193,29 +193,29 @@
                     {% endif %}
                 </div>
 
-                <hr class="border-sage-100">
+                <hr class="border-theme-border">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Keywords (Comma separated)</label>
-                        <input type="text" name="keywords" value="{{ thesis.keywords or '' }}" class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Keywords (Comma separated)</label>
+                        <input type="text" name="keywords" value="{{ thesis.keywords or '' }}" class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Call Number</label>
-                        <input type="text" name="call_number" value="{{ thesis.call_number or '' }}" class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Call Number</label>
+                        <input type="text" name="call_number" value="{{ thesis.call_number or '' }}" class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">ISBN</label>
-                        <input type="text" name="isbn" value="{{ thesis.isbn or '' }}" class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">ISBN</label>
+                        <input type="text" name="isbn" value="{{ thesis.isbn or '' }}" class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-sage-700 uppercase tracking-wide mb-2">Barcode</label>
-                        <input type="text" name="barcode" value="{{ thesis.barcode or '' }}" class="w-full bg-sage-50 border border-sage-200 text-sage-900 rounded-lg p-3 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 font-medium transition shadow-inner">
+                        <label class="block text-sm font-bold text-theme-text uppercase tracking-wide mb-2">Barcode</label>
+                        <input type="text" name="barcode" value="{{ thesis.barcode or '' }}" class="w-full bg-theme-tertiary border border-theme-border text-theme-text rounded-lg p-3 focus:ring-2 focus:ring-theme-primary font-medium transition shadow-inner">
                     </div>
                 </div>
 
-                <div class="flex justify-end mt-4 pt-6 border-t border-sage-100">
-                    <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-8 py-3 rounded-xl font-extrabold shadow-md transition transform hover:-translate-y-0.5 text-lg w-full sm:w-auto">
+                <div class="flex justify-end mt-4 pt-6 border-t border-theme-border">
+                    <button type="submit" class="bg-theme-primary hover:bg-theme-primary-hover text-white px-8 py-3 rounded-xl font-extrabold shadow-md transition transform hover:-translate-y-0.5 text-lg w-full sm:w-auto">
                         <i class="fa-solid fa-floppy-disk mr-2"></i> Save Changes
                     </button>
                 </div>

@@ -6,32 +6,32 @@
 <main class="flex-1 flex flex-col min-h-0 gap-6">
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
-        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+        <div class="bg-theme-primary text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
             <div class="flex items-center gap-4 border-b border-white/30 pb-4">
                 <i class="fa-solid fa-clock-rotate-left text-4xl"></i>
                 <h2 class="text-3xl font-bold uppercase tracking-wider">System Logs</h2>
             </div>
-            <p class="mt-4 text-sage-50 font-medium text-lg">
+            <p class="mt-4 text-white opacity-90 font-medium text-lg">
                 Monitor system-wide activity, user actions, and administrative changes.
             </p>
         </div>
 
         <div class="flex flex-col gap-6 shrink-0">
             
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 flex flex-col lg:flex-row items-center justify-between gap-4">
-                <h3 class="text-lg font-extrabold text-sage-900 flex items-center gap-2">
-                    <i class="fa-solid fa-filter text-sage-500"></i> Filter Logs
+            <div class="bg-theme-surface p-4 rounded-xl shadow-sm border border-theme-border flex flex-col lg:flex-row items-center justify-between gap-4">
+                <h3 class="text-lg font-extrabold text-theme-text flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-theme-primary"></i> Filter Logs
                 </h3>
                 
                 <form action="{{ url_for('admin.history') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                     
-                    <select name="role" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer focus:ring-2 focus:ring-sage-500 transition text-sm">
+                    <select name="role" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-theme-text bg-theme-tertiary border border-theme-border font-bold outline-none cursor-pointer focus:ring-2 focus:ring-theme-primary transition text-sm">
                         <option value="all" {% if current_role == 'all' %}selected{% endif %}>All Roles</option>
                         <option value="admin" {% if current_role == 'admin' %}selected{% endif %}>Admins</option>
                         <option value="student" {% if current_role == 'student' %}selected{% endif %}>Students</option>
                     </select>
 
-					<select name="action" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer focus:ring-2 focus:ring-sage-500 transition text-sm">
+					<select name="action" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-theme-text bg-theme-tertiary border border-theme-border font-bold outline-none cursor-pointer focus:ring-2 focus:ring-theme-primary transition text-sm">
 						<option value="all" {% if current_action == 'all' %}selected{% endif %}>All Actions</option>
 
 						<optgroup label="Admin Actions">
@@ -48,36 +48,36 @@
 							<option value="auth_actions" {% if current_action == 'auth_actions' %}selected{% endif %}>Logins & Logouts</option>
 						</optgroup>
 					</select>
-                    <select name="sort" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer focus:ring-2 focus:ring-sage-500 transition text-sm">
+                    <select name="sort" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-theme-text bg-theme-tertiary border border-theme-border font-bold outline-none cursor-pointer focus:ring-2 focus:ring-theme-primary transition text-sm">
                         <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
                         <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
                     </select>
                 </form>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex flex-col min-h-[500px]">
+            <div class="bg-theme-surface rounded-xl shadow-sm border border-theme-border flex flex-col min-h-[500px]">
                 <div class="p-6 md:p-8 flex-1 flex flex-col gap-4">
                     
                     {% if logs %}
                         {% for log in logs %}
-                        <div class="bg-sage-50 rounded-xl p-4 border border-sage-200 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 transition hover:shadow-md">
+                        <div class="bg-theme-tertiary rounded-xl p-4 border border-theme-border flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4 transition hover:shadow-md">
                             
                             <div class="flex items-start sm:items-center gap-4 flex-1 min-w-0">
                                 <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ log['profile_pic']) }}" alt="Profile" 
-                                     class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0" 
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-theme-surface shadow-sm shrink-0" 
                                      onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/profile_pics/default.png') }}';">
                                 
                                 <div class="min-w-0 flex flex-col">
                                     <div class="flex items-center gap-2 mb-1">
-                                        <h4 class="text-sage-900 font-extrabold text-base leading-tight truncate">
+                                        <h4 class="text-theme-text font-extrabold text-base leading-tight truncate">
                                             {{ log['first_name'] }} {{ log['last_name'] }}
                                         </h4>
-                                        <span class="bg-sage-200 text-sage-700 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
+                                        <span class="bg-theme-secondary text-theme-text border border-theme-border px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
                                             {{ log['role'] }}
                                         </span>
                                     </div>
                                     
-									<p class="text-sage-700 font-medium text-sm flex items-center gap-2">
+									<p class="text-theme-muted font-medium text-sm flex items-center gap-2">
 									{% if 'Approved' in log['action'] %}
 									<i class="fa-solid fa-circle-check text-green-500"></i>
 									{% elif 'Rejected' in log['action'] %}
@@ -97,23 +97,23 @@
 									{% elif 'Logged Out' in log['action'] %}
 									<i class="fa-solid fa-right-from-bracket text-gray-500"></i>
 									{% else %}
-									<i class="fa-solid fa-circle-dot text-sage-400"></i>
+									<i class="fa-solid fa-circle-dot text-theme-muted"></i>
 									{% endif %}
 
 									<span>
-										<span class="font-bold">{{ log['action'] }}</span> 
+										<span class="font-bold text-theme-text">{{ log['action'] }}</span> 
 										{% if log['thesis_title'] %}
-										- <span class="italic text-sage-600">"{{ log['thesis_title'] }}"</span>
+										- <span class="italic">"{{ log['thesis_title'] }}"</span>
 										{% endif %}
 									</span>
 									</p>
                                 </div>
                             </div>
 
-							<div class="flex flex-col items-start sm:items-end shrink-0 text-xs font-bold text-sage-500 ml-12 sm:ml-0 mt-2 sm:mt-0">
+							<div class="flex flex-col items-start sm:items-end shrink-0 text-xs font-bold text-theme-muted ml-12 sm:ml-0 mt-2 sm:mt-0">
 								{{ log['timestamp'] | ph_time('%b %d, %Y') }}<br>
 
-								<span class="font-medium text-sage-400">
+								<span class="font-medium opacity-80">
 									{{ log['timestamp'] | ph_time('%I:%M %p') }}
 								</span>
 							</div>
@@ -121,21 +121,21 @@
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16 text-center">
+                        <div class="flex flex-col items-center justify-center h-full text-theme-muted font-semibold text-lg py-16 text-center">
                             <i class="fa-solid fa-clock-rotate-left text-6xl mb-4 opacity-40"></i>
                             <span>No system history found matching your filters.</span>
                         </div>
                     {% endif %}
                 </div>
                 
-                <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0 rounded-b-xl">
-                    <span class="text-sage-600 font-medium text-sm">
-                        Showing <span class="font-bold text-sage-900">{{ ((current_page - 1) * 15) + 1 if total_logs > 0 else 0 }}</span> to <span class="font-bold text-sage-900">{{ [current_page * 15, total_logs] | min }}</span> of <span class="font-bold text-sage-900">{{ total_logs | default(0) }}</span> logs
+                <div class="bg-theme-surface p-4 border-t border-theme-border flex flex-col md:flex-row items-center justify-between gap-4 shrink-0 rounded-b-xl">
+                    <span class="text-theme-muted font-medium text-sm">
+                        Showing <span class="font-bold text-theme-text">{{ ((current_page - 1) * 15) + 1 if total_logs > 0 else 0 }}</span> to <span class="font-bold text-theme-text">{{ [current_page * 15, total_logs] | min }}</span> of <span class="font-bold text-theme-text">{{ total_logs | default(0) }}</span> logs
                     </span>
                     <nav class="flex gap-1 items-center">
                         {% set base_qs = "&sort=" ~ current_sort ~ "&role=" ~ current_role ~ "&action=" ~ current_action %}
                         {% if current_page > 1 %}
-                        <a href="?page={{ current_page - 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2"><i class="fa-solid fa-chevron-left text-xs"></i> Prev</a>
+                        <a href="?page={{ current_page - 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition flex items-center gap-1 mr-2"><i class="fa-solid fa-chevron-left text-xs"></i> Prev</a>
                         {% endif %}
                         
                         {% set start = [1, current_page - 2] | max %}
@@ -143,14 +143,14 @@
                         
                         {% for p in range(start, end + 1) %}
                             {% if p == current_page %}
-                            <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
+                            <span class="px-3 py-1 rounded-md bg-theme-primary text-white font-bold shadow-sm cursor-default">{{ p }}</span>
                             {% else %}
-                            <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                            <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition">{{ p }}</a>
                             {% endif %}
                         {% endfor %}
                         
                         {% if current_page < total_pages %}
-                        <a href="?page={{ current_page + 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">Next <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        <a href="?page={{ current_page + 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-theme-muted hover:bg-theme-secondary hover:text-theme-text font-bold transition flex items-center gap-1 ml-2">Next <i class="fa-solid fa-chevron-right text-xs"></i></a>
                         {% endif %}
                     </nav>
                 </div>
