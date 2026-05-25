@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    //  AJAX bookmark toggle ---
+    // AJAX bookmark toggle ---
     document.querySelectorAll('.ajax-bookmark').forEach(form => {
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // srop the form from reloading the page
+            e.preventDefault(); // stop the form from reloading the page
 
             const btn = form.querySelector('button');
             const icon = form.querySelector('i');
@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     if (data.bookmarked) {
                         icon.classList.replace('fa-regular', 'fa-solid');
-                        btn.classList.remove('bg-sage-100', 'text-sage-600', 'hover:bg-sage-50');
-                        btn.classList.add('bg-sage-500', 'text-white', 'hover:bg-sage-600');
+                        btn.classList.remove('bg-theme-secondary', 'text-theme-text', 'hover:bg-theme-border');
+                        btn.classList.add('bg-theme-primary', 'text-white', 'hover:bg-theme-primary-hover');
                         btn.title = "Remove Bookmark";
                     } else {
                         icon.classList.replace('fa-solid', 'fa-regular');
-                        btn.classList.remove('bg-sage-500', 'text-white', 'hover:bg-sage-600');
-                        btn.classList.add('bg-sage-100', 'text-sage-600', 'hover:bg-sage-50');
+                        btn.classList.remove('bg-theme-primary', 'text-white', 'hover:bg-theme-primary-hover');
+                        btn.classList.add('bg-theme-secondary', 'text-theme-text', 'hover:bg-theme-border');
                         btn.title = "Save Bookmark";
                     }
 
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         const toast = document.createElement('div');
-        toast.className = 'pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg bg-[#EAF0E4] text-[#4A5D4A] border-[#C5CCB7] transition-all duration-300';
+        toast.className = 'pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg bg-theme-surface text-theme-text border-theme-border transition-all duration-300';
         toast.setAttribute('role', 'alert');
         
         toast.innerHTML = `
@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         container.appendChild(toast);
 
+        // Fade out and remove
         setTimeout(() => {
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 300);
@@ -85,18 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dateBtn) {
         dateBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentSort = urlParams.get('sort') || 'newest';
-            
-            let nextState;
-            if (currentSort === 'newest') {
-                nextState = 'oldest';
-            } else if (currentSort === 'oldest') {
-                nextState = 'newest';
-            } else {
-                nextState = 'newest';
-            }
-            
+            const currentState = dateBtn.getAttribute('data-state');
+            const nextState = currentState === 'newest' ? 'oldest' : 'newest';
             updateURLParameterAndReload('sort', nextState);
         });
     }
@@ -105,23 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (alphaBtn) {
         alphaBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentSort = urlParams.get('sort') || 'newest';
-
-            let nextState;
-            if (currentSort === 'az') {
-                nextState = 'za';
-            } else if (currentSort === 'za') {
-                nextState = 'az';
-            } else {
-                nextState = 'az'; 
-            }
-            
+            // Pulling state directly from the data-state attribute you set in HTML
+            const currentState = alphaBtn.getAttribute('data-state');
+            const nextState = currentState === 'az' ? 'za' : 'az';
             updateURLParameterAndReload('sort', nextState);
         });
     }
 
-    // year fropdown filter
+    // year dropdown filter
     if (yearFilter) {
         yearFilter.addEventListener('change', (e) => {
             updateURLParameterAndReload('year', e.target.value);

@@ -10,7 +10,6 @@ from flask import request
 from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
 from flaskr import oauth
 from flaskr.db import get_db
 from flaskr.queries.shared_queries import track_daily_traffic
@@ -51,36 +50,6 @@ def load_logged_in_user():
             g.pending_count = 0
 
     track_daily_traffic(db, is_registered=(g.user is not None))
-
-@bp.route('/register', methods=('GET', 'POST'))
-def register():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        db = get_db()
-        error = None
-
-        if not email:
-            error = 'Email is required.'
-        elif not email.endswith('@cvsu.edu.ph'):
-            error = 'Registration is restricted to @cvsu.edu.ph emails only.'
-        elif not password:
-            error = 'Password is required.'
-
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (email, password) VALUES (?, ?)",
-                    (email, generate_password_hash(password)),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {email} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
-
-        flash(error)
-    return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():

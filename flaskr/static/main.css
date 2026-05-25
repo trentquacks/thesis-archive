@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700;800&display=swap');
 
+
 :root, [data-theme="sage-light"] {
     --bg-base: #E8EBE0;          
     --bg-surface: #FFFFFF;       
@@ -155,3 +156,8 @@ td {
 .status-approved { background: linear-gradient(to bottom, #7FB169, #568A45); color: white; }
 .status-pending { background: linear-gradient(to bottom, #EED575, #C9A52B); color: white; }
 .status-rejected { background: linear-gradient(to bottom, #E04B40, #B02820); color: white; }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

@@ -99,16 +99,16 @@
                     <div class="md:col-span-3 flex flex-col gap-6">
                         <div>
                             <label class="block text-sm font-bold text-theme-text mb-2">Research Title</label>
-                            <input name="title" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Enter full thesis title..." />
+                            <input required name="title" type="text" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Enter full thesis title..." />
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-theme-text mb-2">Abstract</label>
-                            <textarea name="abstract" rows="6" class="w-full p-3 rounded-xl resize-none outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Write your research's abstract..."></textarea>
+                            <textarea required name="abstract" rows="6" class="w-full p-3 rounded-xl resize-none outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text placeholder-theme-muted" placeholder="Write your research's abstract..."></textarea>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-theme-text mb-2">Date Published</label>
-                                <input name="date" id="published-date" type="date" required class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text" />
+                                <input name="date" id="published-date" type="date" class="w-full p-3 rounded-xl outline-none focus:ring-2 focus:ring-theme-primary focus:bg-theme-base transition bg-theme-tertiary border border-theme-border text-theme-text" />
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-theme-text mb-2">Program</label>
@@ -159,7 +159,7 @@
                         <div id="file-upload-container" class="transition-opacity duration-300">
                             <label class="block text-sm font-bold text-theme-text mb-2">Attach Paper (PDF)</label>
                             <input name="file" id="file-upload" type="file" required class="w-full p-3 rounded-xl bg-theme-tertiary border border-theme-border outline-none focus:ring-2 focus:ring-theme-primary transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-theme-secondary file:text-theme-text hover:file:brightness-95 cursor-pointer text-theme-text" />
-                            <span class="text-sm font-semibold italic text-theme-muted pl-1">First Name*</span>
+                            <span class="text-sm font-semibold italic text-theme-muted pl-1">Max 50MB*</span>
                         </div>
                     </div>
                 </div>

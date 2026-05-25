@@ -68,7 +68,7 @@
                 <i class="fa-solid fa-book-open-reader"></i> Read PDF Now
             </a>
             {% else %}
-            <button id="open-borrow-btn" class="inline-flex items-center gap-2 bg-theme-primary text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-theme-primary-hover transition transform hover:-translate-y-0.5">
+            <button {% if thesis.status == 'pending' %} disabled {% endif %} id="open-borrow-btn" class="inline-flex items-center gap-2 bg-theme-primary text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-theme-primary-hover transition transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-file-pdf"></i> Borrow to View PDF
             </button>
             {% endif %}
@@ -79,7 +79,7 @@
             {% endif %}
 
             <form action="{{ url_for('user.toggle_bookmark', thesis_id=thesis['id']) }}" method="POST" class="inline-block">
-                <button type="submit" class="inline-flex items-center gap-2 bg-theme-secondary text-theme-text px-6 py-3 rounded-xl font-bold shadow-md hover:brightness-95 transition transform hover:-translate-y-0.5">
+                <button  {% if thesis.status == 'pending' %} disabled {% endif %} type="submit" class="inline-flex items-center gap-2 bg-theme-secondary text-theme-text px-6 py-3 rounded-xl font-bold shadow-md hover:brightness-95 transition transform hover:-translate-y-0.5">
                     {% if is_bookmarked %}
                     <i class="fa-solid fa-bookmark text-theme-primary"></i> Bookmarked
                     {% else %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %} About {% endblock %}
+
+{% block content %}
+<main class="container max-w-4xl mx-auto mt-6 mb-12">
+    
+    <div class="bg-theme-primary text-white p-8 rounded-2xl shadow-md mb-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
+        <div class="text-6xl opacity-80 shrink-0">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl sm:text-4xl font-bold mb-2">About the Archive</h1>
+            <p class="text-lg opacity-90 font-medium">A brief overview of the project, its purpose, and the people behind it.</p>
+        </div>
+    </div>
+
+    <article class="bg-theme-surface border border-theme-border rounded-xl shadow-sm p-6 sm:p-10 text-theme-text leading-relaxed">
+        
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-book-bookmark text-theme-primary"></i> Mission and Vision
+            </h2>
+            <p class="text-lg text-theme-muted font-medium mb-4">
+                The <strong>Thesis Archive System</strong> is a centralized, local network repository designed exclusively for the students, faculty, and librarians of <strong>Cavite State University - Imus Campus</strong>. 
+            </p>
+            <p class="text-lg text-theme-muted font-medium">
+                Its primary goal is to digitize and streamline the process of browsing, borrowing, and submitting academic research projects. By transitioning from physical hardbound copies to a secure digital environment, it ensures intellectual property protection while making vital academic literature readily accessible to the campus community.
+            </p>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-calendar-check text-theme-primary"></i> Project Timeline
+            </h2>
+            <p class="text-lg text-theme-muted font-medium">
+                Conceptualized and developed in <strong>2026</strong>. 
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-code text-theme-primary"></i> Credits
+            </h2>
+            
+            <p class="text-lg text-theme-muted font-medium mb-4">
+                This project was brought to life by a dedicated team of developers and academic advisers:
+            </p>
+
+            <ul class="list-none space-y-3 mt-4 text-lg text-theme-muted font-medium">
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-gear text-theme-primary w-5 text-center"></i>
+                    <strong>Trent Perlas</strong> &ndash; Lead Developer
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-pen text-theme-primary w-5 text-center"></i>
+                    <strong>Alessandra Bautista</strong> &ndash; Front-End Developer / Designer
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-pen text-theme-primary w-5 text-center"></i>
+                    <strong>Hanna Jamias</strong> &ndash; Front-End Developer / Designer
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-database text-theme-primary w-5 text-center"></i>
+                    <strong>Sherlynn Nakamura</strong> &ndash; Front-End Developer / Designer
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-database text-theme-primary w-5 text-center"></i>
+                    <strong>Stephen Mendoza</strong> &ndash; Backend / Database Architect
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-tie text-theme-primary w-5 text-center"></i>
+                    <strong>Rosalina Lancuesta</strong> &ndash; Project Adviser
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-tie text-theme-primary w-5 text-center"></i>
+                    <strong>Ser Ricky</strong> &ndash; Project Adviser
+                </li>
+            </ul>
+
+            <div class="mt-8 p-4 bg-theme-secondary border border-theme-border rounded-lg text-sm italic text-theme-muted">
+                Special thanks to the librarians and staff of CvSU Imus Campus for their invaluable feedback and guidance throughout the development process.
+            </div>
+        </section>
+
+    </article>
+</main>
+{% endblock %}

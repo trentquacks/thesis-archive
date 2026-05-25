@@ -4,7 +4,7 @@ def get_all_departments(db):
     return db.execute("SELECT id, name, icon, description FROM department").fetchall()
 
 def get_search_results(db, user_id, dept_id, search_term, sort, year, page, per_page=10):
-    conditions = ""
+    conditions = "AND thesis.status = 'approved'"
     cond_params = []
     department_info = {
         "id": None,

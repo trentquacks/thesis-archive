@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %} FAQ {% endblock %}
+
+{% block content %}
+<style>
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+</style>
+
+<main class="container max-w-4xl mx-auto mt-6 mb-12">
+    
+    <div class="bg-theme-primary text-white p-8 rounded-2xl shadow-md mb-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
+        <div class="text-6xl opacity-80 shrink-0">
+            <i class="fa-solid fa-circle-question"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl sm:text-4xl font-bold mb-2">Frequently Asked Questions</h1>
+            <p class="text-lg opacity-90 font-medium">Everything you need to know about navigating, borrowing, and submitting to the archive.</p>
+        </div>
+    </div>
+
+    <div class="space-y-12">
+
+        <section>
+            <h2 class="text-2xl font-bold text-theme-text mb-6 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-users text-theme-primary"></i> Access
+            </h2>
+            
+            <div class="flex flex-col gap-3">
+                
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Who can use the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Students, Teachers, Librarians, or anyone in the university premises that wants to browse for theses of students in Cavite State University - Imus Campus.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>How do I create an account?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">To create an account, students can easily bind their CvSU google account by clicking that option at the bottom part of the sign in page. Then, they may choose their google account. After that, they must fill up required fields such as name, student number, and program. And voila, they can access more website features with their CvSU google account.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>What to do if I forgot my password?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Go to the login page of the website. Click the 'forgot password'. Then a box will appear where you can input your new password for your email address. Once you’ve filled up the required fields, a confirmation will be sent to your email inbox. After confirmation, you can refresh the website and log in with your new password.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Who do I contact for help?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">If you have concerns that are outside of the website, you may reach out to the librarians at the library of CvSU Imus Campus.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Where is the physical library located?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">The physical library is located at Cavite State University - Imus Campus inside the Old Bldg. on the 2nd floor. You can access the hardbound copy of theses inside the university.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Can students access archived projects anytime?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Students can access the thesis archive anytime inside the library at the device where the website is locally hosted. If they wish to access the website on their own devices, they must be connected to the university’s network.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Can I access the archive online?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">As of now, this website runs on a local host, which means that it will only run if the device is connected to the university’s network. It uses LAN (Local Area Network) where devices can communicate, share files, access the internet through a Wi-Fi or central router in the university.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Can alumni still access the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">No, since the university admins can revoke your access to your CvSU google account.</p>
+                    </div>
+                </details>
+
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-theme-text mb-6 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-book-open-reader text-theme-primary"></i> Borrowing, Uploading, Viewing
+            </h2>
+            
+            <div class="flex flex-col gap-3">
+                
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>How do I upload my thesis in the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">To upload your thesis in the archive, you must be logged in. Then, access the dashboard by hovering your profile at the top right part of the website. After that, you will see the “submit a project” button. Then, you will fill up required information such as full name of author/s, full name of advisor/s, title of your thesis, abstract, date of submission, your program, keywords of the thesis, format of the thesis you will submit, and attach the PDF copy if you want the soft copy available too. You will read the terms and conditions when submitting your thesis and once you agree to it, you can mark the checkbox and finally submit your project in the archive.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>What happens after I submit my thesis/project?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">After submitting your thesis/project, you can always check its status in the dashboard. The default status is ‘pending’ until an admin/librarian reviews the information of the thesis. If the thesis of the student is officially approved by the advisor, the librarian shall change the status to ‘approved’. However, if the thesis is rejected by the advisor, the librarian shall change the status to ‘rejected’.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>What file formats are accepted?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Only PDF files and only PDF files can be uploaded in the submission form.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Is there a maximum file size for uploads?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">The maximum file size for uploading a thesis in the archive is <span class="font-bold text-theme-text">50MB</span> (megabytes).</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>How do I borrow theses/projects in the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">To borrow a thesis in the archive, you must be logged in. In the preview page of a thesis along with other important details, there is an option ‘Borrow to View PDF’. Once you click that, the system will ask for a confirmation that you want to view the PDF of a specific thesis. Note that you can only view up to 5 PDF copies per day. After that, you can navigate to the dashboard at the top right part when you hover your profile. Then, choose the ‘Borrowed Theses’ Filter. After that, a 2 hour timer will run once you’ve opened a PDF. The timer will pause when you close the current PDF. However, the PDF cannot be accessed when the time limit is up.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Why can’t I access the PDF copy of a thesis/project?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">If you are a guest user and are not signed in with an account onto the website, you will not be able to access the PDF copy of a thesis. You may browse for thesis titles and its basic important details but not the PDF copy.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Can I download/copy the PDF content of theses/projects?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">No, downloading or copying the PDF content is NOT allowed to protect the intellectual property of the authors.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Why are only theses/projects from 2015 onwards visible in the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">To ensure that theses are grounded in the most current data, modern methodologies, and up-to-date theories, they are typically capped at 10 years to use as a reference for future researchers and students that are browsing theses in the archive. Using older sources risks citing obsolete information or debunked findings.</p>
+                    </div>
+                </details>
+
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-theme-text mb-6 flex items-center gap-3 border-b-2 border-theme-border pb-2">
+                <i class="fa-solid fa-wrench text-theme-primary"></i> Technical
+            </h2>
+            
+            <div class="flex flex-col gap-3">
+                
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Are unpublished or confidential studies protected in the archive?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Yes. Unpublished and confidential theses inside the university are protected.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>What devices are supported by the website?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">All devices can access the website as long as they are connected to the university’s network used as the local host.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>Why can’t I upload my file?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Some possible reasons why you can’t upload the PDF file when submitting a thesis are:</p>
+                        <ol class="list-decimal list-inside mt-2 space-y-1 ml-2">
+                            <li>The file extension is not in PDF format.</li>
+                            <li>The file size exceeds 50 MB.</li>
+                            <li>The device is not connected to the local network.</li>
+                        </ol>
+                        <p class="mt-2">You may ask the librarian to double check if the device is connected to their network correctly.</p>
+                    </div>
+                </details>
+
+                <details class="bg-theme-surface border border-theme-border rounded-xl shadow-sm group">
+                    <summary class="flex justify-between items-center font-bold text-theme-text cursor-pointer p-5 hover:text-theme-primary transition-colors text-lg">
+                        <span>What should I do if the website is not loading properly?</span>
+                        <span class="transition duration-300 group-open:-rotate-180 text-theme-muted"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-theme-muted font-medium leading-relaxed border-t border-theme-border mt-1">
+                        <p class="pt-4">Double check if the device is connected to the local network. After that, you may reload the website.</p>
+                    </div>
+                </details>
+
+            </div>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

@@ -1,6 +1,6 @@
 import os
 from authlib.integrations.flask_client import OAuth
-from flask import Flask
+from flask import Flask, render_template
 from datetime import datetime, timedelta
 
 oauth = OAuth()
@@ -37,6 +37,13 @@ def create_app(test_config=None):
         client_kwargs={'scope': 'openid email profile'}
     )
 
+    @app.route("/faq")
+    def faq():
+        return render_template("faq.html")
+
+    @app.route("/about")
+    def about():
+        return render_template("about.html")
 
     # register the database commands
     from . import db

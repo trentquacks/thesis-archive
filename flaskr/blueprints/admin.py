@@ -255,7 +255,7 @@ def edit(id):
             flash("Thesis record updated successfully.", "success")
             return redirect(url_for('admin.review'))
 
-    departments, branches, formats = get_form_dropdown_options(db)
+    departments, formats, branches = get_form_dropdown_options(db)
     authors = get_thesis_authors(db, id)
     advisors = get_thesis_advisors(db, id)
     

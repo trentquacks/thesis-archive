@@ -59,8 +59,8 @@
             
             <nav class="flex gap-8 font-medium items-center">
                 <a href="{{ url_for('index') }}" class="text-white hover:underline font-bold">Home</a>
-                <a href="#" class="text-white hover:underline font-bold">About</a>
-                <a href="#" class="text-white hover:underline font-bold">FAQ</a>
+                <a href="{{ url_for('faq') }}" class="text-white hover:underline font-bold">FAQ</a>
+                <a href="{{ url_for('about') }}" class="text-white hover:underline font-bold">About</a>
                 
                 <select id="theme-selector" class="bg-theme-primary-hover text-white font-bold px-3 py-1.5 rounded-lg border border-theme-border outline-none cursor-pointer hover:opacity-90 transition text-sm">
                     <option value="sage-light">Sage Light</option>
@@ -70,8 +70,8 @@
                 
                 {% if g.user %}
                 <div class="dropdown flex items-center gap-2 relative">
-                    <div class="w-10 h-10 overflow-hidden rounded-full inline-block align-middle">
-                        <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover border-2 border-theme-secondary">
+                    <div class="w-10 h-10 overflow-hidden rounded-full inline-block align-middle border-2 border-theme-secondary">
+                        <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ g.user['profile_pic']) }}" alt="Profile Picture" class="w-full h-full object-cover">
                     </div>
                     <button class="flex items-center gap-1 p-0 m-0 bg-transparent border-none text-white cursor-pointer font-bold outline-none">
                         <span>{{ g.user['first_name'] + ' ' +g.user['last_name'] }}</span>
@@ -98,9 +98,11 @@
                         {% set bg_class = 'bg-theme-surface text-theme-text border-theme-border' %}
                         
                         {% if category == 'error' %}
-                            {% set bg_class = 'bg-red-100 text-red-800 border-red-300' %}
+                        {% set bg_class = 'bg-red-100 text-red-800 border-red-200' %}
                         {% elif category == 'success' %}
-                            {% set bg_class = 'bg-[var(--toast-success-bg)] text-[var(--toast-success-text)] border-[var(--toast-success-border)]' %}
+                        {% set bg_class = 'bg-green-100 text-green-800 border-green-200' %}
+                        {% else %}
+                        {% set bg_class = 'bg-theme-surface text-theme-text border-theme-border' %}
                         {% endif %}
                         
                         <div class="pointer-events-auto flex items-start justify-between p-4 rounded-xl font-bold border shadow-lg {{ bg_class }} transition-all" role="alert">

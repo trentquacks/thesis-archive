@@ -167,7 +167,7 @@ CREATE TABLE daily_traffic (
 
 
 INSERT INTO user (first_name, last_name, email, password, student_no, course, role) VALUES 
-('System', 'Admin', 'testing@gmail.com', 'scrypt:32768:8:1$CnOYZglEnYCUPpVx$3bf12468ee0826fbf6b59c8422670a3e2429b56ed9f6dc0f60ffd354fab2ac41bee12647d5d2fcb01524dd627c9a13e519a71f93379dca9490161e300547a1dc', '202600000', 'BS Computer Science', 'admin');
+('System', 'Admin', 'system@admin.com', 'scrypt:32768:8:1$CnOYZglEnYCUPpVx$3bf12468ee0826fbf6b59c8422670a3e2429b56ed9f6dc0f60ffd354fab2ac41bee12647d5d2fcb01524dd627c9a13e519a71f93379dca9490161e300547a1dc', '202600000', 'BS Computer Science', 'admin');
 
 INSERT INTO author (first_name, middle_name, last_name, student_no) VALUES 
 ('David', '', 'Wilson', '2024-0023'),
@@ -188,9 +188,7 @@ INSERT INTO department (name, description, icon) VALUES
 ('Business Administration', 'Focuses on corporate management, marketing, and finance.', 'fa-briefcase-clock');
 
 INSERT INTO branch (name) VALUES 
-('Imus'), 
-('Main'), 
-('Australia');
+('Imus');
 
 INSERT INTO format (format) VALUES 
 ('Digital PDF'), 
