@@ -29,4 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     });
 
+	const modal = document.getElementById('feedbackModal');
+    const content = document.getElementById('feedbackContent');
+    
+    // Only run if the modal actually exists on the page
+    if (modal && content) { 
+        document.querySelectorAll('.view-feedback-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                content.textContent = e.currentTarget.dataset.feedback;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close Modal
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        document.querySelectorAll('.close-feedback-btn').forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
+
 });

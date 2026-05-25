@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    sortSelect.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        currentPage = 1; 
+        fetchBorrows();
+    });
+
     prevBtn.addEventListener('click', () => {
         if (currentPage > 1) { currentPage--; fetchBorrows(); }
     });

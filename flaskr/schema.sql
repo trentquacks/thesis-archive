@@ -65,8 +65,9 @@ CREATE TABLE thesis (
   file_path TEXT NOT NULL, -- digital pdf sa db
 
 
--- APPROVAL WORKFLOW
-status TEXT CHECK( status IN ('pending', 'approved', 'rejected') ) DEFAULT 'pending',
+  -- APPROVAL WORKFLOW
+  status TEXT CHECK( status IN ('pending', 'approved', 'rejected') ) DEFAULT 'pending',
+  feedback TEXT,
 
   -- specifics
   keywords TEXT,

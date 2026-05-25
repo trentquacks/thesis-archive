@@ -83,6 +83,10 @@ def borrow(id):
         flash("You must be logged in to borrow a thesis.", "error")
         return redirect(url_for('auth.login')) 
 
+    if g.user['role'] == 'admin':
+        flash("Administrators cannot use the borrowing system.", "error")
+        return redirect(url_for('archive.view', id=id))
+
     success, message, redirect_route = process_borrow_logic(get_db(), session['user_id'], id)
     
     if message:

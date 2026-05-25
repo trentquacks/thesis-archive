@@ -1,5 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700;800&display=swap');
 
+:root, [data-theme="sage-light"] {
+        --color-sage-50: #E8EBE0;
+        --color-sage-100: #E0E4D3;
+        --color-sage-200: #C5CCB7;
+        --color-sage-300: #B0B8A3;
+        --color-sage-400: #FFFFFF;   
+        --color-sage-500: #8B9D77;
+        --color-sage-600: #7E8C69;
+        --color-sage-700: #626A53;
+        --color-sage-800: #4A5D4A;
+        --color-sage-900: #2D432D;
+
+        /* Toast Overrides for Light Mode */
+        --toast-success-bg: #EAF0E4;
+        --toast-success-text: #4A5D4A;
+        --toast-success-border: #C5CCB7;
+    }
+
+    /* 2. Dark Mode Theme */
+    [data-theme="dark"] {
+        --color-sage-50: #0B0F0C;   /* Deepest page background */
+        --color-sage-100: #121A14;  /* Inputs and secondary elements */
+        --color-sage-200: #202D24;  /* Subtle borders */
+        --color-sage-300: #314537;  /* Stronger dividers */
+        --color-sage-400: #17211A;  /* Elevated Card Backgrounds */
+        --color-sage-500: #5C8A60;  /* Main Banners & Primary Buttons */
+        --color-sage-600: #72A376;  /* Hover States (Lighter in dark mode) */
+        --color-sage-700: #93B096;  /* Muted Text & Icons */
+        --color-sage-800: #C2D1C3;  /* Main Body Descriptions */
+        --color-sage-900: #F2F7F2;  /* Bright Crisp Headings */
+
+        /* Toast Overrides for Dark Mode */
+        --toast-success-bg: #121E14;
+        --toast-success-text: #72A376;
+        --toast-success-border: #202D24;
+    }
+
+    /* 3. Ocean Blue Theme */
+    [data-theme="ocean"] {
+        --color-sage-50: #F0F4F8;
+        --color-sage-100: #D9E2EC;
+        --color-sage-200: #BCCCDC;
+        --color-sage-300: #9FB3C8;
+        --color-sage-400: #FFFFFF;  
+        --color-sage-500: #102A43;
+        --color-sage-600: #243E56;
+        --color-sage-700: #334E68;
+        --color-sage-800: #486581;
+        --color-sage-900: #102A43;
+
+        /* Toast Overrides for Ocean Mode */
+        --toast-success-bg: #E3F9E5;
+        --toast-success-text: #143F24;
+        --toast-success-border: #A2E9B1;
+    }
+
 * {
     margin: 0;
     padding: 0;

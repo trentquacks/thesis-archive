@@ -9,25 +9,25 @@
 {% block content %}
 <main class="container max-w-6xl mx-auto mt-6">
     <nav class="text-sm font-semibold text-sage-600 mb-6 flex items-center gap-2">
-        <a href="{{ url_for('archive.index') }}" class="hover:text-sage-800 hover:underline">Home</a> 
+        <a href="{{ url_for('archive.index') }}" class="hover:text-sage-900 hover:underline transition">Home</a> 
         <span>&gt;</span>
-        <span class="text-sage-800 font-bold">{{ departments.name or 'All' }}</span>
+        <span class="text-sage-900 font-bold">{{ departments.name or 'All' }}</span>
     </nav>
 
-    <section class="flex justify-between items-center mb-4 text-sage-900">
-        <h1 class="text-4xl font-bold">{{ departments.name or 'All' }}</h1>
+    <section class="flex justify-between items-center mb-4">
+        <h1 class="text-4xl font-bold text-sage-900">{{ departments.name or 'All' }}</h1>
         <div class="text-5xl text-sage-500">
             <i class="fa-solid {{ departments.icon }}"></i>
         </div>
     </section>
 
-    <hr class="border-t-2 border-sage-800 mb-8">
+    <hr class="border-t-2 border-sage-300 mb-8">
 
-    <p class="text-lg leading-relaxed text-sage-700 mb-10 max-w-3xl">
+    <p class="text-lg leading-relaxed text-sage-800 mb-10 max-w-3xl">
         {% if departments.description %}
             {{ departments.description }}
         {% else %}
-            Searching for "<span class="font-bold">{{ search }}</span>"
+            Searching for "<span class="font-bold text-sage-900">{{ search }}</span>"
         {% endif %}
     </p>
 
@@ -44,23 +44,24 @@
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
         
         <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
-            <div class="flex gap-2 bg-white p-1 rounded-xl shadow-sm border border-sage-100">
+            
+            <div class="flex gap-2 bg-sage-400 p-1 rounded-xl shadow-sm border border-sage-200">
                 <button id="sort-date-btn" 
                         data-state="{% if current_sort == 'oldest' %}oldest{% else %}newest{% endif %}" 
-                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}text-sage-600 hover:bg-sage-100{% else %}bg-sage-500 text-white shadow-sm{% endif %}">
+                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}text-sage-700 hover:bg-sage-100{% else %}bg-sage-500 text-white shadow-sm{% endif %}">
                     {% if current_sort == 'oldest' %}Oldest{% else %}Newest{% endif %}
                 </button>
 
                 <button id="sort-alpha-btn" 
                         data-state="{% if current_sort == 'za' %}za{% else %}az{% endif %}" 
-                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}bg-sage-500 text-white shadow-sm{% else %}text-sage-600 hover:bg-sage-50{% endif %}">
+                        class="px-5 py-2 rounded-lg font-bold transition {% if current_sort in ['az', 'za'] %}bg-sage-500 text-white shadow-sm{% else %}text-sage-700 hover:bg-sage-100{% endif %}">
                     {% if current_sort == 'za' %}Z-A{% else %}A-Z{% endif %}
                 </button>
             </div>
 
-            <div class="flex items-center gap-3 bg-white p-1 rounded-xl shadow-sm border border-sage-100 pl-4">
+            <div class="flex items-center gap-3 bg-sage-400 p-1 rounded-xl shadow-sm border border-sage-200 pl-4">
                 <label for="year-filter" class="font-bold text-sage-700">Year:</label>
-                <select id="year-filter" class="px-4 py-3 rounded-lg font-bold transition bg-sage-50 text-sage-800 outline-none cursor-pointer hover:bg-sage-100 border-none">
+                <select id="year-filter" class="px-4 py-2.5 rounded-lg font-bold transition bg-sage-50 text-sage-900 outline-none cursor-pointer hover:bg-sage-100 border-none">
                     <option value="" {% if not current_year %}selected{% endif %}>Any Year</option>
                     {% for y in range(2026, 2014, -1) %}
                     <option value="{{ y }}" {% if current_year == y|string %}selected{% endif %}>{{ y }}</option>
@@ -69,9 +70,9 @@
             </div>
         </div>
 
-        <form method="get" class="flex w-full md:max-w-sm shadow-sm rounded-full">
-            <input name="q" type="text" placeholder="Search this collection..." value="{{ search or '' }}" class="w-full px-6 py-3 rounded-l-full border border-white outline-none text-sage-900 bg-white">
-            <button type="submit" class="bg-sage-500 px-6 rounded-r-full text-white flex items-center justify-center hover:bg-sage-600 transition">
+        <form method="get" class="flex w-full md:max-w-sm shadow-sm rounded-full bg-sage-400 p-1 border border-sage-200 transition-all focus-within:border-sage-500 focus-within:shadow-md">
+            <input name="q" type="text" placeholder="Search this collection..." value="{{ search or '' }}" class="w-full px-5 py-2 bg-transparent outline-none text-sage-900 placeholder-sage-600">
+            <button type="submit" class="bg-sage-500 px-6 py-2 rounded-full text-white flex items-center justify-center hover:bg-sage-600 transition shadow-sm">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </form>
@@ -80,23 +81,23 @@
     <div class="flex flex-col gap-4">
         {% if theses %}
             {% for thesis in theses %}
-            <div class="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm border border-sage-100 hover:shadow-md hover:border-sage-300 transition">
+            <div class="bg-sage-400 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm border border-sage-200 hover:shadow-md hover:border-sage-500 transition group">
                 
                 <div class="flex-1 pr-4">
-                    <a href="{{ url_for('archive.view', id=thesis.id) }}" class="text-xl font-bold text-sage-900 hover:text-sage-500 transition line-clamp-2 mb-1">{{ thesis.title }}</a>
-                    <p class="text-sage-600 font-medium">by {{ thesis.authors }}</p>
-                    <p class="text-sm text-sage-500 font-semibold mt-1">
+                    <a href="{{ url_for('archive.view', id=thesis.id) }}" class="text-xl font-bold text-sage-900 group-hover:text-sage-500 transition line-clamp-2 mb-1">{{ thesis.title }}</a>
+                    <p class="text-sage-700 font-medium">by {{ thesis.authors }}</p>
+                    <p class="text-sm text-sage-600 font-semibold mt-1">
                         <i class="fa-regular fa-calendar mr-1"></i> {{ thesis.date_published | timeago }}
                     </p>
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
-                   <a href="{{ url_for('archive.view', id=thesis.id, borrow='true') }}" class="bg-sage-100 text-sage-700 px-5 py-2.5 rounded-xl font-bold hover:bg-sage-200 transition flex items-center justify-center gap-2 flex-1 sm:flex-auto">
+                   <a href="{{ url_for('archive.view', id=thesis.id, borrow='true') }}" class="bg-sage-100 text-sage-900 px-5 py-2.5 rounded-xl font-bold hover:bg-sage-200 transition flex items-center justify-center gap-2 flex-1 sm:flex-auto">
                         <i class="fa-solid fa-file-pdf text-red-500"></i> Borrow PDF
                     </a> 
                     <form action="{{ url_for('user.toggle_bookmark', thesis_id=thesis.id) }}" method="POST" class="inline w-full sm:w-auto ajax-bookmark">
                         <button type="submit" 
-                                class="px-8 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 {% if thesis.is_bookmarked %} bg-sage-500 text-white hover:bg-sage-600 shadow-sm {% else %} bg-sage-100 text-sage-600 hover:bg-sage-50 shadow-sm {% endif %}" 
+                                class="px-8 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 {% if thesis.is_bookmarked %} bg-sage-500 text-white hover:bg-sage-600 shadow-sm {% else %} bg-sage-100 text-sage-800 hover:bg-sage-200 shadow-sm {% endif %}" 
                                 title="{% if thesis.is_bookmarked %}Remove Bookmark{% else %}Save Bookmark{% endif %}">
 
                             {% if thesis.is_bookmarked %}
@@ -112,15 +113,15 @@
             {% endfor %}
 
             {% if total_pages > 1 %}
-            <div class="bg-white p-4 rounded-xl border border-sage-100 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div class="bg-sage-400 p-4 rounded-xl border border-sage-200 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
                 
-                <span class="text-sage-600 font-medium text-sm">
+                <span class="text-sage-700 font-medium text-sm">
                     Showing 
-                    <span class="font-bold text-sage-800">{{ ((current_page - 1) * 10) + 1 if count > 0 else 0 }}</span> 
+                    <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if count > 0 else 0 }}</span> 
                     to 
-                    <span class="font-bold text-sage-800">{{ [current_page * 10, count] | min }}</span> 
+                    <span class="font-bold text-sage-900">{{ [current_page * 10, count] | min }}</span> 
                     of 
-                    <span class="font-bold text-sage-800">{{ count }}</span> entries
+                    <span class="font-bold text-sage-900">{{ count }}</span> entries
                 </span>
                 
                 <nav class="flex gap-1 items-center">
@@ -132,7 +133,7 @@
                     {% endfor %}
 
                     {% if current_page > 1 %}
-                    <a href="?{{ base_qs }}page={{ current_page - 1 }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2">
+                    <a href="?{{ base_qs }}page={{ current_page - 1 }}" class="px-3 py-1 rounded-md text-sage-700 hover:bg-sage-100 hover:text-sage-900 font-bold transition flex items-center gap-1 mr-2">
                         <i class="fa-solid fa-chevron-left text-xs"></i> Prev
                     </a>
                     {% endif %}
@@ -141,12 +142,12 @@
                         {% if p == current_page %}
                             <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
                         {% else %}
-                            <a href="?{{ base_qs }}page={{ p }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                            <a href="?{{ base_qs }}page={{ p }}" class="px-3 py-1 rounded-md text-sage-700 hover:bg-sage-100 hover:text-sage-900 font-bold transition">{{ p }}</a>
                         {% endif %}
                     {% endfor %}
 
                     {% if current_page < total_pages %}
-                    <a href="?{{ base_qs }}page={{ current_page + 1 }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">
+                    <a href="?{{ base_qs }}page={{ current_page + 1 }}" class="px-3 py-1 rounded-md text-sage-700 hover:bg-sage-100 hover:text-sage-900 font-bold transition flex items-center gap-1 ml-2">
                         Next <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                     {% endif %}
@@ -155,7 +156,7 @@
             {% endif %}
 
         {% else %}
-            <div class="text-center py-16 text-sage-600 font-semibold text-lg bg-white rounded-2xl border border-sage-100 shadow-sm flex flex-col items-center justify-center">
+            <div class="text-center py-16 text-sage-700 font-semibold text-lg bg-sage-400 rounded-2xl border border-sage-200 shadow-sm flex flex-col items-center justify-center">
                 <i class="fa-solid fa-magnifying-glass text-5xl mb-4 opacity-40"></i>
                 No collections found matching your criteria.
             </div>

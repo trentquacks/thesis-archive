@@ -44,6 +44,11 @@ def load_logged_in_user():
         g.user = (
             get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         )
+        if g.user and g.user['role'] == 'admin':
+            result = db.execute("SELECT COUNT(id) as count FROM thesis WHERE status = 'pending'").fetchone()
+            g.pending_count = result['count'] if result else 0
+        else:
+            g.pending_count = 0
 
     track_daily_traffic(db, is_registered=(g.user is not None))
 
@@ -117,6 +122,10 @@ def login():
                     session.clear()
                     session['user_id'] = user['id']
                     unpause_user_borrows(db, user['id'])
+
+                    db.execute("INSERT INTO user_history (user_id, action) VALUES (?, ?)", (user['id'], 'Logged In'))
+                    db.commit()
+
                     return redirect(url_for('index'))
                     
         if error:
@@ -127,7 +136,7 @@ def login():
 @bp.route('/login/google')
 def google_login():
     redirect_uri = url_for('auth.google_callback', _external=True)
-    return oauth.google.authorize_redirect(redirect_uri, hd='cvsu.edu.ph')
+    return oauth.google.authorize_redirect(redirect_uri, hd='cvsu.edu.ph', prompt='select_account')
 
 @bp.route('/auth/google/callback')
 def google_callback():
@@ -157,6 +166,9 @@ def google_callback():
     session['user_id'] = user['id']
     
     unpause_user_borrows(db, user['id'])
+
+    db.execute("INSERT INTO user_history (user_id, action) VALUES (?, ?)", (user['id'], 'Logged In via Google'))
+    db.commit()
 
     flash('Successfully logged in!', 'success')
     return redirect(url_for('index'))
@@ -204,6 +216,10 @@ def complete_profile():
                 # log the user in
                 session.clear()
                 session['user_id'] = user['id']
+
+                db.execute("INSERT INTO user_history (user_id, action) VALUES (?, ?)", (user['id'], 'Logged In via Google'))
+                db.commit()
+
                 flash('Account created successfully!', 'success')
                 return redirect(url_for("index"))
 
@@ -220,6 +236,7 @@ def logout():
     if user_id:
         db = get_db()
         pause_user_borrows(db, user_id)
+        db.execute("INSERT INTO user_history (user_id, action) VALUES (?, ?)", (user_id, 'Logged Out'))
         db.commit()
         
     session.clear()

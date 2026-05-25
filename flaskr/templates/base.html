@@ -13,15 +13,16 @@
                     extend: {
                         colors: {
                             sage: {
-                                50: '#E8EBE0',   /* Body background */
-                                100: '#E0E4D3',  /* Table cells */
-                                200: '#C5CCB7',  /* Borders */
-                                300: '#B0B8A3',  /* Table headers */
-                                500: '#8B9D77',  /* Primary accent (Nav, Buttons) */
-                                600: '#7E8C69',  /* Secondary Buttons */
-                                700: '#626A53',  /* Labels & Titles */
-                                800: '#4A5D4A',  /* Main text */
-                                900: '#2D432D',  /* Darkest text */
+                                50: 'var(--color-sage-50)',
+                                100: 'var(--color-sage-100)',
+                                200: 'var(--color-sage-200)',
+                                300: 'var(--color-sage-300)',
+                                400: 'var(--color-sage-400)',  
+                                500: 'var(--color-sage-500)',
+                                600: 'var(--color-sage-600)',
+                                700: 'var(--color-sage-700)',
+                                800: 'var(--color-sage-800)',
+                                900: 'var(--color-sage-900)',
                             }
                         },
                         fontFamily: {
@@ -48,6 +49,13 @@
                 <a href="{{ url_for('index') }}" class="text-white hover:underline font-bold">Home</a>
                 <a href="#" class="text-white hover:underline font-bold">About</a>
                 <a href="#" class="text-white hover:underline font-bold">FAQ</a>
+                <div class="relative inline-block text-left">
+                    <select id="theme-selector" class="bg-sage-600 text-white font-bold px-3 py-1.5 rounded-lg border border-sage-300 outline-none cursor-pointer hover:bg-sage-700 transition text-sm">
+                        <option value="sage-light">Sage Light</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="ocean">Ocean Blue</option>
+                    </select>
+                </div>
                 
                 {% if g.user %}
                 <div class="dropdown flex items-center gap-2 relative">
@@ -60,8 +68,8 @@
                     </button>
                     
                     <div class="dropdown-content">
-                        <a href="{{ url_for('user.profile') }}">Profile</a>
-                        <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('admin.profile') if g.user['role'] == 'admin' else url_for('user.profile') }}">Profile</a>
+                        <a href="{{ url_for('admin.dashboard_stats') if g.user['role'] == 'admin' else url_for('user.dashboard') }}">Dashboard</a>
                         <a href="{{ url_for('auth.logout') }}">Logout</a>
                     </div>
                 </div>

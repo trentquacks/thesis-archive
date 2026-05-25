@@ -11,3 +11,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// theme toggler
+
+const savedTheme = localStorage.getItem('theme');
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'sage-light');
+
+document.documentElement.setAttribute('data-theme', initialTheme);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeSelector = document.getElementById('theme-selector');
+
+    if (themeSelector) {
+        themeSelector.value = initialTheme;
+
+        themeSelector.addEventListener('change', (e) => {
+            const selectedTheme = e.target.value;
+            document.documentElement.setAttribute('data-theme', selectedTheme);
+            localStorage.setItem('theme', selectedTheme);
+        });
+    }
+});

@@ -200,7 +200,7 @@
     </div>
 </main>
 
-{% macro review_modal(action, bg_light, text_color, bg_dark, hover_dark, icon, title, desc, warning, btn_text, require_password=False) %}
+{% macro review_modal(action, bg_light, text_color, bg_dark, hover_dark, icon, title, desc, warning, btn_text, require_password=False, show_feedback=False) %}
 <div id="{{ action }}Modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
     <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
         <button type="button" class="close-{{ action }}-btn absolute top-4 sm:top-6 right-4 sm:right-6 text-gray-400 hover:text-gray-700 transition-colors">
@@ -221,6 +221,13 @@
         </p>
 
         <form id="{{ action }}Form" action="" method="POST" class="mt-4">
+            
+            {% if show_feedback %}
+            <div class="mb-5">
+                <label class="block text-sm font-bold text-gray-700 mb-2"><i class="fa-solid fa-comment-medical mr-1 text-red-500"></i> Rejection Feedback (Optional)</label>
+                <textarea name="feedback" rows="3" class="w-full bg-red-50/50 border border-red-100 text-gray-900 rounded-lg p-3 focus:ring-2 focus:ring-red-400 outline-none transition shadow-sm resize-none" placeholder="Explain why this submission is being rejected to help the uploader..."></textarea>
+            </div>
+            {% endif %}
             
             {% if require_password %}
             <div class="mb-6 bg-red-50 p-4 rounded-xl border border-red-100">
@@ -251,7 +258,7 @@
     desc='Are you sure you want to approve this submission?', 
     warning='Once approved, this thesis will be published to the archive and become visible to all users.', 
     btn_text='Confirm Approve'
-) }}
+    ) }}
 
 {{ review_modal(
     action='reject', 
@@ -260,8 +267,9 @@
     title='Reject Record', 
     desc='Are you sure you want to reject this submission?', 
     warning='This action will mark the record as rejected and it will not be published to the archive.', 
-    btn_text='Confirm Reject'
-) }}
+    btn_text='Confirm Reject',
+    show_feedback=True  
+    ) }}
 
 {{ review_modal(
     action='delete', 
@@ -272,6 +280,6 @@
     warning='This action is PERMANENT and cannot be undone. The digital file and all associated metadata will be wiped.', 
     btn_text='Confirm Delete',
     require_password=True
-) }}
+    ) }}
 
 {% endblock %}

@@ -5,13 +5,15 @@ from flask import Blueprint, render_template, g, redirect, url_for, flash, reque
 from flaskr.db import get_db
 from flaskr.helper import extract_contributors_from_form, save_uploaded_file
 from flask import jsonify
+from werkzeug.security import check_password_hash, generate_password_hash
+from flaskr.queries.user_queries import update_profile_picture, update_user_password
 from flaskr.queries.shared_queries import get_form_dropdown_options
 from flaskr.queries.admin_queries import (
     get_thesis_stats, get_departments_list, get_filtered_review_theses, 
     update_thesis_status_and_log, get_thesis_by_id, 
     update_thesis_record, get_thesis_authors, get_thesis_advisors, delete_thesis_record,
     get_dashboard_stats, get_traffic_data, get_department_distribution, get_projects_tracking_data,
-    get_thesis_borrow_history
+    get_thesis_borrow_history, get_registered_accounts, get_system_history, update_thesis_record
 )
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -59,6 +61,53 @@ def api_thesis_borrows(id):
         'current_page': page
     })
 
+@bp.route('/profile', methods=('GET', 'POST'))
+@admin_required
+def profile():
+    db = get_db()
+    user_id = g.user['id']
+
+    user_record = db.execute('SELECT password FROM user WHERE id = ?', (user_id,)).fetchone()
+    has_password = user_record['password'] != '!OAUTH_LOGIN_ONLY!'
+
+    if request.method == 'POST':
+        if 'profile_pic' in request.files:
+            _, _, unique_filename = save_uploaded_file(
+                request.files['profile_pic'], 
+                'profile_pics', 
+                f"user_{user_id}"
+            )
+            
+            if unique_filename:
+                update_profile_picture(db, unique_filename, user_id)
+                flash('Profile picture updated successfully!', 'success')
+                return redirect(url_for('admin.profile'))
+
+        elif 'new_password' in request.form:
+            new_password = request.form['new_password']
+            confirm_password = request.form['confirm_password']
+            error = None
+            
+            if has_password:
+                current_password = request.form.get('current_password')
+                if not current_password:
+                    error = 'Current password is required.'
+                elif not check_password_hash(user_record['password'], current_password):
+                    error = 'Incorrect current password.'
+                    
+            if not error:
+                if new_password != confirm_password:
+                    error = 'New passwords do not match.'
+                
+            if error is None:
+                update_user_password(db, user_id, generate_password_hash(new_password))
+                flash('Password successfully updated!', "success")
+                return redirect(url_for('admin.profile'))
+            
+            flash(error, 'error')
+
+    return render_template('admin/profile.html', has_password=has_password)
+
 @bp.route("/dashboard/stats")
 @admin_required
 def dashboard_stats():
@@ -90,7 +139,16 @@ def dashboard_projects():
 @bp.route("/dashboard/accounts")
 @admin_required
 def dashboard_accounts():
-    return render_template("admin/dashboard/accounts.html")
+    db = get_db()
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'newest')
+    search = request.args.get('q', '').strip()
+    
+    users, total, pages = get_registered_accounts(db, search, sort, page)
+    
+    return render_template("admin/dashboard/accounts.html", 
+                           users=users, total_users=total, 
+                           total_pages=pages, current_page=page, current_sort=sort, search=search)
 
 @bp.route("/review")
 @admin_required
@@ -132,7 +190,9 @@ def update_status(id, new_status):
         return redirect(request.referrer or url_for('admin.review'))
 
     db = get_db()
-    thesis_title = update_thesis_status_and_log(db, id, g.user['id'], new_status)
+    feedback = request.form.get('feedback')
+    
+    thesis_title = update_thesis_status_and_log(db, id, g.user['id'], new_status, feedback)
     
     if not thesis_title:
         flash("Thesis record not found.", "error")
@@ -230,3 +290,19 @@ def delete(id):
         flash("Thesis record not found.", "error")
         
     return redirect(request.referrer or url_for('admin.review'))
+
+@bp.route("/history")
+@admin_required
+def history():
+    db = get_db()
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'newest')
+    role = request.args.get('role', 'all')
+    action = request.args.get('action', 'all')
+    
+    logs, total, pages = get_system_history(db, role, action, sort, page)
+    
+    return render_template("admin/history.html", 
+                           logs=logs, total_logs=total, 
+                           total_pages=pages, current_page=page, 
+                           current_sort=sort, current_role=role, current_action=action)

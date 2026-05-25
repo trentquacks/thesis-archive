@@ -3,7 +3,7 @@ from .shared_queries import fetch_paginated_data
 
 def get_user_thesis(db, user_id):
     return db.execute("""
-        SELECT thesis.id, title, status, strftime('%Y', thesis.date_published) as year, department.icon 
+        SELECT thesis.id, title, status, feedback, strftime('%Y', thesis.date_published) as year, department.icon 
         FROM thesis 
         JOIN department ON thesis.department_id = department.id
         WHERE uploader_id = ?

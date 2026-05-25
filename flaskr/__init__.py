@@ -1,7 +1,7 @@
 import os
 from authlib.integrations.flask_client import OAuth
 from flask import Flask
-from datetime import datetime
+from datetime import datetime, timedelta
 
 oauth = OAuth()
 
@@ -61,8 +61,27 @@ def create_app(test_config=None):
     app.add_url_rule("/", endpoint="index")
 
     app.jinja_env.filters['timeago'] = timeago
+    app.jinja_env.filters['ph_time'] = format_ph_time
 
     return app
+
+def format_ph_time(value, format_string='%b %d, %Y at %I:%M %p'):
+    if not value:
+        return "Unknown"
+    
+    if isinstance(value, str):
+        try:
+            clean_string = value.split('.')[0] 
+            dt = datetime.strptime(clean_string, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return value 
+    else:
+        dt = value
+        
+    ph_dt = dt + timedelta(hours=8)
+    
+    return ph_dt.strftime(format_string)
+
 
 
 def timeago(date):

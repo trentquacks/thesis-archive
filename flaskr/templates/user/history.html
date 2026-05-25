@@ -75,7 +75,7 @@
                                 {{ event.title or 'Unknown Document' }}
                             </a>
                             <div class="flex items-center text-sage-600 font-bold text-sm mt-2">
-                                <i class="fa-regular fa-calendar-days mr-1"></i> {{ event.timestamp }}
+                                <i class="fa-regular fa-calendar-days mr-1"></i> {{ event.timestamp | ph_time }}
                             </div>
                         </div>
                     </div>

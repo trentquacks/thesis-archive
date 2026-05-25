@@ -1,0 +1,107 @@
+{% extends 'sidebar.html' %}
+
+{% block title %} Admin Accounts Dashboard {% endblock %}
+
+{% block main %}
+<main class="flex-1 flex flex-col min-h-0 gap-6">
+    <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
+
+        <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
+            <div class="flex items-center gap-4 border-b border-white/30 pb-4">
+                <i class="fa-solid fa-chart-pie text-4xl"></i>
+                <h2 class="text-3xl font-bold uppercase tracking-wider">System Dashboard</h2>
+            </div>
+            <p class="mt-4 text-sage-50 font-medium text-lg">
+                Overview of archive statistics, project lists, and user accounts.
+            </p>
+        </div>
+
+        {% include 'admin/dashboard/dashboard_nav.html' %}
+
+        <div class="flex flex-col gap-6 shrink-0">
+            
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-sage-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <h3 class="text-lg font-extrabold text-sage-900 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-sage-500"></i> Registered Accounts
+                </h3>
+                
+                <form action="{{ url_for('admin.dashboard_accounts') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <div class="flex w-full sm:w-64 bg-sage-50 border border-sage-200 rounded-lg overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-sage-500">
+                        <input type="text" name="q" value="{{ search }}" placeholder="Search name or student no." class="w-full px-4 py-2 bg-transparent outline-none text-sage-700 font-medium text-sm">
+                        <button type="submit" class="px-4 text-sage-500 hover:text-sage-700 transition"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                    <select name="sort" onchange="this.form.submit()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sage-700 bg-sage-50 border border-sage-200 font-bold outline-none cursor-pointer focus:ring-2 focus:ring-sage-500 transition text-sm">
+                        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                    </select>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-sage-100 flex flex-col min-h-[500px]">
+                <div class="p-6 md:p-8 flex-1 flex flex-col gap-4">
+                    
+                    {% if users %}
+                    {% for user in users %}
+                    <div class="bg-sage-50 rounded-xl p-5 border border-sage-200 flex flex-col lg:flex-row items-start lg:items-center justify-between shadow-sm gap-6 transition hover:shadow-md hover:border-sage-300">
+
+                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                            <img src="{{ url_for('static', filename='uploads/profile_pics/' ~ user['profile_pic']) }}" alt="Profile" 
+                                                                                                                       class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm shrink-0" 
+                                                                                                                       onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/profile_pics/default.png') }}';">
+
+                            <div class="min-w-0 flex flex-col">
+                                <h4 class="text-sage-900 font-extrabold text-lg leading-tight mb-1 truncate" title="{{ user['first_name'] }} {{ user['last_name'] }}">
+                                    {{ user['first_name'] }} {{ user['last_name'] }}
+                                </h4>
+                                <p class="text-sage-600 font-bold text-sm mb-1"><i class="fa-solid fa-id-card mr-1"></i> {{ user['student_no'] }}</p>
+                                <p class="text-sage-600 font-bold text-sm mb-1"><i class="fa-solid fa-graduation-cap mr-1"></i> {{ user['course'] }}</p>
+                                <p class="text-sage-500 text-xs font-medium truncate" title="{{ user['email'] }}"><i class="fa-regular fa-envelope mr-1"></i> {{ user['email'] }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col lg:items-end self-end lg:self-auto shrink-0 w-full lg:w-auto mt-4 lg:mt-0 pt-4 lg:pt-0 border-t border-sage-200 lg:border-none">
+                            <span class="bg-sage-200 text-sage-800 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 lg:mb-1 w-max">
+                                {{ user['role'] }}
+                            </span>
+                            <span class="text-xs font-medium text-sage-500">
+                                <i class="fa-regular fa-clock mr-1"></i> Registered: {{ user['date_registered'] | ph_time }}
+                            </span>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center h-full text-sage-600 font-semibold text-lg py-16 text-center">
+                            <i class="fa-solid fa-users-slash text-6xl mb-4 opacity-40"></i>
+                            <span>No accounts found matching your criteria.</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="bg-sage-400 p-4 border-t border-sage-200 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0 rounded-b-xl">
+                    <span class="text-sage-600 font-medium text-sm">
+                        Showing <span class="font-bold text-sage-900">{{ ((current_page - 1) * 10) + 1 if total_users > 0 else 0 }}</span> to <span class="font-bold text-sage-900">{{ [current_page * 10, total_users] | min }}</span> of <span class="font-bold text-sage-900">{{ total_users | default(0) }}</span> accounts
+                    </span>
+                    <nav class="flex gap-1 items-center">
+                        {% set base_qs = "&sort=" ~ current_sort ~ "&q=" ~ search %}
+                        {% if current_page > 1 %}
+                        <a href="?page={{ current_page - 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 mr-2"><i class="fa-solid fa-chevron-left text-xs"></i> Prev</a>
+                        {% endif %}
+                        {% for p in range(1, total_pages + 1) %}
+                        {% if p == current_page %}
+                        <span class="px-3 py-1 rounded-md bg-sage-500 text-white font-bold shadow-sm cursor-default">{{ p }}</span>
+                        {% else %}
+                        <a href="?page={{ p }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition">{{ p }}</a>
+                        {% endif %}
+                        {% endfor %}
+                        {% if current_page < total_pages %}
+                        <a href="?page={{ current_page + 1 }}{{ base_qs }}" class="px-3 py-1 rounded-md text-sage-600 hover:bg-sage-200 font-bold transition flex items-center gap-1 ml-2">Next <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

@@ -3,6 +3,16 @@ from flask import current_app
 from datetime import datetime
 import os
 
+"""
+
+I have no time to refactor this c;
+Tommorow is presentation
+shouldnt have procastinated o lord
+Ammen
+
+
+"""
+
 def get_thesis_stats(db):
     """Returns the total count for pending, approved, and rejected theses."""
     total_pending = db.execute("SELECT COUNT(id) FROM thesis WHERE status = 'pending'").fetchone()[0]
@@ -341,3 +351,97 @@ def get_projects_tracking_data(db, sort_filter, page, per_page=10):
         main_query += " ORDER BY t.date_published DESC"
         
     return fetch_paginated_data(db, main_query, count_query, [], page, per_page)
+
+def get_registered_accounts(db, search_term, sort_filter, page, per_page=10):
+    """Fetches paginated and filtered registered user accounts."""
+    conditions = "WHERE 1=1"
+    params = []
+    
+    if search_term:
+        conditions += " AND (first_name LIKE '%' || ? || '%' OR last_name LIKE '%' || ? || '%' OR student_no LIKE '%' || ? || '%')"
+        params.extend([search_term, search_term, search_term])
+        
+    count_query = f"SELECT COUNT(id) FROM user {conditions}"
+    
+    main_query = f"""
+        SELECT id, first_name, last_name, email, student_no, course, profile_pic, role, date_registered
+        FROM user
+        {conditions}
+    """
+    
+    if sort_filter == 'oldest':
+        main_query += " ORDER BY date_registered ASC"
+    else:
+        main_query += " ORDER BY date_registered DESC"
+        
+    return fetch_paginated_data(db, main_query, count_query, params, page, per_page)
+
+def get_system_history(db, role_filter, action_filter, sort_filter, page, per_page=15):
+    """Fetches paginated and filtered system-wide user history logs."""
+    conditions = ["1=1"]
+    params = []
+    
+    if role_filter != 'all':
+        conditions.append("u.role = ?")
+        params.append(role_filter)
+        
+    if action_filter != 'all':
+        if action_filter == 'admin_actions':
+            conditions.append("(h.action LIKE 'Marked as%' OR h.action LIKE 'Deleted record:%' OR h.action LIKE 'Edited record%')")
+        elif action_filter == 'status_updates':
+            conditions.append("h.action LIKE 'Marked as%'")
+        elif action_filter == 'modifications':
+            conditions.append("h.action LIKE 'Edited record%'")
+        elif action_filter == 'deletions':
+            conditions.append("h.action LIKE 'Deleted record:%'")
+        elif action_filter == 'submissions':
+            conditions.append("h.action = 'Submitted'")
+        elif action_filter == 'bookmarks':
+            conditions.append("h.action IN ('Bookmarked', 'Unbookmarked')")
+        elif action_filter == 'borrows':
+            conditions.append("h.action = 'Borrowed'")
+        elif action_filter == 'auth_actions':
+            conditions.append("(h.action LIKE '%Logged In%' OR h.action = 'Logged Out')")
+            
+    where_clause = " AND ".join(conditions)
+    
+    count_query = f"SELECT COUNT(h.id) FROM user_history h JOIN user u ON h.user_id = u.id WHERE {where_clause}"
+    
+    main_query = f"""
+        SELECT h.id, h.action, h.timestamp, u.first_name, u.last_name, 
+               u.profile_pic, u.role, u.student_no, t.title as thesis_title
+        FROM user_history h
+        JOIN user u ON h.user_id = u.id
+        LEFT JOIN thesis t ON h.thesis_id = t.id
+        WHERE {where_clause}
+    """
+    
+    if sort_filter == 'oldest':
+        main_query += " ORDER BY h.timestamp ASC"
+    else:
+        main_query += " ORDER BY h.timestamp DESC"
+        
+    return fetch_paginated_data(db, main_query, count_query, params, page, per_page)
+
+def update_thesis_status_and_log(db, thesis_id, user_id, new_status, feedback=None):
+    """
+    Updates the thesis status and feedback, logs it in user_history, and commits to the DB.
+    """
+    thesis = db.execute("SELECT title FROM thesis WHERE id = ?", (thesis_id,)).fetchone()
+    
+    if not thesis:
+        return None
+        
+    db.execute(
+        "UPDATE thesis SET status = ?, feedback = ? WHERE id = ?",
+        (new_status, feedback, thesis_id)
+    )
+    
+    action_text = f"Marked as {new_status.capitalize()}"
+    db.execute(
+        "INSERT INTO user_history (user_id, action, thesis_id) VALUES (?, ?, ?)",
+        (user_id, action_text, thesis_id)
+    )
+    
+    db.commit()
+    return thesis['title']

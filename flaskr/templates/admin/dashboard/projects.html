@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block main %}
-<main class="flex-1 flex flex-col min-h-0 gap-6">
+<main class="flex-1 flex flex-col min-w-0 min-h-0 gap-6 relative w-full overflow-hidden">
     <div class="flex-1 overflow-y-auto pr-2 pb-8 custom-scrollbar flex flex-col gap-6">
 
         <div class="bg-sage-500 text-white p-6 md:p-8 rounded-xl shadow-md shrink-0">
@@ -55,13 +55,13 @@
                                     </h4>
                                     <p class="text-sage-600 font-bold text-sm mb-2"><i class="fa-solid fa-building mr-1"></i> {{ thesis['department_name'] }}</p>
                                     
-                                    <div class="flex items-center gap-2 text-xs font-medium text-sage-500 mt-1">
-                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <div class="flex items-center gap-2 text-xs font-medium text-sage-500 mt-1 min-w-0 w-full">
+                                        <i class="fa-solid fa-clock-rotate-left shrink-0"></i>
                                         {% if thesis['recent_borrowers'] %}
-                                            <button type="button" 
-                                                    data-thesis-id="{{ thesis.id }}" 
-                                                    data-thesis-title="{{ thesis.title }}"
-                                                    class="open-borrows-modal text-left hover:text-sage-800 transition truncate flex-1 group focus:outline-none">
+                                        <button type="button" 
+                                                data-thesis-id="{{ thesis.id }}" 
+                                                data-thesis-title="{{ thesis.title }}"
+                                                class="open-borrows-modal text-left hover:text-sage-800 transition truncate flex-1 group focus:outline-none min-w-0">
                                                 Recently borrowed by: 
                                                 <span class="font-bold text-sage-700 group-hover:underline">{{ thesis['recent_borrowers'] }}</span>
                                                 <span class="inline-flex items-center justify-center bg-sage-200 text-sage-700 ml-2 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider group-hover:bg-sage-300 transition shadow-sm">View All</span>

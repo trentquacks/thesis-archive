@@ -18,9 +18,13 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 def require_login():
     if g.user is None:
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return {"error:": "Unauthorized"}, 401
+            return {"error": "Unauthorized"}, 401
         flash("Login required", "error")
         return redirect(url_for('auth.login'))
+        
+    if g.user['role'] == 'admin':
+        flash("Please log in as a user to have user privileges", "error")
+        return redirect(url_for('archive.index'))
 
 @bp.route("/dashboard")
 def dashboard():
